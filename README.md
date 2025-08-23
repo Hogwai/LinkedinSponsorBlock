@@ -16,7 +16,7 @@ Ce script pour Tampermonkey supprime les publications sponsorisées, les suggest
     - Se rendre sur la page du script: [LinkedinSponsorBlock](https://greasyfork.org/fr/scripts/546877-linkedinsponsorblock) 
     - Cliquer sur "Installer ce script" et confirmer
 2. **Depuis Github :**
-   - Cliquer ici: [LinkedinSponsorBlock.user.js](https://github.com/Hogwai/PureTechBlock/raw/refs/heads/main/LinkedinSponsorBlock.user.js) et confimer.
+   - Cliquer ici: [LinkedinSponsorBlock.user.js](https://github.com/Hogwai/LinkedinSponsorBlock/raw/refs/heads/main/LinkedinSponsorBlock.user.js) et confimer.
 3. **Vérifiez que le script est activé :**
    - Dans le tableau de bord de Tampermonkey (cliquez sur l'icône > "Tableau de bord"), assurez-vous que le script `LinkedinSponsorBlock` est activé (interrupteur sur "On").
 
