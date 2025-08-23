@@ -5,7 +5,7 @@
 // @description:en  Remove sponsored posts, suggestions, and partner content on linkedin.com
 // @description:fr  Supprime les publications sponsorisées, les suggestions et le contenu en partenariat sur linkedin.com
 // @author          Hogwai
-// @match           https://www.linkedin.com/feed/*
+// @include         *://www.linkedin.com/feed/*
 // @grant           none
 // @license         MIT
 // @downloadURL     https://update.greasyfork.org/scripts/546877/LinkedinSponsorBlock.user.js
