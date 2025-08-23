@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name            LinkedinSponsorBlock
+// @name            Linkedin Sponsor Block
 // @namespace       https://github.com/Hogwai/LinkedinSponsorBlock/
 // @version         1.0
 // @description:en  Remove sponsored posts, suggestions, and partner content on linkedin.com
