@@ -8,8 +8,8 @@
 // @match           https://www.linkedin.com/feed/*
 // @grant           none
 // @license         MIT
-// @downloadURL     https://update.greasyfork.org/scripts/545906/LinkedinSponsorBlock.user.js
-// @updateURL       https://update.greasyfork.org/scripts/545906/LinkedinSponsorBlock.meta.js
+// @downloadURL     https://update.greasyfork.org/scripts/546877/LinkedinSponsorBlock.user.js
+// @updateURL       https://update.greasyfork.org/scripts/546877/LinkedinSponsorBlock.meta.js
 // ==/UserScript==
 
 (function () {
