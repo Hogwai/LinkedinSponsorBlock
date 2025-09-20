@@ -16,19 +16,18 @@
 (function () {
     'use strict';
 
-    const FR_TARGET_TEXTS = [
+    const TARGET_TEXTS = [
+        // FR
         'Post sponsorisé',
         'Suggestions',
         'En partenariat avec',
         'Promu(e) par ',
-        'Sponsorisé • En partenariat avec'
+        'Sponsorisé • En partenariat avec',
+        // EN
+        'Promoted',
+        // DE
+        'Anzeige'
     ];
-
-    const EN_TARGET_TEXTS = [
-        'Promoted'
-    ];
-
-    const TARGET_TEXTS = [...FR_TARGET_TEXTS, ...EN_TARGET_TEXTS];
 
     function scanAndClean() {
         let removedCount = 0;
