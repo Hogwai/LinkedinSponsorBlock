@@ -1,39 +1,47 @@
 # LinkedinSponsorBlock
 
-Ce script pour Tampermonkey supprime les publications sponsorisées, les suggestions et le contenu en partenariat sur le fil d'actualité de linkedin.com
+This script for Tampermonkey removes sponsored posts, suggestions, and partnered content from the linkedin.com news feed.
 
-## Prérequis
-- Un navigateur web compatible (Google Chrome, Firefox, Edge, etc.).
-- L'extension **Tampermonkey** installée.
+## Prerequisites
 
-## Installation de Tampermonkey
-   - **Google Chrome** : Se rendre sur  [Chrome Web Store](https://chromewebstore.google.com/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?pli=1) et cliquez sur "Ajouter à Chrome".
-   - **Firefox** : Se rendre sur [Mozilla Add-ons](https://addons.mozilla.org/fr/firefox/addon/tampermonkey/) et cliquez sur "Ajouter à Firefox".
-   - **Autres navigateurs** : Cherchez "Tampermonkey" dans le store d'extensions de votre navigateur (Edge, Opera, etc.).
+- A compatible web browser (Google Chrome, Firefox, Edge, etc.).
+- The **Tampermonkey** extension installed.
 
-## Installation du script LinkedinSponsorBlock
-1. **Depuis Greasyfork :**
-    - Se rendre sur la page du script: [LinkedinSponsorBlock](https://greasyfork.org/fr/scripts/546877-linkedinsponsorblock) 
-    - Cliquer sur "Installer ce script" et confirmer
-2. **Depuis Github :**
-   - Cliquer ici: [LinkedinSponsorBlock.user.js](https://github.com/Hogwai/LinkedinSponsorBlock/raw/refs/heads/main/LinkedinSponsorBlock.user.js) et confimer.
-3. **Vérifiez que le script est activé :**
-   - Dans le tableau de bord de Tampermonkey (cliquez sur l'icône > "Tableau de bord"), assurez-vous que le script `LinkedinSponsorBlock` est activé (interrupteur sur "On").
+## Installing Tampermonkey
 
-## Utilisation
-- Visitez [linkedin.com/feed](https://www.linkedin.com/feed/)
-- Ouvrez la console du navigateur (`F12` > Console) pour voir les logs (par exemple, combien d'annonces ou publicités ont été supprimées).
+- **Google Chrome**: Go to the [Chrome Web Store](https://chromewebstore.google.com/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?pli=1) and click "Add to Chrome".
+- **Firefox**: Go to [Mozilla Add-ons](https://addons.mozilla.org/fr/firefox/addon/tampermonkey/) and click "Add to Firefox".
+- **Other browsers**: Search for "Tampermonkey" in your browser's extension store (Edge, Opera, etc.).
 
-## Dépannage
-- **Le script ne fonctionne pas ?**
-  - Vérifiez que Tampermonkey est activé et que le script est correctement installé.
-  - Assurez-vous que l'URL du site correspond aux motifs `@match` du script (`https://www.linkedin.com/feed/*`).
-  - Consultez la console du navigateur pour des messages d'erreur.
-- **Problèmes persistants ?**
-  - Contactez l'auteur via [GitHub](https://github.com/Hogwai/LinkedinSponsorBlock/) ou mettez à jour le script.
+## Installing the LinkedinSponsorBlock script
 
-## Auteur
-- **Hogwai** - [GitHub](https://github.com/Hogwai)
+1. **From Greasyfork:**
 
-## Licence
-Ce projet est sous licence libre. Consultez le dépôt GitHub pour plus de détails.
+- Go to the script page: [LinkedinSponsorBlock](https://greasyfork.org/fr/scripts/546877-linkedinsponsorblock)
+- Click "Install this script" and confirm
+
+2. **From Github:**
+
+- Click here: [LinkedinSponsorBlock.user.js](https://github.com/Hogwai/LinkedinSponsorBlock/raw/refs/heads/main/LinkedinSponsorBlock.user.js) and confirm.
+
+3. **Verify that the script is enabled:**
+
+- In the Tampermonkey dashboard (click the icon > "Dashboard"), ensure that the `LinkedinSponsorBlock` script is enabled (switch to "On").
+
+## Usage
+
+- Visit [linkedin.com/feed](https://www.linkedin.com/feed/)
+- Open the browser console (`F12` > Console) to view logs (e.g., how many ads were removed).
+
+## Troubleshooting
+
+- **Script not working?**
+- Verify that Tampermonkey is enabled and that the script is correctly installed.
+- Ensure that the site URL matches the script's `@match` patterns (`https://www.linkedin.com/feed/*`).
+- Check the browser console for error messages.
+- **Persistent issues?**
+- Open an issue via [GitHub](https://github.com/Hogwai/LinkedinSponsorBlock/issues) or try to update the script.
+
+## License
+
+This project is licensed under the MIT License.
