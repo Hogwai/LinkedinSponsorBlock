@@ -23,6 +23,7 @@
         'En partenariat avec',
         'Promu(e) par ',
         'Sponsorisé • En partenariat avec',
+        'Promues',
         // ENGLISH
         'Promoted',
         // GERMAN
