@@ -110,7 +110,6 @@
             const desktopSpans = document.querySelectorAll('span[aria-hidden="true"]:not([class]):not([id]):not([data-sponsor-processed])');
             const mobileSpans = document.querySelectorAll('span.text-color-text-low-emphasis');
 
-            // Combinaison des deux sélections
             const spans = [...desktopSpans, ...mobileSpans];
 
             for (const span of spans) {
@@ -160,7 +159,6 @@
 
             clearTimeout(timeout);
 
-            // Force l'exécution si maxWait est dépassé
             if (now - lastExecTime >= maxWait) {
                 lastExecTime = now;
                 func.apply(this, args);
