@@ -9,13 +9,14 @@
 // @include         *://*.linkedin.*/feed/*
 // @grant           none
 // @license         MIT
-// @downloadURL     https://update.greasyfork.org/scripts/546877/LinkedinSponsorBlock.user.js
-// @updateURL       https://update.greasyfork.org/scripts/546877/LinkedinSponsorBlock.meta.js
+// @description Supprime les publications sponsorisées, les suggestions et le contenu en partenariat sur linkedin.com
+// @downloadURL https://update.greasyfork.org/scripts/546877/Linkedin%20Sponsor%20Block.user.js
+// @updateURL https://update.greasyfork.org/scripts/546877/Linkedin%20Sponsor%20Block.meta.js
 // ==/UserScript==
 
 (function () {
     'use strict';
-    
+
     const TARGET_TEXTS = [
         // FRENCH
         'Post sponsorisé',
@@ -102,41 +103,44 @@
     function scanAndClean() {
         if (isScanning) return;
         isScanning = true;
-        
+
         try {
             let removedCount = 0;
-            
-            const spans = document.querySelectorAll('span[aria-hidden="true"]:not([class]):not([id]):not([data-sponsor-processed])');
-            
+
+            const desktopSpans = document.querySelectorAll('span[aria-hidden="true"]:not([class]):not([id]):not([data-sponsor-processed])');
+            const mobileSpans = document.querySelectorAll('span.text-color-text-low-emphasis');
+
+            // Combinaison des deux sélections
+            const spans = [...desktopSpans, ...mobileSpans];
+
             for (const span of spans) {
                 const textContent = span.textContent?.trim().toLowerCase();
                 if (!textContent) {
                     span.setAttribute('data-sponsor-processed', 'true');
                     continue;
                 }
-                
-                const isSponsored = TARGET_TEXTS.some(text => 
-                    span.textContent.trim() === text || span.textContent.includes(text)
-                );
-                
+
+                const isSponsored = TARGET_TEXTS.some(text => span.textContent.trim() === text || span.textContent.includes(text));
+
                 if (isSponsored) {
-                    let parent = span.closest('.ember-view.occludable-update');
-                    
+                    let parent = span.closest('.ember-view.occludable-update') ||
+                        span.closest('li.feed-item.new-feed.mb-1');
+
                     if (parent && !parent.hasAttribute('data-sponsor-removed')) {
                         parent.setAttribute('data-sponsor-removed', 'true');
                         parent.style.display = 'none';
                         removedCount++;
                         totalRemoved++;
-                        
+
                         if (console.debug) {
                             console.debug(`[LinkedinSponsorBlock] Hidden element : "${span.textContent.trim()}"`);
                         }
                     }
                 }
-                
+
                 span.setAttribute('data-sponsor-processed', 'true');
             }
-            
+
             if (removedCount > 0 && console.debug) {
                 console.debug(`[LinkedinSponsorBlock] ${removedCount} hidden elements (Total: ${totalRemoved})`);
             }
@@ -150,19 +154,19 @@
     function createThrottledDebounce(func, delay, maxWait = 1000) {
         let timeout;
         let lastExecTime = 0;
-        
-        return function(...args) {
+
+        return function (...args) {
             const now = Date.now();
-            
+
             clearTimeout(timeout);
-            
+
             // Force l'exécution si maxWait est dépassé
             if (now - lastExecTime >= maxWait) {
                 lastExecTime = now;
                 func.apply(this, args);
                 return;
             }
-            
+
             timeout = setTimeout(() => {
                 lastExecTime = Date.now();
                 func.apply(this, args);
@@ -174,11 +178,13 @@
 
     const observer = new MutationObserver((mutations) => {
         let shouldScan = false;
-        
+
         for (const mutation of mutations) {
             if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
                 for (const node of mutation.addedNodes) {
-                    if (node.nodeType === Node.ELEMENT_NODE && node.querySelector?.('span[aria-hidden="true"]')) {
+                    if (node.nodeType === Node.ELEMENT_NODE &&
+                        (node.querySelector?.('span[aria-hidden="true"]') ||
+                            node.querySelector?.('span.text-color-text-low-emphasis'))) {
                         shouldScan = true;
                         break;
                     }
@@ -186,7 +192,7 @@
             }
             if (shouldScan) break;
         }
-        
+
         if (shouldScan) {
             throttledScanAndClean();
         }
@@ -202,7 +208,7 @@
         try {
             observer.observe(document.body, observerConfig);
             scanAndClean();
-            
+
             if (console.info) {
                 console.info('[LinkedinSponsorBlock] Initialized');
             }
