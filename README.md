@@ -3,7 +3,6 @@
 This script for Tampermonkey removes sponsored posts, suggestions, and partnered content from the linkedin.com news feed.
 
 Available in two flavors: [Firefox extension](https://addons.mozilla.org/fr/firefox/addon/linkedin-sponsor-block/) and [userscript](https://greasyfork.org/fr/scripts/546877-linkedinsponsorblock)
-- Userscript: 
 
 ## Installing
 
