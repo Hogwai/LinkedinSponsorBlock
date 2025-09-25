@@ -123,6 +123,7 @@
 
                 if (isSponsored) {
                     let parent = span.closest('.ember-view.occludable-update') ||
+                        span.closest('[class*="ember-view"][class*="occludable-update"]') ||
                         span.closest('li.feed-item.new-feed.mb-1');
 
                     if (parent && !parent.hasAttribute('data-sponsor-removed')) {
