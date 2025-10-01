@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Linkedin Sponsor Block
 // @namespace       https://github.com/Hogwai/LinkedinSponsorBlock/
-// @version         1.1
+// @version         1.1.1
 // @description:en  Remove sponsored posts, suggestions, and partner content on linkedin.com
 // @description:fr  Supprime les publications sponsorisées, les suggestions et le contenu en partenariat sur linkedin.com
 // @author          Hogwai
@@ -9,7 +9,7 @@
 // @include         *://*.linkedin.*/feed/*
 // @grant           none
 // @license         MIT
-// @description Supprime les publications sponsorisées, les suggestions et le contenu en partenariat sur linkedin.com
+// @description Remove sponsored posts, suggestions, and partner content on linkedin.com
 // @downloadURL https://update.greasyfork.org/scripts/546877/Linkedin%20Sponsor%20Block.user.js
 // @updateURL https://update.greasyfork.org/scripts/546877/Linkedin%20Sponsor%20Block.meta.js
 // ==/UserScript==
@@ -183,7 +183,7 @@
                 for (const node of mutation.addedNodes) {
                     if (node.nodeType === Node.ELEMENT_NODE &&
                         (node.querySelector?.('span[aria-hidden="true"]') ||
-                            node.querySelector?.('span.text-color-text-low-emphasis'))) {
+                         node.querySelector?.('span.text-color-text-low-emphasis'))) {
                         shouldScan = true;
                         break;
                     }
@@ -204,8 +204,9 @@
     };
 
     function initialize() {
+        const feedDiv = document.querySelector('.scaffold-finite-scroll__content[data-finite-scroll-hotkey-context="FEED"]');
         try {
-            observer.observe(document.body, observerConfig);
+            observer.observe(feedDiv, observerConfig);
             scanAndClean();
 
             if (console.info) {
@@ -215,12 +216,6 @@
             console.error('[LinkedinSponsorBlock] Error while initializing:', error);
         }
     }
-
-    setInterval(() => {
-        if (!isScanning) {
-            scanAndClean();
-        }
-    }, 5000);
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initialize);
