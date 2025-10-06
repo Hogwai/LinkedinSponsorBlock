@@ -25,6 +25,7 @@
         'Promu(e) par ',
         'Sponsorisé • En partenariat avec',
         'Promues',
+        'Promu(e) par',
         // ENGLISH
         'Promoted',
         // GERMAN
