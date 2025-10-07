@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Linkedin Sponsor Block
 // @namespace       https://github.com/Hogwai/LinkedinSponsorBlock/
-// @version         1.2.2
+// @version         1.2.4
 // @description:en  Remove sponsored posts, suggestions, and partner content on linkedin.com
 // @description:fr  Supprime les publications sponsorisées, les suggestions et le contenu en partenariat sur linkedin.com
 // @author          Hogwai
@@ -100,6 +100,7 @@
 
     let isScanning = false;
     let totalRemoved = 0;
+    let lastUrl = location.href;
 
     function scanAndClean() {
         if (isScanning) return;
@@ -120,7 +121,7 @@
                     continue;
                 }
 
-                const isSponsored = TARGET_TEXTS.some(text => span.textContent.trim() === text || span.textContent.includes(text));
+                const isSponsored = TARGET_TEXTS.some(text => textContent === text.toLowerCase() || textContent.includes(text.toLowerCase()));
 
                 if (isSponsored) {
                     let parent = span.closest('.ember-view.occludable-update') ||
@@ -132,18 +133,15 @@
                         parent.style.display = 'none';
                         removedCount++;
                         totalRemoved++;
-
-                        if (console.debug) {
-                            console.debug(`[LinkedinSponsorBlock] Hidden element : "${span.textContent.trim()}"`);
-                        }
+                        console.log(`[LinkedinSponsorBlock] Hidden element: "${span.textContent.trim()}"`);
                     }
                 }
 
                 span.setAttribute('data-sponsor-processed', 'true');
             }
 
-            if (removedCount > 0 && console.debug) {
-                console.debug(`[LinkedinSponsorBlock] ${removedCount} hidden elements (Total: ${totalRemoved})`);
+            if (removedCount > 0) {
+                console.log(`[LinkedinSponsorBlock] ${removedCount} hidden elements (Total: ${totalRemoved})`);
             }
         } catch (error) {
             console.error('[LinkedinSponsorBlock] Error while scanning:', error);
@@ -152,13 +150,12 @@
         }
     }
 
-    function createThrottledDebounce(func, delay, maxWait = 1000) {
+    function createThrottledDebounce(func, delay, maxWait = 500) {
         let timeout;
         let lastExecTime = 0;
 
         return function (...args) {
             const now = Date.now();
-
             clearTimeout(timeout);
 
             if (now - lastExecTime >= maxWait) {
@@ -174,7 +171,7 @@
         };
     }
 
-    const throttledScanAndClean = createThrottledDebounce(scanAndClean, 250, 800);
+    const throttledScanAndClean = createThrottledDebounce(scanAndClean, 250, 500);
 
     const observer = new MutationObserver((mutations) => {
         let shouldScan = false;
@@ -205,18 +202,46 @@
     };
 
     function initialize() {
-        const feedDiv = document.querySelector('.scaffold-finite-scroll__content[data-finite-scroll-hotkey-context="FEED"]');
-        try {
-            observer.observe(feedDiv, observerConfig);
-            scanAndClean();
-
-            if (console.info) {
-                console.info('[LinkedinSponsorBlock] Initialized');
+        const attemptInitialize = () => {
+            const feedDiv = document.querySelector('.scaffold-finite-scroll__content[data-finite-scroll-hotkey-context="FEED"]');
+            if (!feedDiv) {
+                setTimeout(attemptInitialize, 1000);
+                return;
             }
-        } catch (error) {
-            console.error('[LinkedinSponsorBlock] Error while initializing:', error);
+
+            try {
+                observer.disconnect();
+                observer.observe(feedDiv, observerConfig);
+                scanAndClean();
+                console.log('[LinkedinSponsorBlock] Initialized');
+            } catch (error) {
+                console.error('[LinkedinSponsorBlock] Error while initializing:', error);
+            }
+        };
+
+        attemptInitialize();
+    }
+
+    function checkUrlChange() {
+        if (location.href !== lastUrl) {
+            lastUrl = location.href;
+            initialize();
         }
     }
+
+    window.addEventListener('popstate', checkUrlChange);
+    const originalPushState = history.pushState;
+    const originalReplaceState = history.replaceState;
+
+    history.pushState = function (...args) {
+        originalPushState.apply(this, args);
+        checkUrlChange();
+    };
+
+    history.replaceState = function (...args) {
+        originalReplaceState.apply(this, args);
+        checkUrlChange();
+    };
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initialize);
