@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Linkedin Sponsor Block
 // @namespace       https://github.com/Hogwai/LinkedinSponsorBlock/
-// @version         1.1.2
+// @version         1.1.3
 // @description:en  Remove sponsored posts, suggestions, and partner content on linkedin.com
 // @description:fr  Supprime les publications sponsorisées, les suggestions et le contenu en partenariat sur linkedin.com
 // @author          Hogwai
@@ -98,9 +98,24 @@
         '促銷內容',
     ];
 
+    const PARENTS_SELECTORS = [
+        '.ember-view.occludable-update',
+        '[class*="ember-view"][class*="occludable-update"]',
+        'div[class*="feed-shared-update-v2"][id*="ember"]',
+        'li.feed-item.new-feed.mb-1'
+    ];
+
     let isScanning = false;
     let totalRemoved = 0;
     let lastUrl = location.href;
+
+    function findParentDiv(element) {
+        for (const selector of PARENTS_SELECTORS) {
+            const parent = element.closest(selector);
+            if (parent) return parent;
+        }
+        return null;
+    }
 
     function scanAndClean() {
         if (isScanning) return;
@@ -124,9 +139,7 @@
                 const isSponsored = TARGET_TEXTS.some(text => textContent === text.toLowerCase() || textContent.includes(text.toLowerCase()));
 
                 if (isSponsored) {
-                    let parent = span.closest('.ember-view.occludable-update') ||
-                        span.closest('[class*="ember-view"][class*="occludable-update"]') ||
-                        span.closest('li.feed-item.new-feed.mb-1');
+                    let parent = findParentDiv(span);
 
                     if (parent && !parent.hasAttribute('data-sponsor-removed')) {
                         parent.setAttribute('data-sponsor-removed', 'true');
@@ -171,6 +184,34 @@
         };
     }
 
+    function initialize() {
+        const attemptInitialize = () => {
+            const feedDiv = document.querySelector('.scaffold-finite-scroll__content[data-finite-scroll-hotkey-context="FEED"]');
+            if (!feedDiv) {
+                setTimeout(attemptInitialize, 1000);
+                return;
+            }
+
+            try {
+                observer.disconnect();
+                observer.observe(feedDiv, observerConfig);
+                scanAndClean();
+                console.log('[LinkedinSponsorBlock] Initialized');
+            } catch (error) {
+                console.error('[LinkedinSponsorBlock] Error while initializing:', error);
+            }
+        };
+
+        attemptInitialize();
+    }
+
+    function checkUrlChange() {
+        if (location.href !== lastUrl) {
+            lastUrl = location.href;
+            initialize();
+        }
+    }
+
     const throttledScanAndClean = createThrottledDebounce(scanAndClean, 250, 500);
 
     const observer = new MutationObserver((mutations) => {
@@ -201,33 +242,6 @@
         attributeFilter: []
     };
 
-    function initialize() {
-        const attemptInitialize = () => {
-            const feedDiv = document.querySelector('.scaffold-finite-scroll__content[data-finite-scroll-hotkey-context="FEED"]');
-            if (!feedDiv) {
-                setTimeout(attemptInitialize, 1000);
-                return;
-            }
-
-            try {
-                observer.disconnect();
-                observer.observe(feedDiv, observerConfig);
-                scanAndClean();
-                console.log('[LinkedinSponsorBlock] Initialized');
-            } catch (error) {
-                console.error('[LinkedinSponsorBlock] Error while initializing:', error);
-            }
-        };
-
-        attemptInitialize();
-    }
-
-    function checkUrlChange() {
-        if (location.href !== lastUrl) {
-            lastUrl = location.href;
-            initialize();
-        }
-    }
 
     window.addEventListener('popstate', checkUrlChange);
     const originalPushState = history.pushState;
