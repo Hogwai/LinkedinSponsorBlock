@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Linkedin Sponsor Block
 // @namespace       https://github.com/Hogwai/LinkedinSponsorBlock/
-// @version         1.1.3
+// @version         1.1.4
 // @description:en  Remove sponsored posts, suggestions, and partner content on linkedin.com
 // @description:fr  Supprime les publications sponsorisées, les suggestions et le contenu en partenariat sur linkedin.com
 // @author          Hogwai
@@ -186,9 +186,9 @@
 
     function initialize() {
         const attemptInitialize = () => {
-            const feedDiv = document.querySelector('.scaffold-finite-scroll__content[data-finite-scroll-hotkey-context="FEED"]');
+            const feedDiv = document.querySelector('[class*="scaffold-finite-scroll"][class*="scaffold-finite-scroll--infinite"]');
             if (!feedDiv) {
-                setTimeout(attemptInitialize, 1000);
+                setTimeout(attemptInitialize, 500);
                 return;
             }
 
@@ -208,7 +208,7 @@
     function checkUrlChange() {
         if (location.href !== lastUrl) {
             lastUrl = location.href;
-            initialize();
+            setTimeout(initialize, 500);
         }
     }
 
@@ -222,7 +222,7 @@
                 for (const node of mutation.addedNodes) {
                     if (node.nodeType === Node.ELEMENT_NODE &&
                         (node.querySelector?.('span[aria-hidden="true"]') ||
-                         node.querySelector?.('span.text-color-text-low-emphasis'))) {
+                            node.querySelector?.('span.text-color-text-low-emphasis'))) {
                         shouldScan = true;
                         break;
                     }
@@ -256,6 +256,16 @@
         originalReplaceState.apply(this, args);
         checkUrlChange();
     };
+
+    window.addEventListener('focus', () => {
+        setTimeout(throttledScanAndClean, 500);
+    });
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+            setTimeout(throttledScanAndClean, 500);
+        }
+    });
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initialize);
