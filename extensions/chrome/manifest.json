@@ -3,7 +3,7 @@
     "name": "Linkedin Sponsor Block",
     "description": "Remove sponsored posts, suggestions, and partner content on linkedin feed",
     "homepage_url": "https://github.com/Hogwai/LinkedinSponsorBlock",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "icons": {
         "16": "icon_16.png",
         "48": "icon_48.png",
