@@ -2,18 +2,15 @@
 
 This script for Tampermonkey removes sponsored posts, suggestions, and partnered content from the linkedin.com news feed.
 
-Available in two flavors: browser extensions
-(<a href="https://addons.mozilla.org/fr/firefox/addon/linkedin-sponsor-block/" target="_blank">Firefox</a>, 
-<a href="https://chromewebstore.google.com/detail/linkedin-sponsor-block/dmgglmnbmokkdocpamjkcgjfjceoocbh" target="_blank">Chrome</a>)
-and <a href="https://greasyfork.org/fr/scripts/546877-linkedinsponsorblock" target="_blank">userscript</a>
+Available in two flavors: browser extensions and userscript
 
 ## Installing
 
 ### Firefox Extension
-On Firefox, go to <a href="https://addons.mozilla.org/fr/firefox/addon/linkedin-sponsor-block/" target="_blank">Firefox</a> and install the extension
+<a href="https://addons.mozilla.org/fr/firefox/addon/linkedin-sponsor-block/" target="_blank"><img src="https://user-images.githubusercontent.com/585534/107280546-7b9b2a00-6a26-11eb-8f9f-f95932f4bfec.png" alt="Get LinkedIn Sponsor Block for Firefox"></a> 
 
 ### Chrome Extension
-On Chrome, go to <a href="https://chromewebstore.google.com/detail/linkedin-sponsor-block/dmgglmnbmokkdocpamjkcgjfjceoocbh" target="_blank">Chrome</a> and install the extension
+<a href="https://chromewebstore.google.com/detail/linkedin-sponsor-block/dmgglmnbmokkdocpamjkcgjfjceoocbh" target="_blank"><img src="https://user-images.githubusercontent.com/585534/107280622-91a8ea80-6a26-11eb-8d07-77c548b28665.png" alt="Get LinkedIn Suggested Posts Remover for Chromium"></a>
 
 ### Userscript
 #### Prerequisites
