@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Linkedin Sponsor Block
 // @namespace       https://github.com/Hogwai/LinkedinSponsorBlock/
-// @version         1.2.4
+// @version         1.2.5
 // @description:en  Remove sponsored posts, suggestions, and partner content on linkedin.com
 // @description:fr  Supprime les publications sponsorisées, les suggestions et le contenu en partenariat sur linkedin.com
 // @author          Hogwai
@@ -98,9 +98,24 @@
         '促銷內容',
     ];
 
+    const PARENTS_SELECTORS = [
+        '.ember-view.occludable-update',
+        '[class*="ember-view"][class*="occludable-update"]',
+        'div[class*="feed-shared-update-v2"][id*="ember"]',
+        'li.feed-item.new-feed.mb-1'
+    ];
+
     let isScanning = false;
     let totalRemoved = 0;
     let lastUrl = location.href;
+
+    function findParentDiv(element) {
+        for (const selector of PARENTS_SELECTORS) {
+            const parent = element.closest(selector);
+            if (parent) return parent;
+        }
+        return null;
+    }
 
     function scanAndClean() {
         if (isScanning) return;
@@ -124,9 +139,7 @@
                 const isSponsored = TARGET_TEXTS.some(text => textContent === text.toLowerCase() || textContent.includes(text.toLowerCase()));
 
                 if (isSponsored) {
-                    let parent = span.closest('.ember-view.occludable-update') ||
-                        span.closest('[class*="ember-view"][class*="occludable-update"]') ||
-                        span.closest('li.feed-item.new-feed.mb-1');
+                    let parent = findParentDiv(span);
 
                     if (parent && !parent.hasAttribute('data-sponsor-removed')) {
                         parent.setAttribute('data-sponsor-removed', 'true');
@@ -171,41 +184,11 @@
         };
     }
 
-    const throttledScanAndClean = createThrottledDebounce(scanAndClean, 250, 500);
-
-    const observer = new MutationObserver((mutations) => {
-        let shouldScan = false;
-
-        for (const mutation of mutations) {
-            if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-                for (const node of mutation.addedNodes) {
-                    if (node.nodeType === Node.ELEMENT_NODE &&
-                        (node.querySelector?.('span[aria-hidden="true"]') ||
-                         node.querySelector?.('span.text-color-text-low-emphasis'))) {
-                        shouldScan = true;
-                        break;
-                    }
-                }
-            }
-            if (shouldScan) break;
-        }
-
-        if (shouldScan) {
-            throttledScanAndClean();
-        }
-    });
-
-    const observerConfig = {
-        childList: true,
-        subtree: true,
-        attributeFilter: []
-    };
-
     function initialize() {
         const attemptInitialize = () => {
-            const feedDiv = document.querySelector('.scaffold-finite-scroll__content[data-finite-scroll-hotkey-context="FEED"]');
+            const feedDiv = document.querySelector('[class*="scaffold-finite-scroll"][class*="scaffold-finite-scroll--infinite"]');
             if (!feedDiv) {
-                setTimeout(attemptInitialize, 1000);
+                setTimeout(attemptInitialize, 500);
                 return;
             }
 
@@ -225,9 +208,40 @@
     function checkUrlChange() {
         if (location.href !== lastUrl) {
             lastUrl = location.href;
-            initialize();
+            setTimeout(initialize, 500);
         }
     }
+
+    const throttledScanAndClean = createThrottledDebounce(scanAndClean, 250, 500);
+
+    const observer = new MutationObserver((mutations) => {
+        let shouldScan = false;
+
+        for (const mutation of mutations) {
+            if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                for (const node of mutation.addedNodes) {
+                    if (node.nodeType === Node.ELEMENT_NODE &&
+                        (node.querySelector?.('span[aria-hidden="true"]') ||
+                            node.querySelector?.('span.text-color-text-low-emphasis'))) {
+                        shouldScan = true;
+                        break;
+                    }
+                }
+            }
+            if (shouldScan) break;
+        }
+
+        if (shouldScan) {
+            throttledScanAndClean();
+        }
+    });
+
+    const observerConfig = {
+        childList: true,
+        subtree: true,
+        attributeFilter: []
+    };
+
 
     window.addEventListener('popstate', checkUrlChange);
     const originalPushState = history.pushState;
@@ -242,6 +256,16 @@
         originalReplaceState.apply(this, args);
         checkUrlChange();
     };
+
+    window.addEventListener('focus', () => {
+        setTimeout(throttledScanAndClean, 500);
+    });
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+            setTimeout(throttledScanAndClean, 500);
+        }
+    });
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initialize);
