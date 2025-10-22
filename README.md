@@ -50,6 +50,11 @@ Available in two flavors: browser extensions and userscript
 - Verify that Tampermonkey is enabled and that the script is correctly installed.
 - Ensure that the site URL matches the script's `@match` patterns (`https://www.linkedin.com/feed/*`).
 - Check the browser console for error messages.
+- On google chrome, you will have to allow userscripts:
+<img width="407" height="612" alt="image" src="https://github.com/user-attachments/assets/3c67c990-abfe-45b2-90e4-be841dc8a24c" />
+
+<img width="852" height="107" alt="image" src="https://github.com/user-attachments/assets/34cc79c6-5313-4155-a3c7-0b08dcdd700d" />
+
 
 **Persistent issues?**
 - Open an issue via [GitHub](https://github.com/Hogwai/LinkedinSponsorBlock/issues) or try to update the script.
