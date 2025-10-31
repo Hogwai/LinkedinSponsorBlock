@@ -1,22 +1,7 @@
-// ==UserScript==
-// @name            Linkedin Sponsor Block
-// @namespace       https://github.com/Hogwai/LinkedinSponsorBlock/
-// @version         1.0.4
-// @description:en  Remove sponsored posts, suggestions, and partner content on linkedin.com
-// @description:fr  Supprime les publications sponsorisées, les suggestions et le contenu en partenariat sur linkedin.com
-// @author          Hogwai
-// @include         *://*.linkedin.*
-// @include         *://*.linkedin.*/feed/*
-// @grant           none
-// @license         MIT
-// @description Remove sponsored posts, suggestions, and partner content on linkedin.com
-// @downloadURL https://update.greasyfork.org/scripts/546877/Linkedin%20Sponsor%20Block.user.js
-// @updateURL https://update.greasyfork.org/scripts/546877/Linkedin%20Sponsor%20Block.meta.js
-// ==/UserScript==
-
 (function () {
     'use strict';
 
+    // Promoted texts
     const TARGET_TEXTS = [
         // FRENCH
         'Post sponsorisé',
@@ -95,9 +80,10 @@
         // CHINESE (SIMPLIFIED)
         '广告',
         // CHINESE (TRADITIONAL)
-        '促銷內容',
-    ];
+        '促銷內容'
+    ].map(t => t.toLowerCase());
 
+    // Promoted posts cards
     const PARENTS_SELECTORS = [
         '.ember-view.occludable-update',
         '[class*="ember-view"][class*="occludable-update"]',
@@ -105,10 +91,19 @@
         'li.feed-item.new-feed.mb-1'
     ];
 
+    // Global variables
     let isScanning = false;
     let totalRemoved = 0;
+    let observer = null;
     let lastUrl = location.href;
+    const delay = 500;
 
+    // Detects if the current page is the feed
+    function isFeedPage() {
+        return location.pathname.startsWith('/feed');
+    }
+
+    // Find the parent div
     function findParentDiv(element) {
         for (const selector of PARENTS_SELECTORS) {
             const parent = element.closest(selector);
@@ -117,159 +112,136 @@
         return null;
     }
 
+    // Scan and hide promoted posts
     function scanAndClean() {
-        if (isScanning) return;
+        if (isScanning || !document.body) return;
         isScanning = true;
 
-        try {
-            let removedCount = 0;
+        let removedCount = 0;
 
-            const desktopSpans = document.querySelectorAll('span[aria-hidden="true"]:not([class]):not([id]):not([data-sponsor-processed])');
-            const mobileSpans = document.querySelectorAll('span.text-color-text-low-emphasis');
+        // Clean before rescanning
+        document.querySelectorAll('[data-sponsor-processed]').forEach(el => el.removeAttribute('data-sponsor-processed'));
 
-            const spans = [...desktopSpans, ...mobileSpans];
+        const spans = document.querySelectorAll(`
+            span[aria-hidden="true"]:not([class]):not([id]),
+            span.text-color-text-low-emphasis
+        `);
 
-            for (const span of spans) {
-                const textContent = span.textContent?.trim().toLowerCase();
-                if (!textContent) {
-                    span.setAttribute('data-sponsor-processed', 'true');
-                    continue;
+        for (const span of spans) {
+            const text = span.textContent?.trim();
+            if (!text) continue;
+
+            const lowerText = text.toLowerCase();
+            const isSponsored = TARGET_TEXTS.some(t => lowerText === t || lowerText.includes(t));
+
+            if (isSponsored) {
+                const parent = findParentDiv(span);
+                if (parent && !parent.hasAttribute('data-sponsor-removed')) {
+                    parent.style.display = 'none';
+                    parent.setAttribute('data-sponsor-removed', 'true');
+                    removedCount++;
+                    totalRemoved++;
+                    console.log(`[LinkedinSponsorBlock] Hidden element: "${text}"`);
                 }
-
-                const isSponsored = TARGET_TEXTS.some(text => textContent === text.toLowerCase() || textContent.includes(text.toLowerCase()));
-
-                if (isSponsored) {
-                    let parent = findParentDiv(span);
-
-                    if (parent && !parent.hasAttribute('data-sponsor-removed')) {
-                        parent.setAttribute('data-sponsor-removed', 'true');
-                        parent.style.display = 'none';
-                        removedCount++;
-                        totalRemoved++;
-                        console.log(`[LinkedinSponsorBlock] Hidden element: "${span.textContent.trim()}"`);
-                    }
-                }
-
-                span.setAttribute('data-sponsor-processed', 'true');
             }
-
-            if (removedCount > 0) {
-                console.log(`[LinkedinSponsorBlock] ${removedCount} hidden elements (Total: ${totalRemoved})`);
-            }
-        } catch (error) {
-            console.error('[LinkedinSponsorBlock] Error while scanning:', error);
-        } finally {
-            isScanning = false;
+            span.setAttribute('data-sponsor-processed', 'true');
         }
+
+        if (removedCount > 0) {
+            console.log(`[LinkedinSponsorBlock] ${removedCount} hidden elements (Total: ${totalRemoved})`);
+        }
+
+        isScanning = false;
     }
 
-    function createThrottledDebounce(func, delay, maxWait = 500) {
-        let timeout;
-        let lastExecTime = 0;
-
-        return function (...args) {
+    // Throttle & debounce
+    function createThrottledDebounce(func, delay = 300, maxWait = 500) {
+        let timeout, lastExec = 0;
+        return (...args) => {
             const now = Date.now();
             clearTimeout(timeout);
-
-            if (now - lastExecTime >= maxWait) {
-                lastExecTime = now;
-                func.apply(this, args);
-                return;
+            if (now - lastExec >= maxWait) {
+                lastExec = now;
+                return func(...args);
             }
-
             timeout = setTimeout(() => {
-                lastExecTime = Date.now();
-                func.apply(this, args);
+                lastExec = Date.now();
+                func(...args);
             }, delay);
         };
     }
+    const throttledScan = createThrottledDebounce(scanAndClean, 300, delay);
 
-    function initialize() {
-        const attemptInitialize = () => {
-            const feedDiv = document.querySelector('[class*="scaffold-finite-scroll"][class*="scaffold-finite-scroll--infinite"]');
-            if (!feedDiv) {
-                setTimeout(attemptInitialize, 500);
-                return;
-            }
+    // Start body observer
+    function startBodyObserver() {
+        if (!isFeedPage()) return;
 
-            try {
-                observer.disconnect();
-                observer.observe(feedDiv, observerConfig);
-                scanAndClean();
-                console.log('[LinkedinSponsorBlock] Initialized');
-            } catch (error) {
-                console.error('[LinkedinSponsorBlock] Error while initializing:', error);
-            }
-        };
+        if (observer) observer.disconnect();
 
-        attemptInitialize();
+        observer = new MutationObserver(throttledScan);
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+
+        setTimeout(scanAndClean, 1000);
+        setTimeout(scanAndClean, 3000);
+
+        console.log('[LinkedinSponsorBlock] Feed detected: starting listening...');
     }
 
+    // Listen SPA navigation
     function checkUrlChange() {
         if (location.href !== lastUrl) {
             lastUrl = location.href;
-            setTimeout(initialize, 500);
+            if (observer) observer.disconnect();
+            setTimeout(() => {
+                if (isFeedPage()) {
+                    startBodyObserver();
+                } else {
+                    scanAndClean();
+                }
+            }, delay);
         }
     }
 
-    const throttledScanAndClean = createThrottledDebounce(scanAndClean, 250, 500);
+    // Listen scroll
+    let scrollTimeout;
+    window.addEventListener('scroll', () => {
+        if (!isFeedPage()) return;
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(throttledScan, delay);
+    }, { passive: true });
 
-    const observer = new MutationObserver((mutations) => {
-        let shouldScan = false;
+    // Listen focus change
+    window.addEventListener('focus', () => {
+        if (isFeedPage()) setTimeout(throttledScan, delay);
+    });
 
-        for (const mutation of mutations) {
-            if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-                for (const node of mutation.addedNodes) {
-                    if (node.nodeType === Node.ELEMENT_NODE &&
-                        (node.querySelector?.('span[aria-hidden="true"]') ||
-                            node.querySelector?.('span.text-color-text-low-emphasis'))) {
-                        shouldScan = true;
-                        break;
-                    }
-                }
-            }
-            if (shouldScan) break;
-        }
-
-        if (shouldScan) {
-            throttledScanAndClean();
+    // Listen visibility change
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && isFeedPage()) {
+            setTimeout(throttledScan, delay);
         }
     });
 
-    const observerConfig = {
-        childList: true,
-        subtree: true,
-        attributeFilter: []
-    };
-
-
+    // Listen history change
     window.addEventListener('popstate', checkUrlChange);
     const originalPushState = history.pushState;
     const originalReplaceState = history.replaceState;
+    history.pushState = (...args) => { originalPushState.apply(history, args); checkUrlChange(); };
+    history.replaceState = (...args) => { originalReplaceState.apply(history, args); checkUrlChange(); };
 
-    history.pushState = function (...args) {
-        originalPushState.apply(this, args);
-        checkUrlChange();
-    };
-
-    history.replaceState = function (...args) {
-        originalReplaceState.apply(this, args);
-        checkUrlChange();
-    };
-
-    window.addEventListener('focus', () => {
-        setTimeout(throttledScanAndClean, 500);
-    });
-
-    document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') {
-            setTimeout(throttledScanAndClean, 500);
-        }
-    });
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initialize);
+    // Detecting the body load
+    if (document.body) {
+        if (isFeedPage()) startBodyObserver();
     } else {
-        setTimeout(initialize, 500);
+        const waiter = new MutationObserver((_, obs) => {
+            if (document.body && isFeedPage()) {
+                obs.disconnect();
+                startBodyObserver();
+            }
+        });
+        waiter.observe(document.documentElement, { childList: true });
     }
 })();
