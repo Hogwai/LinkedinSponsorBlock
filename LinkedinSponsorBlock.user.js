@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Linkedin Sponsor Block
 // @namespace       https://github.com/Hogwai/LinkedinSponsorBlock/
-// @version         1.1.5
+// @version         1.1.6
 // @description:en  Remove sponsored posts, suggestions, and partner content on linkedin.com
 // @description:fr  Supprime les publications sponsorisées, les suggestions et le contenu en partenariat sur linkedin.com
 // @author          Hogwai
@@ -99,12 +99,18 @@
         '促銷內容'
     ].map(t => t.toLowerCase());
 
-    // Promoted posts cards
+    // Parent containers
     const PARENTS_SELECTORS = [
         '.ember-view.occludable-update',
         '[class*="ember-view"][class*="occludable-update"]',
         'div[class*="feed-shared-update-v2"][id*="ember"]',
         'li.feed-item.new-feed.mb-1'
+    ];
+
+    // Promoted spans
+    const SPAN_SELECTORS = [
+        'span[aria-hidden="true"]:not([class]):not([id]):not([data-sponsor-processed])',
+        'span.text-color-text-low-emphasis:not([data-sponsor-processed])'
     ];
 
     // Global variables
@@ -114,34 +120,28 @@
     let lastUrl = location.href;
     const delay = 500;
 
-    // Detects if the current page is the feed
+    // Feed detection
     function isFeedPage() {
         return location.pathname.startsWith('/feed');
     }
 
-    // Find the parent div
+    // Find the parent
     function findParentDiv(element) {
-        for (const selector of PARENTS_SELECTORS) {
-            const parent = element.closest(selector);
-            if (parent) return parent;
-        }
-        return null;
+        return element.closest(PARENTS_SELECTORS.find(sel => element.closest(sel)));
     }
 
-    // Scan and hide promoted posts
+    // Find spans
+    function getNewSuspectSpans(root = document) {
+        return root.querySelectorAll(SPAN_SELECTORS);
+    }
+
+    // Scan and hide
     function scanAndClean() {
         if (isScanning || !document.body) return;
         isScanning = true;
 
         let removedCount = 0;
-
-        // Clean before rescanning
-        document.querySelectorAll('[data-sponsor-processed]').forEach(el => el.removeAttribute('data-sponsor-processed'));
-
-        const spans = document.querySelectorAll(`
-            span[aria-hidden="true"]:not([class]):not([id]),
-            span.text-color-text-low-emphasis
-        `);
+        const spans = getNewSuspectSpans();
 
         for (const span of spans) {
             const text = span.textContent?.trim();
@@ -151,7 +151,7 @@
             const isSponsored = TARGET_TEXTS.some(t => lowerText === t || lowerText.includes(t));
 
             if (isSponsored) {
-                const parent = findParentDiv(span);
+                const parent = span.closest(PARENTS_SELECTORS);
                 if (parent && !parent.hasAttribute('data-sponsor-removed')) {
                     parent.style.display = 'none';
                     parent.setAttribute('data-sponsor-removed', 'true');
@@ -170,7 +170,7 @@
         isScanning = false;
     }
 
-    // Throttle & debounce
+    // Throttle + debounce
     function createThrottledDebounce(func, delay = 300, maxWait = 500) {
         let timeout, lastExec = 0;
         return (...args) => {
@@ -188,25 +188,38 @@
     }
     const throttledScan = createThrottledDebounce(scanAndClean, 300, delay);
 
-    // Start body observer
+    // Start observer
     function startBodyObserver() {
         if (!isFeedPage()) return;
-
         if (observer) observer.disconnect();
 
-        observer = new MutationObserver(throttledScan);
-        observer.observe(document.body, {
+        observer = new MutationObserver(mutations => {
+            const shouldScan =
+                mutations.some(mutation => Array.from(mutation.addedNodes)
+                    .some(node => node.nodeType === 1 && getNewSuspectSpans(node).length > 0));
+
+            if (shouldScan) throttledScan();
+        });
+
+
+        const feedDiv = document.querySelector('[class*="scaffold-finite-scroll"][class*="scaffold-finite-scroll--infinite"]');
+        if (!feedDiv) {
+            setTimeout(startBodyObserver, delay);
+            return;
+        }
+
+
+        observer.observe(feedDiv, {
             childList: true,
             subtree: true
         });
 
-        setTimeout(scanAndClean, 1000);
-        setTimeout(scanAndClean, 3000);
-
+        // Init
+        setTimeout(throttledScan, delay);
         console.log('[LinkedinSponsorBlock] Feed detected: starting listening...');
     }
 
-    // Listen SPA navigation
+    // Handle URL change
     function checkUrlChange() {
         if (location.href !== lastUrl) {
             lastUrl = location.href;
@@ -215,40 +228,32 @@
                 if (isFeedPage()) {
                     startBodyObserver();
                 } else {
-                    scanAndClean();
+                    throttledScan();
                 }
             }, delay);
         }
     }
 
-    // Listen scroll
-    let scrollTimeout;
-    window.addEventListener('scroll', () => {
-        if (!isFeedPage()) return;
-        clearTimeout(scrollTimeout);
-        scrollTimeout = setTimeout(throttledScan, delay);
-    }, { passive: true });
-
-    // Listen focus change
+    // Events
     window.addEventListener('focus', () => {
-        if (isFeedPage()) setTimeout(throttledScan, delay);
+        if (isFeedPage()) {
+            setTimeout(throttledScan, delay);
+        }
     });
 
-    // Listen visibility change
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible' && isFeedPage()) {
             setTimeout(throttledScan, delay);
         }
     });
 
-    // Listen history change
     window.addEventListener('popstate', checkUrlChange);
     const originalPushState = history.pushState;
     const originalReplaceState = history.replaceState;
     history.pushState = (...args) => { originalPushState.apply(history, args); checkUrlChange(); };
     history.replaceState = (...args) => { originalReplaceState.apply(history, args); checkUrlChange(); };
 
-    // Detecting the body load
+    // Start
     if (document.body) {
         if (isFeedPage()) startBodyObserver();
     } else {
