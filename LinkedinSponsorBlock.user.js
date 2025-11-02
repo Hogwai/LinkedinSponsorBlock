@@ -105,7 +105,7 @@
         '[class*="ember-view"][class*="occludable-update"]',
         'div[class*="feed-shared-update-v2"][id*="ember"]',
         'li.feed-item.new-feed.mb-1'
-    ];
+    ].join(',');
 
     // Promoted spans
     const SPAN_SELECTORS = [
@@ -123,11 +123,6 @@
     // Feed detection
     function isFeedPage() {
         return location.pathname.startsWith('/feed');
-    }
-
-    // Find the parent
-    function findParentDiv(element) {
-        return element.closest(PARENTS_SELECTORS.find(sel => element.closest(sel)));
     }
 
     // Find spans
@@ -202,7 +197,10 @@
         });
 
 
-        const feedDiv = document.querySelector('[class*="scaffold-finite-scroll"][class*="scaffold-finite-scroll--infinite"]');
+        const feedDesktop = document.querySelector('[class*="scaffold-finite-scroll"][class*="scaffold-finite-scroll--infinite"]');
+        const feedMobile = document.querySelector('ol.feed-container');
+
+        const feedDiv = feedMobile || feedDesktop;
         if (!feedDiv) {
             setTimeout(startBodyObserver, delay);
             return;
