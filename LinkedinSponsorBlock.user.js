@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Linkedin Sponsor Block
 // @namespace       https://github.com/Hogwai/LinkedinSponsorBlock/
-// @version         1.1.6
+// @version         1.1.7
 // @description:en  Remove sponsored posts, suggestions, and partner content on linkedin.com
 // @description:fr  Supprime les publications sponsorisées, les suggestions et le contenu en partenariat sur linkedin.com
 // @author          Hogwai
@@ -225,8 +225,6 @@
             setTimeout(() => {
                 if (isFeedPage()) {
                     startBodyObserver();
-                } else {
-                    throttledScan();
                 }
             }, delay);
         }
@@ -234,14 +232,17 @@
 
     // Events
     window.addEventListener('focus', () => {
-        if (isFeedPage()) {
-            setTimeout(throttledScan, delay);
-        }
+        restartOnWake();
     });
 
+    const restartOnWake = () => {
+        if (!isFeedPage()) return;
+        setTimeout(startBodyObserver, delay);
+    };
+
     document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible' && isFeedPage()) {
-            setTimeout(throttledScan, delay);
+        if (document.visibilityState === 'visible') {
+            restartOnWake();
         }
     });
 
