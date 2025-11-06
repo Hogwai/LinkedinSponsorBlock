@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Linkedin Sponsor Block
 // @namespace       https://github.com/Hogwai/LinkedinSponsorBlock/
-// @version         1.1.7
+// @version         1.1.8
 // @description:en  Remove sponsored posts, suggestions, and partner content on linkedin.com
 // @description:fr  Supprime les publications sponsorisées, les suggestions et le contenu en partenariat sur linkedin.com
 // @author          Hogwai
@@ -29,14 +29,18 @@
         'Promu(e) par',
         // ENGLISH
         'Promoted',
+        'Suggested',
         // GERMAN
         'Anzeige',
+        'Vorgeschlagen',
         // SPANISH
         'Promocionado',
+        'Sugerencias',
         // ARABIC
         'الترويج',
         // ITALIAN
         'Post sponsorizzato',
+        'Promosso da',
         // BANGLA
         'প্রমোটেড',
         // CZECH
@@ -51,6 +55,7 @@
         'Mainostettu',
         // HINDI
         'प्रमोट किया गयाप्रमोट किया गया',
+        'प्रमोट किया गया',
         // HUNGARIAN
         'Kiemelt',
         // INDONESIAN
@@ -61,6 +66,8 @@
         'プロモーション',
         // KOREAN
         '광고',
+        '추천됨',
+        '주최:',
         // MARATHI
         'प्रमोट केले',
         // MALAYSIAN
@@ -75,6 +82,7 @@
         'Treść promowana',
         // PORTUGUESE
         'Promovido',
+        'Sugestões',
         // ROMANIAN
         'Promovat',
         // RUSSIAN
@@ -110,7 +118,8 @@
     // Promoted spans
     const SPAN_SELECTORS = [
         'span[aria-hidden="true"]:not([class]):not([id]):not([data-sponsor-processed])',
-        'span.text-color-text-low-emphasis:not([data-sponsor-processed])'
+        'span.text-color-text-low-emphasis:not([data-sponsor-processed])',
+        'span.update-components-header__text-view:not([data-sponsor-processed])'
     ];
 
     // Global variables
@@ -118,11 +127,13 @@
     let totalRemoved = 0;
     let observer = null;
     let lastUrl = location.href;
-    const delay = 500;
+    const delay = 200;
+    let isObserverConnected = false;
 
     // Feed detection
     function isFeedPage() {
-        return location.pathname.startsWith('/feed');
+        const pathName = location.pathname;
+        return pathName.startsWith('/feed') || pathName.startsWith('/preload');
     }
 
     // Find spans
@@ -166,7 +177,7 @@
     }
 
     // Throttle + debounce
-    function createThrottledDebounce(func, delay = 300, maxWait = 500) {
+    function createThrottledDebounce(func, delay = 100, maxWait = 300) {
         let timeout, lastExec = 0;
         return (...args) => {
             const now = Date.now();
@@ -181,17 +192,22 @@
             }, delay);
         };
     }
-    const throttledScan = createThrottledDebounce(scanAndClean, 300, delay);
+    const throttledScan = createThrottledDebounce(scanAndClean, delay, 300);
 
     // Start observer
     function startBodyObserver() {
-        if (!isFeedPage()) return;
-        if (observer) observer.disconnect();
+        if (!isFeedPage() || isObserverConnected) {
+            return;
+        }
+
+        if (observer) {
+            observer.disconnect();
+        }
 
         observer = new MutationObserver(mutations => {
             const shouldScan =
-                mutations.some(mutation => Array.from(mutation.addedNodes)
-                    .some(node => node.nodeType === 1 && getNewSuspectSpans(node).length > 0));
+                  mutations.some(mutation => Array.from(mutation.addedNodes)
+                                 .some(node => node.nodeType === 1 && getNewSuspectSpans(node).length > 0));
 
             if (shouldScan) throttledScan();
         });
@@ -215,13 +231,17 @@
         // Init
         setTimeout(throttledScan, delay);
         console.log('[LinkedinSponsorBlock] Feed detected: starting listening...');
+        isObserverConnected = true;
     }
 
     // Handle URL change
     function checkUrlChange() {
         if (location.href !== lastUrl) {
             lastUrl = location.href;
-            if (observer) observer.disconnect();
+            if (observer) {
+                observer.disconnect();
+                isObserverConnected = false;
+            }
             setTimeout(() => {
                 if (isFeedPage()) {
                     startBodyObserver();
@@ -236,13 +256,22 @@
     });
 
     const restartOnWake = () => {
-        if (!isFeedPage()) return;
-        setTimeout(startBodyObserver, delay);
+        setTimeout(() => {
+            if (isFeedPage()) {
+                scanAndClean();
+                startBodyObserver();
+            }
+        }, delay);
     };
 
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') {
             restartOnWake();
+        } else if (document.visibilityState === 'hidden') {
+            if (observer) {
+                observer.disconnect();
+                isObserverConnected = false;
+            }
         }
     });
 
@@ -258,7 +287,6 @@
     } else {
         const waiter = new MutationObserver((_, obs) => {
             if (document.body && isFeedPage()) {
-                obs.disconnect();
                 startBodyObserver();
             }
         });
