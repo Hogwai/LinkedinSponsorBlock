@@ -13,14 +13,18 @@
         'Promu(e) par',
         // ENGLISH
         'Promoted',
+        'Suggested',
         // GERMAN
         'Anzeige',
+        'Vorgeschlagen',
         // SPANISH
         'Promocionado',
+        'Sugerencias',
         // ARABIC
         'الترويج',
         // ITALIAN
         'Post sponsorizzato',
+        'Promosso da',
         // BANGLA
         'প্রমোটেড',
         // CZECH
@@ -35,6 +39,7 @@
         'Mainostettu',
         // HINDI
         'प्रमोट किया गयाप्रमोट किया गया',
+        'प्रमोट किया गया',
         // HUNGARIAN
         'Kiemelt',
         // INDONESIAN
@@ -45,6 +50,8 @@
         'プロモーション',
         // KOREAN
         '광고',
+        '추천됨',
+        '주최:',
         // MARATHI
         'प्रमोट केले',
         // MALAYSIAN
@@ -59,6 +66,7 @@
         'Treść promowana',
         // PORTUGUESE
         'Promovido',
+        'Sugestões',
         // ROMANIAN
         'Promovat',
         // RUSSIAN
@@ -83,12 +91,19 @@
         '促銷內容'
     ].map(t => t.toLowerCase());
 
-    // Promoted posts cards
+    // Parent containers
     const PARENTS_SELECTORS = [
         '.ember-view.occludable-update',
         '[class*="ember-view"][class*="occludable-update"]',
         'div[class*="feed-shared-update-v2"][id*="ember"]',
         'li.feed-item.new-feed.mb-1'
+    ].join(',');
+
+    // Promoted spans
+    const SPAN_SELECTORS = [
+        'span[aria-hidden="true"]:not([class]):not([id]):not([data-sponsor-processed])',
+        'span.text-color-text-low-emphasis:not([data-sponsor-processed])',
+        'span.update-components-header__text-view:not([data-sponsor-processed])'
     ];
 
     // Global variables
@@ -96,36 +111,27 @@
     let totalRemoved = 0;
     let observer = null;
     let lastUrl = location.href;
-    const delay = 500;
+    const delay = 200;
+    let isObserverConnected = false;
 
-    // Detects if the current page is the feed
+    // Feed detection
     function isFeedPage() {
-        return location.pathname.startsWith('/feed');
+        const pathName = location.pathname;
+        return pathName.startsWith('/feed') || pathName.startsWith('/preload');
     }
 
-    // Find the parent div
-    function findParentDiv(element) {
-        for (const selector of PARENTS_SELECTORS) {
-            const parent = element.closest(selector);
-            if (parent) return parent;
-        }
-        return null;
+    // Find spans
+    function getNewSuspectSpans(root = document) {
+        return root.querySelectorAll(SPAN_SELECTORS);
     }
 
-    // Scan and hide promoted posts
+    // Scan and hide
     function scanAndClean() {
         if (isScanning || !document.body) return;
         isScanning = true;
 
         let removedCount = 0;
-
-        // Clean before rescanning
-        document.querySelectorAll('[data-sponsor-processed]').forEach(el => el.removeAttribute('data-sponsor-processed'));
-
-        const spans = document.querySelectorAll(`
-            span[aria-hidden="true"]:not([class]):not([id]),
-            span.text-color-text-low-emphasis
-        `);
+        const spans = getNewSuspectSpans();
 
         for (const span of spans) {
             const text = span.textContent?.trim();
@@ -135,7 +141,7 @@
             const isSponsored = TARGET_TEXTS.some(t => lowerText === t || lowerText.includes(t));
 
             if (isSponsored) {
-                const parent = findParentDiv(span);
+                const parent = span.closest(PARENTS_SELECTORS);
                 if (parent && !parent.hasAttribute('data-sponsor-removed')) {
                     parent.style.display = 'none';
                     parent.setAttribute('data-sponsor-removed', 'true');
@@ -154,8 +160,8 @@
         isScanning = false;
     }
 
-    // Throttle & debounce
-    function createThrottledDebounce(func, delay = 300, maxWait = 500) {
+    // Throttle + debounce
+    function createThrottledDebounce(func, delay = 100, maxWait = 300) {
         let timeout, lastExec = 0;
         return (...args) => {
             const now = Date.now();
@@ -170,75 +176,101 @@
             }, delay);
         };
     }
-    const throttledScan = createThrottledDebounce(scanAndClean, 300, delay);
+    const throttledScan = createThrottledDebounce(scanAndClean, delay, 300);
 
-    // Start body observer
+    // Start observer
     function startBodyObserver() {
-        if (!isFeedPage()) return;
+        if (!isFeedPage() || isObserverConnected) {
+            return;
+        }
 
-        if (observer) observer.disconnect();
+        if (observer) {
+            observer.disconnect();
+        }
 
-        observer = new MutationObserver(throttledScan);
-        observer.observe(document.body, {
+        observer = new MutationObserver(mutations => {
+            const shouldScan =
+                mutations.some(mutation => Array.from(mutation.addedNodes)
+                    .some(node => node.nodeType === 1 && getNewSuspectSpans(node).length > 0));
+
+            if (shouldScan) throttledScan();
+        });
+
+
+        const feedDesktop = document.querySelector('[class*="scaffold-finite-scroll"][class*="scaffold-finite-scroll--infinite"]');
+        const feedMobile = document.querySelector('ol.feed-container');
+
+        const feedDiv = feedMobile || feedDesktop;
+        if (!feedDiv) {
+            setTimeout(startBodyObserver, delay);
+            return;
+        }
+
+
+        observer.observe(feedDiv, {
             childList: true,
             subtree: true
         });
 
-        setTimeout(scanAndClean, 1000);
-        setTimeout(scanAndClean, 3000);
-
+        // Init
+        setTimeout(throttledScan, delay);
         console.log('[LinkedinSponsorBlock] Feed detected: starting listening...');
+        isObserverConnected = true;
     }
 
-    // Listen SPA navigation
+    // Handle URL change
     function checkUrlChange() {
         if (location.href !== lastUrl) {
             lastUrl = location.href;
-            if (observer) observer.disconnect();
+            if (observer) {
+                observer.disconnect();
+                isObserverConnected = false;
+            }
             setTimeout(() => {
                 if (isFeedPage()) {
                     startBodyObserver();
-                } else {
-                    scanAndClean();
                 }
             }, delay);
         }
     }
 
-    // Listen scroll
-    let scrollTimeout;
-    window.addEventListener('scroll', () => {
-        if (!isFeedPage()) return;
-        clearTimeout(scrollTimeout);
-        scrollTimeout = setTimeout(throttledScan, delay);
-    }, { passive: true });
-
-    // Listen focus change
+    // Events
     window.addEventListener('focus', () => {
-        if (isFeedPage()) setTimeout(throttledScan, delay);
+        restartOnWake();
     });
 
-    // Listen visibility change
+    const restartOnWake = () => {
+        setTimeout(() => {
+            if (isFeedPage()) {
+                scanAndClean();
+                startBodyObserver();
+            }
+        }, delay);
+    };
+
     document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible' && isFeedPage()) {
-            setTimeout(throttledScan, delay);
+        if (document.visibilityState === 'visible') {
+            restartOnWake();
+        } else if (document.visibilityState === 'hidden') {
+            if (observer) {
+                observer.disconnect();
+                isObserverConnected = false;
+            }
         }
     });
 
-    // Listen history change
-    window.addEventListener('popstate', checkUrlChange);
-    const originalPushState = history.pushState;
-    const originalReplaceState = history.replaceState;
-    history.pushState = (...args) => { originalPushState.apply(history, args); checkUrlChange(); };
-    history.replaceState = (...args) => { originalReplaceState.apply(history, args); checkUrlChange(); };
+    chrome.runtime.onMessage.addListener((msg) => {
+        if (msg.type === 'URL_CHANGED') {
+            checkUrlChange();
+        }
+    });
 
-    // Detecting the body load
+    // Start
     if (document.body) {
         if (isFeedPage()) startBodyObserver();
     } else {
         const waiter = new MutationObserver((_, obs) => {
             if (document.body && isFeedPage()) {
-                obs.disconnect();
                 startBodyObserver();
             }
         });
