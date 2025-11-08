@@ -113,14 +113,15 @@
         '.ember-view.occludable-update:not([data-sponsor-scanned])',
         '[class*="ember-view"][class*="occludable-update"]:not([data-sponsor-scanned])',
         'div[class*="feed-shared-update-v2"][id*="ember"]:not([data-sponsor-scanned])',
-        'li.feed-item.new-feed.mb-1:not([data-sponsor-scanned])'
+        'article[data-id="main-feed-card"]:not([data-sponsor-scanned])'
     ];
 
     // Promoted spans
     const SPAN_SELECTORS = [
         'span[aria-hidden="true"]:not([class]):not([id]):not([data-sponsor-scanned])',
         'span.text-color-text-low-emphasis:not([data-sponsor-scanned])',
-        'span.update-components-header__text-view:not([data-sponsor-scanned])'
+        'span.update-components-header__text-view:not([data-sponsor-scanned])',
+        'p[data-test-id="main-feed-card__header"]'
     ];
     // #endregion
 
@@ -188,9 +189,17 @@
 
                 if (isSponsored) {
                     const activityDiv = span.closest('div[data-id^="urn:li:activity:"]:not([data-sponsor-scanned])');
-                    const wrapper = activityDiv?.parentElement;
-                    if (wrapper) {
-                        hidePostWrapper(wrapper);
+                    if (activityDiv) {
+                        const wrapper = activityDiv?.parentElement;
+                        if (wrapper) {
+                            hidePostWrapper(wrapper);
+                            removedCount++;
+                            totalRemoved++;
+                            console.debug(`[LinkedinSponsorBlock] Hidden: "${text}"`);
+                            break;
+                        }
+                    } else {
+                        post.style.display = 'none';
                         removedCount++;
                         totalRemoved++;
                         console.debug(`[LinkedinSponsorBlock] Hidden: "${text}"`);
