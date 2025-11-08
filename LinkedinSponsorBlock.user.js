@@ -271,14 +271,9 @@
 
     // #region Event listening
     // Events
-    window.addEventListener('focus', () => {
-        restartOnWake();
-    });
-
     const restartOnWake = () => {
         setTimeout(() => {
             if (isCurrentlyFeedPage) {
-                detectAndHideIn();
                 startBodyObserver();
             }
         }, delay);
