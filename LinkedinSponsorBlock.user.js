@@ -163,51 +163,47 @@
         wrapper.setAttribute('data-sponsor-scanned', 'true');
     }
 
+    function getCandidatePosts(root) {
+        if (root.nodeType === 1 && PARENTS_SELECTORS.some(sel => root.matches?.(sel))) {
+            return [root];
+        }
+        return root.querySelectorAll?.(parents) || [];
+    }
+
+    function containsSponsoredText(post) {
+        const spans = post.querySelectorAll(SPAN_SELECTORS);
+        for (const span of spans) {
+            const text = span.textContent?.trim().toLowerCase();
+            if (TARGET_TEXTS.includes(text)) return span;
+        }
+        return null;
+    }
+
     // Detect and hide
     function detectAndHideIn(root = document) {
         if (isScanning) return 0;
         isScanning = true;
 
         let removedCount = 0;
-        let posts;
-        if (root.nodeType === 1 && PARENTS_SELECTORS.some(sel => root.matches?.(sel))) {
-            posts = [root];
-        } else {
-            posts = root.querySelectorAll?.(parents) || [];
-        }
+        const posts = getCandidatePosts(root);
 
         for (const post of posts) {
-            if (post.hasAttribute('data-sponsor-scanned')) continue;
+            const sponsoSpan = containsSponsoredText(post);
+            if (!sponsoSpan) continue;
 
-            const spans = post.querySelectorAll(SPAN_SELECTORS);
-            for (const span of spans) {
-                const text = span.textContent?.trim();
-                if (!text) continue;
+            const activityDiv = sponsoSpan.closest('div[data-id^="urn:li:activity:"]:not([data-sponsor-scanned])');
+            const wrapper = activityDiv?.parentElement ?? post;
 
-                const lowerText = text.toLowerCase();
-                const isSponsored = TARGET_TEXTS.some(t => lowerText === t);
-
-                if (isSponsored) {
-                    const activityDiv = span.closest('div[data-id^="urn:li:activity:"]:not([data-sponsor-scanned])');
-                    if (activityDiv) {
-                        const wrapper = activityDiv?.parentElement;
-                        if (wrapper) {
-                            hidePostWrapper(wrapper);
-                            removedCount++;
-                            totalRemoved++;
-                            console.debug(`[LinkedinSponsorBlock] Hidden: "${text}"`);
-                            break;
-                        }
-                    } else {
-                        post.style.display = 'none';
-                        removedCount++;
-                        totalRemoved++;
-                        console.debug(`[LinkedinSponsorBlock] Hidden: "${text}"`);
-                        break;
-                    }
-                }
-                span.setAttribute('data-sponsor-scanned', 'true');
+            if (wrapper) {
+                hidePostWrapper(wrapper);
+            } else {
+                post.style.display = 'none';
             }
+
+            removedCount++;
+            totalRemoved++;
+            console.debug(`[LinkedinSponsorBlock] Hidden: "${sponsoSpan.textContent.trim()}"`);
+
             post.setAttribute('data-sponsor-scanned', 'true');
         }
 
