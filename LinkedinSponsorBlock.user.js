@@ -242,10 +242,6 @@
             subtree: true
         });
 
-        // Init
-        setTimeout(() => {
-            detectAndHideIn();
-        }, delay);
         console.debug('[LinkedinSponsorBlock] Feed detected: starting listening...');
         isObserverConnected = true;
     }
