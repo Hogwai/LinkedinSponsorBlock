@@ -1,8 +1,9 @@
 (function () {
     'use strict';
 
+    // #region Selectors
     // Promoted texts
-    const TARGET_TEXTS = [
+    const TARGET_TEXTS = new Set([
         // FRENCH
         'Post sponsorisé',
         'Suggestions',
@@ -38,7 +39,6 @@
         // FINNISH
         'Mainostettu',
         // HINDI
-        'प्रमोट किया गयाप्रमोट किया गया',
         'प्रमोट किया गया',
         // HUNGARIAN
         'Kiemelt',
@@ -89,30 +89,69 @@
         '广告',
         // CHINESE (TRADITIONAL)
         '促銷內容'
-    ].map(t => t.toLowerCase());
+    ].map(t => t.toLowerCase()));
 
     // Parent containers
     const PARENTS_SELECTORS = [
-        '.ember-view.occludable-update',
-        '[class*="ember-view"][class*="occludable-update"]',
-        'div[class*="feed-shared-update-v2"][id*="ember"]',
-        'li.feed-item.new-feed.mb-1'
-    ].join(',');
+        '.ember-view.occludable-update:not([data-sponsor-scanned])',
+        '[class*="ember-view"][class*="occludable-update"]:not([data-sponsor-scanned])',
+        'div[class*="feed-shared-update-v2"][id*="ember"]:not([data-sponsor-scanned])',
+        'article[data-id="main-feed-card"]:not([data-sponsor-scanned])'
+    ];
 
     // Promoted spans
     const SPAN_SELECTORS = [
-        'span[aria-hidden="true"]:not([class]):not([id]):not([data-sponsor-processed])',
-        'span.text-color-text-low-emphasis:not([data-sponsor-processed])',
-        'span.update-components-header__text-view:not([data-sponsor-processed])'
+        'span[aria-hidden="true"]:not([class]):not([id]):not([data-sponsor-scanned])',
+        'span.text-color-text-low-emphasis:not([data-sponsor-scanned])',
+        'span.update-components-header__text-view:not([data-sponsor-scanned])',
+        'p[data-test-id="main-feed-card__header"]'
     ];
 
-    // Global variables
-    let isScanning = false;
-    let totalRemoved = 0;
-    let observer = null;
-    let lastUrl = location.href;
+    const POST_CONTAINER = 'div[data-id^="urn:li:activity:"]:not([data-sponsor-scanned])';
+    // #endregion
+
+    // #region Global variables
+    const state = {
+        isScanning: false,
+        totalRemoved: 0,
+        observer: null,
+        waiter: null,
+        sessionRemoved: 0,
+        isObserverConnected: false,
+        isCurrentlyFeedPage: false
+    };
+
     const delay = 200;
-    let isObserverConnected = false;
+    const URL_CHANGED = 'URL_CHANGED';
+    const MANUAL_SCAN = 'MANUAL_SCAN';
+    const parents = PARENTS_SELECTORS.join(',');
+    // #endregion
+
+    // #region Utility method
+    const style = document.createElement('style');
+    style.textContent = `
+        .linkedin-sponsor-blocker-hidden {
+            opacity: 0 !important;
+            transform: scaleY(0) !important;
+            transform-origin: top !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: 0 !important;
+            min-height: 0 !important;
+            height: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+            transition: none !important;
+            contain: layout style paint !important;
+        }
+    `;
+    (document.head || document.documentElement).appendChild(style);
+    // #endregion
+
+    // #region Utility method
+    function resetStats() {
+        state.sessionRemoved = 0;
+    }
 
     // Feed detection
     function isFeedPage() {
@@ -120,82 +159,94 @@
         return pathName.startsWith('/feed') || pathName.startsWith('/preload');
     }
 
-    // Find spans
-    function getNewSuspectSpans(root = document) {
-        return root.querySelectorAll(SPAN_SELECTORS);
+    // Hide post container
+    function hidePostWrapper(wrapper) {
+        wrapper.classList.add('linkedin-sponsor-blocker-hidden');
+        wrapper.setAttribute('data-sponsor-scanned', 'true');
     }
 
-    // Scan and hide
-    function scanAndClean() {
-        if (isScanning || !document.body) return;
-        isScanning = true;
+    function getCandidatePosts(root) {
+        if (root.nodeType === 1 && PARENTS_SELECTORS.some(sel => root.matches?.(sel))) {
+            return [root];
+        }
+        return root.querySelectorAll?.(parents) || [];
+    }
+
+    function containsSponsoredText(post) {
+        const spans = post.querySelectorAll(SPAN_SELECTORS);
+        for (const span of spans) {
+            const text = span.textContent?.trim().toLowerCase();
+            if (text && TARGET_TEXTS.has(text)) return span;
+        }
+        return null;
+    }
+
+    // Detect and hide
+    function detectAndHideIn(root = document) {
+        if (state.isScanning) return 0;
+        state.isScanning = true;
 
         let removedCount = 0;
-        const spans = getNewSuspectSpans();
+        const posts = getCandidatePosts(root);
 
-        for (const span of spans) {
-            const text = span.textContent?.trim();
-            if (!text) continue;
+        for (const post of posts) {
+            const sponsoSpan = containsSponsoredText(post);
+            if (!sponsoSpan) continue;
 
-            const lowerText = text.toLowerCase();
-            const isSponsored = TARGET_TEXTS.some(t => lowerText === t || lowerText.includes(t));
+            const activityDiv = sponsoSpan.closest(POST_CONTAINER);
+            const wrapper = activityDiv?.parentElement ?? post;
 
-            if (isSponsored) {
-                const parent = span.closest(PARENTS_SELECTORS);
-                if (parent && !parent.hasAttribute('data-sponsor-removed')) {
-                    parent.style.display = 'none';
-                    parent.setAttribute('data-sponsor-removed', 'true');
-                    removedCount++;
-                    totalRemoved++;
-                    console.log(`[LinkedinSponsorBlock] Hidden element: "${text}"`);
-                }
+            if (wrapper) {
+                hidePostWrapper(wrapper);
+            } else {
+                post.style.display = 'none';
             }
-            span.setAttribute('data-sponsor-processed', 'true');
+
+            removedCount++;
+            state.totalRemoved++;
+            console.debug(`[LinkedinSponsorBlock] Hidden: "${sponsoSpan.textContent.trim()}"`);
+
+            post.setAttribute('data-sponsor-scanned', 'true');
         }
 
-        if (removedCount > 0) {
-            console.log(`[LinkedinSponsorBlock] ${removedCount} hidden elements (Total: ${totalRemoved})`);
+        state.isScanning = false;
+        return removedCount;
+    }
+
+    function notify(result) {
+        if (result > 0) {
+            state.sessionRemoved += result;
+            chrome.runtime.sendMessage({ type: "BLOCKED", count: state.sessionRemoved });
         }
-
-        isScanning = false;
     }
-
-    // Throttle + debounce
-    function createThrottledDebounce(func, delay = 100, maxWait = 300) {
-        let timeout, lastExec = 0;
-        return (...args) => {
-            const now = Date.now();
-            clearTimeout(timeout);
-            if (now - lastExec >= maxWait) {
-                lastExec = now;
-                return func(...args);
-            }
-            timeout = setTimeout(() => {
-                lastExec = Date.now();
-                func(...args);
-            }, delay);
-        };
-    }
-    const throttledScan = createThrottledDebounce(scanAndClean, delay, 300);
 
     // Start observer
     function startBodyObserver() {
-        if (!isFeedPage() || isObserverConnected) {
-            return;
-        }
+        if (!state.isCurrentlyFeedPage || state.isObserverConnected) return;
 
-        if (observer) {
-            observer.disconnect();
-        }
+        if (state.observer) state.observer.disconnect();
 
-        observer = new MutationObserver(mutations => {
-            const shouldScan =
-                mutations.some(mutation => Array.from(mutation.addedNodes)
-                    .some(node => node.nodeType === 1 && getNewSuspectSpans(node).length > 0));
+        const processNodes = (nodes) => {
+            for (const node of nodes) {
+                if (node.nodeType === 1) {
+                    const result = detectAndHideIn(node);
+                    notify(result);
+                }
+            }
+        };
 
-            if (shouldScan) throttledScan();
+        state.observer = new MutationObserver(mutations => {
+            const nodesToProcess = [];
+            for (const mutation of mutations) {
+                for (const node of mutation.addedNodes) {
+                    nodesToProcess.push(node);
+                }
+            }
+
+            if (nodesToProcess.length > 0) {
+                processNodes(nodesToProcess);
+            }
         });
-
 
         const feedDesktop = document.querySelector('[class*="scaffold-finite-scroll"][class*="scaffold-finite-scroll--infinite"]');
         const feedMobile = document.querySelector('ol.feed-container');
@@ -207,42 +258,48 @@
         }
 
 
-        observer.observe(feedDiv, {
+        state.observer.observe(feedDiv, {
             childList: true,
             subtree: true
         });
 
-        // Init
-        setTimeout(throttledScan, delay);
-        console.log('[LinkedinSponsorBlock] Feed detected: starting listening...');
-        isObserverConnected = true;
+        console.debug('[LinkedinSponsorBlock] Feed detected: starting listening...');
+        state.isObserverConnected = true;
+        detectAndHideIn(feedDiv);
     }
+    // #endregion
 
+    // #region URL change
     // Handle URL change
     function checkUrlChange() {
-        if (location.href !== lastUrl) {
-            lastUrl = location.href;
-            if (observer) {
-                observer.disconnect();
-                isObserverConnected = false;
-            }
-            setTimeout(() => {
-                if (isFeedPage()) {
-                    startBodyObserver();
-                }
-            }, delay);
+        const isStillFeedPage = isFeedPage();
+        if (isStillFeedPage === state.isCurrentlyFeedPage) return;
+
+        state.isCurrentlyFeedPage = isStillFeedPage;
+
+        if (state.observer) {
+            state.observer.disconnect();
+            state.isObserverConnected = false;
         }
+        if (state.waiter) state.waiter.disconnect();
+        state.observer = state.waiter = null;
+
+        setTimeout(() => {
+            if (state.isCurrentlyFeedPage) {
+                resetStats();
+                const result = detectAndHideIn();
+                notify(result);
+                startBodyObserver();
+            }
+        }, delay);
     }
+    // #endregion
 
+    // #region Event listening
     // Events
-    window.addEventListener('focus', () => {
-        restartOnWake();
-    });
-
     const restartOnWake = () => {
         setTimeout(() => {
-            if (isFeedPage()) {
-                scanAndClean();
+            if (state.isCurrentlyFeedPage) {
                 startBodyObserver();
             }
         }, delay);
@@ -252,28 +309,40 @@
         if (document.visibilityState === 'visible') {
             restartOnWake();
         } else if (document.visibilityState === 'hidden') {
-            if (observer) {
-                observer.disconnect();
-                isObserverConnected = false;
+            if (state.observer) {
+                state.observer.disconnect();
+                state.isObserverConnected = false;
             }
         }
     });
 
     chrome.runtime.onMessage.addListener((msg) => {
-        if (msg.type === 'URL_CHANGED') {
+        if (msg.type === URL_CHANGED) {
             checkUrlChange();
         }
+
+        if (msg.type === MANUAL_SCAN) {
+            const result = detectAndHideIn();
+            notify(result);
+            startBodyObserver();
+        }
     });
+    // #endregion
+
+    // #region Start
+    // Initial state setup
+    state.isCurrentlyFeedPage = isFeedPage();
 
     // Start
     if (document.body) {
-        if (isFeedPage()) startBodyObserver();
+        if (state.isCurrentlyFeedPage) startBodyObserver();
     } else {
-        const waiter = new MutationObserver((_, obs) => {
-            if (document.body && isFeedPage()) {
+        state.waiter = new MutationObserver((_, _obs) => {
+            if (document.body && state.isCurrentlyFeedPage) {
                 startBodyObserver();
             }
         });
-        waiter.observe(document.documentElement, { childList: true });
+        state.waiter.observe(document.documentElement, { childList: true });
     }
+    // #endregion
 })();

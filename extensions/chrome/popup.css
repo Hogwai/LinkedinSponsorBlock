@@ -9,3 +9,25 @@ h1 {
     margin-bottom: 20px;
     font-size: 1.4em;
 }
+
+button {
+    width: 100%;
+    padding: 8px;
+    margin-top: 10px;
+}
+
+#status {
+    font-size: 0.85em;
+    color: #666;
+    text-align: center;
+    min-height: 1.2em;
+    transition: color 0.3s;
+}
+
+.success {
+    color: #0a7;
+}
+
+.error {
+    color: #d33;
+}

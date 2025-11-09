@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
   "name": "Linkedin Sponsor Block",
-  "description": "Remove sponsored posts, suggestions, and partner content on linkedin feed",
+  "description": "Clean up your LinkedIn feed and see only what matters.",
   "homepage_url": "https://github.com/Hogwai/LinkedinSponsorBlock",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "icons": {
     "16": "icon_16.png",
     "48": "icon_48.png",
