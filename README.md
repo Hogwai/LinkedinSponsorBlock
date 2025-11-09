@@ -1,18 +1,32 @@
-# LinkedinSponsorBlock
+# 🔗 LinkedinSponsorBlock
 
-This script for Tampermonkey removes sponsored posts, suggestions, and partnered content from the linkedin.com news feed.
+**Clean up your LinkedIn feed and see only what matters.**
 
-Available in two flavors: browser extensions and userscript
+Tired of sponsored posts, suggested content, or partner promotions cluttering your feed? **LinkedinSponsorBlock** automatically removes these “promotion” posts, giving you a cleaner, more productive LinkedIn experience.
+
+These posts look like regular updates but are labeled **"Promotion."** Even standard ad blockers often miss them — this extension catches and hides them silently.
+
+**Key features:**
+
+* 🚫 **Automatic removal** – Hides sponsored posts, suggested content, and partner promotions.
+* 🌐 **Multilingual support** – Works with all languages available on LinkedIn.
+* ⚡ **Lightweight & discreet** – Runs in the background without slowing your browsing.
+* 💼 **Focused feed** – Concentrate on the content that actually matters to you.
+
+Perfect for professionals, recruiters, or regular LinkedIn users who want a more relevant and distraction-free feed.
 
 ## Installing
 
 ### Firefox Extension
-<a href="https://addons.mozilla.org/fr/firefox/addon/linkedin-sponsor-block/" target="_blank"><img src="https://user-images.githubusercontent.com/585534/107280546-7b9b2a00-6a26-11eb-8f9f-f95932f4bfec.png" alt="Get LinkedIn Sponsor Block for Firefox"></a> 
+
+<a href="https://addons.mozilla.org/fr/firefox/addon/linkedin-sponsor-block/" target="_blank"><img src="https://user-images.githubusercontent.com/585534/107280546-7b9b2a00-6a26-11eb-8f9f-f95932f4bfec.png" alt="Get LinkedIn Sponsor Block for Firefox"></a>
 
 ### Chrome Extension
+
 <a href="https://chromewebstore.google.com/detail/linkedin-sponsor-block/dmgglmnbmokkdocpamjkcgjfjceoocbh" target="_blank"><img src="https://user-images.githubusercontent.com/585534/107280622-91a8ea80-6a26-11eb-8d07-77c548b28665.png" alt="Get LinkedIn Suggested Posts Remover for Chromium"></a>
 
 ### Userscript
+
 #### Prerequisites
 
 - A compatible web browser (Google Chrome, Firefox, Edge, etc.).
@@ -47,6 +61,7 @@ Available in two flavors: browser extensions and userscript
 #### Troubleshooting
 
 **Script not working?**
+
 - Verify that Tampermonkey is enabled and that the script is correctly installed.
 - Ensure that the site URL matches the script's `@match` patterns (`https://www.linkedin.com/feed/*`).
 - Check the browser console for error messages.
@@ -55,8 +70,8 @@ Available in two flavors: browser extensions and userscript
 
 <img width="852" height="107" alt="image" src="https://github.com/user-attachments/assets/34cc79c6-5313-4155-a3c7-0b08dcdd700d" />
 
-
 **Persistent issues?**
+
 - Open an issue via [GitHub](https://github.com/Hogwai/LinkedinSponsorBlock/issues) or try to update the script.
 
 ## License
