@@ -13,7 +13,7 @@ const color = '#363232ff';
 browser.action.setBadgeBackgroundColor({ color });
 browser.runtime.onMessage.addListener((message, sender) => {
   if (message.type === 'BLOCKED' && sender.tab?.id) {
-    blockedCount += (message.count || 0);
+    blockedCount = message.count;
     const text = blockedCount > 0 ? blockedCount.toString() : '';
     browser.action.setBadgeText({ text, tabId: sender.tab.id });
   }
