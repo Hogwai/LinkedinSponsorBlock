@@ -19,7 +19,7 @@ Perfect for professionals, recruiters, or regular LinkedIn users who want a more
 
 ### Firefox Extension
 
-<a href="https://addons.mozilla.org/fr/firefox/addon/linkedin-sponsor-block/" target="_blank"><img src="https://user-images.githubusercontent.com/585534/107280546-7b9b2a00-6a26-11eb-8f9f-f95932f4bfec.png" alt="Get LinkedIn Sponsor Block for Firefox"></a>
+<a href="https://addons.mozilla.org/en-US/firefox/addon/linkedin-sponsor-block/" target="_blank"><img src="https://user-images.githubusercontent.com/585534/107280546-7b9b2a00-6a26-11eb-8f9f-f95932f4bfec.png" alt="Get LinkedIn Sponsor Block for Firefox"></a>
 
 ### Chrome Extension
 
