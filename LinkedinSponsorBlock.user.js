@@ -19,7 +19,7 @@
 
     // #region Selectors
     // Promoted texts
-    const TARGET_TEXTS = new Set([
+    const PROMOTED_TEXTS = [
         // FRENCH
         'Post sponsorisé',
         'Suggestions',
@@ -105,7 +105,9 @@
         '广告',
         // CHINESE (TRADITIONAL)
         '促銷內容'
-    ].map(t => t.toLowerCase()));
+    ].map(t => t.toLowerCase());
+
+    const PROMOTED_TEXTS_SET = new Set(PROMOTED_TEXTS);
 
     // Parent containers
     const PARENTS_SELECTORS = [
@@ -196,7 +198,13 @@
         const promotedElements = post.querySelectorAll(PROMOTED_ELEMENTS);
         for (const element of promotedElements) {
             const text = element.textContent?.trim().toLowerCase();
-            if (text && TARGET_TEXTS.has(text)) return element;
+            if (PROMOTED_TEXTS_SET.has(text)) return element;
+
+            for (const promoText of PROMOTED_TEXTS) {
+                if (text.startsWith(promoText) || text.includes(promoText)) {
+                    return element;
+                }
+            }
         }
         return null;
     }
