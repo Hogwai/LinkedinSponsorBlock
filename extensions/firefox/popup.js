@@ -2,7 +2,7 @@ const statusEl = document.getElementById('status');
 const scanBtn = document.getElementById('manualScan');
 
 scanBtn.addEventListener('click', async () => {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
   
   if (!tab?.url?.includes('linkedin.com')) {
     setStatus('You are not on LinkedIn', 'error');
@@ -13,11 +13,10 @@ scanBtn.addEventListener('click', async () => {
   scanBtn.disabled = true;
 
   browser.tabs.sendMessage(tab.id, { type: 'MANUAL_SCAN' }, (response) => {
-    console.debug(response);
     if (browser.runtime.lastError) {
       setStatus('Error', 'error');
-    } else if (response?.blocked !== undefined) {
-      setStatus(`${response.blocked} hidden posts`, 'success');
+    } else if (response?.blocked !== undefined && response.blocked > 0) {
+      setStatus(`${response.blocked} hidden post(s)`, 'success');
     } else {
       setStatus('No promoted post found', 'success');
     }
