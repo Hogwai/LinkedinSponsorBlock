@@ -202,7 +202,7 @@
     }
 
     function hideStaticPromotedElements() {
-        const sectionAdBanner = document.querySelector('section[class*="ad-banner-container"]');
+        const sectionAdBanner = document.querySelector('section[class*="ad-banner-container"]:not([data-sponsor-scanned])');
         if (sectionAdBanner) {
             hideElementNone(sectionAdBanner);
             console.debug('[LinkedinSponsorBlock] Hidden: ad-banner-container');
