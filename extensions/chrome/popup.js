@@ -13,11 +13,10 @@ scanBtn.addEventListener('click', async () => {
   scanBtn.disabled = true;
 
   chrome.tabs.sendMessage(tab.id, { type: 'MANUAL_SCAN' }, (response) => {
-    console.debug(response);
     if (chrome.runtime.lastError) {
       setStatus('Error', 'error');
-    } else if (response?.blocked !== undefined) {
-      setStatus(`${response.blocked} hidden posts`, 'success');
+    } else if (response?.blocked !== undefined && response.blocked > 0) {
+      setStatus(`${response.blocked} hidden post(s)`, 'success');
     } else {
       setStatus('No promoted post found', 'success');
     }

@@ -3,7 +3,7 @@
   "name": "Linkedin Sponsor Block",
   "description": "Clean up your LinkedIn feed and see only what matters.",
   "homepage_url": "https://github.com/Hogwai/LinkedinSponsorBlock",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "icons": {
     "16": "icon_16.png",
     "48": "icon_48.png",

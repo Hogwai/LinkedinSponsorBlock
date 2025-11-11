@@ -3,7 +3,7 @@
 
     // #region Selectors
     // Promoted texts
-    const TARGET_TEXTS = new Set([
+    const PROMOTED_TEXTS = [
         // FRENCH
         'Post sponsorisé',
         'Suggestions',
@@ -89,7 +89,9 @@
         '广告',
         // CHINESE (TRADITIONAL)
         '促銷內容'
-    ].map(t => t.toLowerCase()));
+    ].map(t => t.toLowerCase());
+
+    const PROMOTED_TEXTS_SET = new Set(PROMOTED_TEXTS);
 
     // Parent containers
     const PARENTS_SELECTORS = [
@@ -99,8 +101,8 @@
         'article[data-id="main-feed-card"]:not([data-sponsor-scanned])'
     ];
 
-    // Promoted spans
-    const SPAN_SELECTORS = [
+    // Promoted elements
+    const PROMOTED_ELEMENTS = [
         'span[aria-hidden="true"]:not([class]):not([id]):not([data-sponsor-scanned])',
         'span.text-color-text-low-emphasis:not([data-sponsor-scanned])',
         'span.update-components-header__text-view:not([data-sponsor-scanned])',
@@ -146,9 +148,7 @@
         }
     `;
     (document.head || document.documentElement).appendChild(style);
-    // #endregion
 
-    // #region Utility method
     function resetStats() {
         state.sessionRemoved = 0;
     }
@@ -159,10 +159,18 @@
         return pathName.startsWith('/feed') || pathName.startsWith('/preload');
     }
 
-    // Hide post container
-    function hidePostWrapper(wrapper) {
-        wrapper.classList.add('linkedin-sponsor-blocker-hidden');
-        wrapper.setAttribute('data-sponsor-scanned', 'true');
+    // Hide element with the css class
+    function hideElementClass(element) {
+        element.classList.add('linkedin-sponsor-blocker-hidden');
+        element.setAttribute('data-sponsor-scanned', 'true');
+        state.sessionRemoved++;
+    }
+
+    // Hide element with none
+    function hideElementNone(element) {
+        element.style.display = 'none';
+        element.setAttribute('data-sponsor-scanned', 'true');
+        state.sessionRemoved++;
     }
 
     function getCandidatePosts(root) {
@@ -172,13 +180,27 @@
         return root.querySelectorAll?.(parents) || [];
     }
 
-    function containsSponsoredText(post) {
-        const spans = post.querySelectorAll(SPAN_SELECTORS);
-        for (const span of spans) {
-            const text = span.textContent?.trim().toLowerCase();
-            if (text && TARGET_TEXTS.has(text)) return span;
+    function getPromotedElement(post) {
+        const promotedElements = post.querySelectorAll(PROMOTED_ELEMENTS);
+        for (const element of promotedElements) {
+            const text = element.textContent?.trim().toLowerCase();
+            if (PROMOTED_TEXTS_SET.has(text)) return element;
+
+            for (const promoText of PROMOTED_TEXTS) {
+                if (text.startsWith(promoText) || text.includes(promoText)) {
+                    return element;
+                }
+            }
         }
         return null;
+    }
+
+    function hideStaticPromotedElements() {
+        const sectionAdBanner = document.querySelector('section[class*="ad-banner-container"]:not([data-sponsor-scanned])');
+        if (sectionAdBanner) {
+            hideElementNone(sectionAdBanner);
+            console.debug('[LinkedinSponsorBlock] Hidden: ad-banner-container');
+        }
     }
 
     // Detect and hide
@@ -190,21 +212,21 @@
         const posts = getCandidatePosts(root);
 
         for (const post of posts) {
-            const sponsoSpan = containsSponsoredText(post);
-            if (!sponsoSpan) continue;
+            const promoted = getPromotedElement(post);
+            if (!promoted) continue;
 
-            const activityDiv = sponsoSpan.closest(POST_CONTAINER);
+            const activityDiv = promoted.closest(POST_CONTAINER);
             const wrapper = activityDiv?.parentElement ?? post;
 
             if (wrapper) {
-                hidePostWrapper(wrapper);
+                hideElementClass(wrapper);
             } else {
                 post.style.display = 'none';
             }
 
             removedCount++;
             state.totalRemoved++;
-            console.debug(`[LinkedinSponsorBlock] Hidden: "${sponsoSpan.textContent.trim()}"`);
+            console.debug(`[LinkedinSponsorBlock] Hidden: "${promoted.textContent.trim()}"`);
 
             post.setAttribute('data-sponsor-scanned', 'true');
         }
@@ -266,6 +288,7 @@
         console.debug('[LinkedinSponsorBlock] Feed detected: starting listening...');
         state.isObserverConnected = true;
         detectAndHideIn(feedDiv);
+        requestIdleCallback(() => hideStaticPromotedElements());
     }
     // #endregion
 
@@ -316,15 +339,16 @@
         }
     });
 
-    chrome.runtime.onMessage.addListener((msg) => {
-        if (msg.type === URL_CHANGED) {
+    chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+        if (message.type === URL_CHANGED) {
             checkUrlChange();
         }
 
-        if (msg.type === MANUAL_SCAN) {
+        if (message.type === MANUAL_SCAN) {
             const result = detectAndHideIn();
             notify(result);
             startBodyObserver();
+            sendResponse({ blocked: result });
         }
     });
     // #endregion
