@@ -1,4 +1,4 @@
-# 🔗 LinkedinSponsorBlock
+# LinkedinSponsorBlock
 
 **Clean up your LinkedIn feed and see only what matters.**
 
