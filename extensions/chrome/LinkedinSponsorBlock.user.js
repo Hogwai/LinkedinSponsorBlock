@@ -215,7 +215,6 @@
             setTimeout(startObserver, CONFIG.DELAYS.OBSERVER_RETRY);
             return;
         }
-        console.debug('Feed detected');
 
         let debounceTimeout = null;
 
@@ -236,18 +235,17 @@
 
             clearTimeout(debounceTimeout);
             debounceTimeout = setTimeout(() => {
-                scanFeed(feed);
+                scanFeed(document);
             }, CONFIG.DELAYS.OBSERVER_RETRY);
         });
 
-        scanFeed(feed);
-
-        state.observer.observe(feed, {
+        state.observer.observe(document.body, {
             childList: true,
             subtree: true
         });
 
         state.isObserverConnected = true;
+        scanFeed(feed);
     }
 
     function stopObserver() {
