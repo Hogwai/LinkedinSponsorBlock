@@ -28,6 +28,19 @@
                 chrome.runtime.onMessage.addListener(callback);
             }
 
+        },
+
+        async getSettings() {
+            if (ENV.isFirefoxExtension || ENV.isChromeExtension) {
+                const storage = ENV.isFirefoxExtension ? browser.storage : chrome.storage;
+                const result = await storage.local.get({
+                    enabled: true,
+                    filterPromoted: true,
+                    filterSuggested: true
+                });
+                return result;
+            }
+            return { enabled: true, filterPromoted: true, filterSuggested: true };
         }
     };
 
@@ -73,9 +86,15 @@
     const state = {
         observer: null,
         waiter: null,
-        sessionRemoved: 0,
+        sessionPromotedRemoved: 0,
+        sessionSuggestedRemoved: 0,
         isObserverConnected: false,
-        isCurrentlyFeedPage: false
+        isCurrentlyFeedPage: false,
+        settings: {
+            enabled: true,
+            filterPromoted: true,
+            filterSuggested: true
+        }
     };
 
     const logger = {
@@ -99,6 +118,8 @@
     const notifier = {
         pending: false,
         scheduled: false,
+        lastNotifiedPromoted: 0,
+        lastNotifiedSuggested: 0,
         queue() {
             this.pending = true;
             if (!this.scheduled) {
@@ -106,16 +127,30 @@
                 setTimeout(() => {
                     requestIdleCallback(() => {
                         if (this.pending) {
-                            runtime.sendMessage({
-                                type: "BLOCKED",
-                                count: state.sessionRemoved
-                            });
+                            // Only notify the new counts since last notification
+                            const newPromoted = state.sessionPromotedRemoved - this.lastNotifiedPromoted;
+                            const newSuggested = state.sessionSuggestedRemoved - this.lastNotifiedSuggested;
+
+                            if (newPromoted > 0 || newSuggested > 0) {
+                                runtime.sendMessage({
+                                    type: "BLOCKED",
+                                    promoted: newPromoted,
+                                    suggested: newSuggested
+                                });
+                                this.lastNotifiedPromoted = state.sessionPromotedRemoved;
+                                this.lastNotifiedSuggested = state.sessionSuggestedRemoved;
+                            }
+
                             this.pending = false;
                         }
                         this.scheduled = false;
                     }, { timeout: 500 });
                 }, CONFIG.DELAYS.NOTIFICATION);
             }
+        },
+        reset() {
+            this.lastNotifiedPromoted = 0;
+            this.lastNotifiedSuggested = 0;
         }
     };
 
@@ -124,14 +159,16 @@
         hideSuggestedPost(suggestedPost) {
             suggestedPost.style.display = 'none';
             suggestedPost.setAttribute(CONFIG.ATTRIBUTES.SCANNED, 'true');
-            state.sessionRemoved++;
+            state.sessionSuggestedRemoved++;
+            notifier.queue();
             logger.log(`Suggested post hidden: "${suggestedPost?.textContent?.trim().slice(0, 100)}"`);
             return true;
         },
         hidePromotedPost(promotedPost) {
             promotedPost.style.display = 'none';
             promotedPost.setAttribute(CONFIG.ATTRIBUTES.SCANNED, 'true');
-            state.sessionRemoved++;
+            state.sessionPromotedRemoved++;
+            notifier.queue();
             logger.log(`Promoted post hidden: "${promotedPost?.textContent?.trim().slice(0, 100)}"`);
             return true;
         },
@@ -178,28 +215,41 @@
     };
 
     function scanFeed(root = document) {
+        if (!state.settings.enabled) {
+            return { promoted: 0, suggested: 0 };
+        }
+
         const groupedPosts = dom.getUnscannedPosts(root);
-        let count = 0;
-        for (const post of groupedPosts.sponsored) {
-            if (dom.hidePromotedPost(post)) {
-                count += 1;
-            } else {
-                post.setAttribute(CONFIG.ATTRIBUTES.SCANNED, 'false');
+        let promotedCount = 0;
+        let suggestedCount = 0;
+
+        // Hide promoted posts if enabled
+        if (state.settings.filterPromoted) {
+            for (const post of groupedPosts.sponsored) {
+                if (dom.hidePromotedPost(post)) {
+                    promotedCount += 1;
+                } else {
+                    post.setAttribute(CONFIG.ATTRIBUTES.SCANNED, 'false');
+                }
             }
         }
 
-        for (const post of groupedPosts.suggested) {
-            if (dom.hideSuggestedPost(post)) {
-                count += 1;
-            } else {
-                post.setAttribute(CONFIG.ATTRIBUTES.SCANNED, 'false');
+        // Hide suggested posts if enabled
+        if (state.settings.filterSuggested) {
+            for (const post of groupedPosts.suggested) {
+                if (dom.hideSuggestedPost(post)) {
+                    suggestedCount += 1;
+                } else {
+                    post.setAttribute(CONFIG.ATTRIBUTES.SCANNED, 'false');
+                }
             }
         }
 
-        if (count > 0) {
+        if (promotedCount > 0 || suggestedCount > 0) {
             notifier.queue();
         }
-        return count;
+
+        return { promoted: promotedCount, suggested: suggestedCount };
     }
 
 
@@ -268,14 +318,40 @@
         if (state.isCurrentlyFeedPage === wasFeedPage) return;
         stopObserver();
         if (state.isCurrentlyFeedPage) {
-            state.sessionRemoved = 0;
+            state.sessionPromotedRemoved = 0;
+            state.sessionSuggestedRemoved = 0;
+            notifier.reset();
             startObserver();
+        }
+    }
+
+    // ==================== SETTINGS ====================
+    async function loadSettings() {
+        const settings = await runtime.getSettings();
+        state.settings = settings;
+    }
+
+    function updateSettings(newSettings) {
+        if (newSettings.enabled !== undefined) {
+            state.settings.enabled = newSettings.enabled;
+            if (!state.settings.enabled) {
+                stopObserver();
+            } else if (state.isCurrentlyFeedPage) {
+                startObserver();
+            }
+        }
+        if (newSettings.filterPromoted !== undefined) {
+            state.settings.filterPromoted = newSettings.filterPromoted;
+        }
+        if (newSettings.filterSuggested !== undefined) {
+            state.settings.filterSuggested = newSettings.filterSuggested;
         }
     }
 
     // ==================== INIT ====================
     document.addEventListener('visibilitychange', () => {
         if (!state.isCurrentlyFeedPage) return;
+        if (!state.settings.enabled) return;
         document.hidden ? stopObserver() : startObserver();
     });
 
@@ -283,10 +359,13 @@
         if (message.type === 'URL_CHANGED') {
             handleUrlChange();
         } else if (message.type === 'MANUAL_SCAN') {
-            sendResponse({ blocked: scanFeed() });
+            const result = scanFeed();
+            sendResponse(result);
             stopObserver();
             startObserver();
             return true;
+        } else if (message.type === 'SETTINGS_CHANGED') {
+            updateSettings(message);
         }
     });
 
@@ -300,18 +379,24 @@
         }, 500);
     }
 
-    state.isCurrentlyFeedPage = isFeedPage();
+    // Initialize
+    async function init() {
+        await loadSettings();
+        state.isCurrentlyFeedPage = isFeedPage();
 
-    if (document.body) {
-        if (state.isCurrentlyFeedPage) startObserver();
-    } else {
-        state.waiter = new MutationObserver(() => {
-            if (document.body) {
-                state.waiter.disconnect();
-                state.waiter = null;
-                if (state.isCurrentlyFeedPage) startObserver();
-            }
-        });
-        state.waiter.observe(document.documentElement, { childList: true });
+        if (document.body) {
+            if (state.isCurrentlyFeedPage && state.settings.enabled) startObserver();
+        } else {
+            state.waiter = new MutationObserver(() => {
+                if (document.body) {
+                    state.waiter.disconnect();
+                    state.waiter = null;
+                    if (state.isCurrentlyFeedPage && state.settings.enabled) startObserver();
+                }
+            });
+            state.waiter.observe(document.documentElement, { childList: true });
+        }
     }
+
+    init();
 })();
