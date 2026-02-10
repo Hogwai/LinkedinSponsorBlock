@@ -1,0 +1,16 @@
+{
+  "name": "linkedin-sponsor-block",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.js",
+    "build:chrome": "node build.js --target=chrome",
+    "build:firefox": "node build.js --target=firefox",
+    "build:userscript": "node build.js --target=userscript",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "rollup": "^4.0.0",
+    "rollup-plugin-copy": "^3.5.0"
+  }
+}

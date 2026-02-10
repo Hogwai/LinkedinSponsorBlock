@@ -1,3 +1,5 @@
+import api from './browser-api.js';
+
 const statusEl = document.getElementById('status');
 const scanBtn = document.getElementById('manualScan');
 const extensionToggle = document.getElementById('extensionToggle');
@@ -18,21 +20,12 @@ const cancelResetBtn = document.getElementById('cancelReset');
 // Translations
 const translations = {
     en: {
-        // UI Labels
         'blockedPromotedPosts': 'blocked promoted posts',
         'blockedSuggestedPosts': 'blocked suggested posts',
-
-        // Section titles
         'filterOptions': 'Filter options',
-
-        // Checkbox labels
         'blockPromotedPosts': 'Block promoted posts',
         'blockSuggestedPosts': 'Block suggested posts',
-
-        // Buttons
         'scanNow': 'Scan now',
-
-        // Status messages
         'extensionEnabled': 'Extension enabled',
         'extensionDisabled': 'Extension disabled',
         'extensionDisabledBanner': 'Extension is disabled',
@@ -41,8 +34,6 @@ const translations = {
         'error': 'Error',
         'noPostsFound': 'No posts found',
         'countersReset': 'Counters have been reset',
-
-        // Settings
         'language': 'Language',
         'settingsTitle': 'Settings',
         'extensionSettings': 'Extension',
@@ -56,21 +47,12 @@ const translations = {
         'no': 'No'
     },
     fr: {
-        // UI Labels
         'blockedPromotedPosts': 'posts promotionnels bloqués',
         'blockedSuggestedPosts': 'posts suggérés bloqués',
-
-        // Section titles
         'filterOptions': 'Options de filtrage',
-
-        // Checkbox labels
         'blockPromotedPosts': 'Bloquer les posts sponsorisés',
         'blockSuggestedPosts': 'Bloquer les posts suggérés',
-
-        // Buttons
         'scanNow': 'Analyser maintenant',
-
-        // Status messages
         'extensionEnabled': 'Extension activée',
         'extensionDisabled': 'Extension désactivée',
         'extensionDisabledBanner': 'L\'extension est désactivée',
@@ -79,8 +61,6 @@ const translations = {
         'error': 'Erreur',
         'noPostsFound': 'Aucun post trouvé',
         'countersReset': 'Les compteurs ont été réinitialisés',
-
-        // Settings
         'language': 'Langue',
         'settingsTitle': 'Paramètres',
         'extensionSettings': 'Extension',
@@ -118,7 +98,6 @@ function getCurrentLanguage() {
 
 // Update UI with current language
 function updateUILanguage() {
-    // Update all elements with data-translate attribute
     document.querySelectorAll('[data-translate]').forEach(element => {
         const key = element.getAttribute('data-translate');
         if (key) {
@@ -126,7 +105,6 @@ function updateUILanguage() {
         }
     });
 
-    // Update scan button text only (keep the SVG icon)
     const btnText = scanBtn.querySelector('.btn-text');
     if (btnText) {
         btnText.textContent = t('scanNow');
@@ -135,7 +113,7 @@ function updateUILanguage() {
 
 // Load settings from storage
 async function loadSettings() {
-    const result = await browser.storage.local.get(defaultSettings);
+    const result = await api.storage.local.get(defaultSettings);
 
     extensionToggle.checked = result.enabled;
     filterPromoted.checked = result.filterPromoted;
@@ -143,7 +121,6 @@ async function loadSettings() {
     promotedCountEl.textContent = result.totalPromotedBlocked;
     suggestedCountEl.textContent = result.totalSuggestedBlocked;
 
-    // Set language selector
     languageSelect.value = result.language || 'en';
 
     updateDisabledState(result.enabled);
@@ -152,7 +129,7 @@ async function loadSettings() {
 
 // Update counters from background
 async function updateCounters() {
-    const result = await browser.storage.local.get({
+    const result = await api.storage.local.get({
         totalPromotedBlocked: 0,
         totalSuggestedBlocked: 0
     });
@@ -162,7 +139,7 @@ async function updateCounters() {
 
 // Save settings to storage
 async function saveSettings(settings) {
-    await browser.storage.local.set(settings);
+    await api.storage.local.set(settings);
 }
 
 // Update UI disabled state
@@ -180,12 +157,11 @@ extensionToggle.addEventListener('change', async () => {
     await saveSettings({ enabled });
     updateDisabledState(enabled);
 
-    // Notify content script and background
-    const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+    const [tab] = await api.tabs.query({ active: true, currentWindow: true });
     if (tab?.url?.includes('linkedin.com')) {
-        browser.tabs.sendMessage(tab.id, { type: 'SETTINGS_CHANGED', enabled });
+        api.tabs.sendMessage(tab.id, { type: 'SETTINGS_CHANGED', enabled });
     }
-    browser.runtime.sendMessage({ type: 'SETTINGS_CHANGED', enabled });
+    api.runtime.sendMessage({ type: 'SETTINGS_CHANGED', enabled });
 
     setStatus(enabled ? t('extensionEnabled') : t('extensionDisabled'), 'success');
     setTimeout(() => setStatus(''), 2000);
@@ -247,36 +223,31 @@ confirmResetBtn.addEventListener('click', async () => {
         totalSuggestedBlocked: 0
     });
 
-    // Update UI
     promotedCountEl.textContent = '0';
     suggestedCountEl.textContent = '0';
 
-    // Notify background script
-    browser.runtime.sendMessage({ type: 'RESET_COUNTERS' });
+    api.runtime.sendMessage({ type: 'RESET_COUNTERS' });
 
-    // Hide confirmation and show button again
     resetConfirm.classList.add('hidden');
     resetCountersBtn.classList.remove('hidden');
 
-    // Close modal
     settingsModal.classList.remove('active');
 
-    // Show success message
     setStatus(t('countersReset'), 'success');
     setTimeout(() => setStatus(''), 3000);
 });
 
 // Notify content script of settings changes
 async function notifyContentScript(message) {
-    const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+    const [tab] = await api.tabs.query({ active: true, currentWindow: true });
     if (tab?.url?.includes('linkedin.com')) {
-        browser.tabs.sendMessage(tab.id, message);
+        api.tabs.sendMessage(tab.id, message);
     }
 }
 
 // Manual scan button
 scanBtn.addEventListener('click', async () => {
-    const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+    const [tab] = await api.tabs.query({ active: true, currentWindow: true });
 
     if (!tab?.url?.includes('linkedin.com')) {
         setStatus(t('notOnLinkedIn'), 'error');
@@ -286,8 +257,8 @@ scanBtn.addEventListener('click', async () => {
     setStatus(t('scanning'), 'pending');
     scanBtn.disabled = true;
 
-    browser.tabs.sendMessage(tab.id, { type: 'MANUAL_SCAN' }, (response) => {
-        if (browser.runtime.lastError) {
+    api.tabs.sendMessage(tab.id, { type: 'MANUAL_SCAN' }, (response) => {
+        if (api.runtime.lastError) {
             setStatus(t('error'), 'error');
         } else if (response) {
             const msg = [];
@@ -307,7 +278,7 @@ scanBtn.addEventListener('click', async () => {
 });
 
 // Listen for counter updates from background
-browser.runtime.onMessage.addListener((message) => {
+api.runtime.onMessage.addListener((message) => {
     if (message.type === 'COUNTER_UPDATE') {
         promotedCountEl.textContent = message.promoted;
         suggestedCountEl.textContent = message.suggested;
@@ -315,7 +286,7 @@ browser.runtime.onMessage.addListener((message) => {
 });
 
 // Update counters when popup opens
-browser.runtime.onConnect.addListener((port) => {
+api.runtime.onConnect.addListener((port) => {
     if (port.name === 'counterUpdate') {
         port.onMessage.addListener((msg) => {
             if (msg.type === 'COUNTER_UPDATE') {

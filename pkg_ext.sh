@@ -28,10 +28,10 @@ case "$PLATFORM" in
     fi
 
     echo "🔍 Linting Firefox extension..."
-    web-ext lint -s extensions/firefox
+    web-ext lint -s dist/firefox
 
     echo "📦 Building Firefox extension..."
-    web-ext build -s extensions/firefox
+    web-ext build -s dist/firefox
     ;;
 
   chrome)
@@ -41,8 +41,8 @@ case "$PLATFORM" in
     fi
 
     echo "📦 Creating Chrome archive..."
-    zip -r -q "chrome_ext.zip" extensions/chrome
-    echo "✅ Archive created: extensions/chrome_ext.zip"
+    zip -r -q "chrome_ext.zip" dist/chrome
+    echo "✅ Archive created: chrome_ext.zip"
     ;;
 esac
 

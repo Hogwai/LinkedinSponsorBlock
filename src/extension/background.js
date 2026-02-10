@@ -1,3 +1,5 @@
+import api from './browser-api.js';
+
 // Global counters
 let totalPromotedBlocked = 0;
 let totalSuggestedBlocked = 0;
@@ -8,15 +10,15 @@ let isEnabled = true;
 // Update badge based on enabled state
 function updateBadge(enabled) {
     if (enabled) {
-        chrome.action.setBadgeText({ text: '' });
+        api.action.setBadgeText({ text: '' });
     } else {
-        chrome.action.setBadgeBackgroundColor({ color: '#d72828' });
+        api.action.setBadgeBackgroundColor({ color: '#d72828' });
     }
 }
 
 // Load counters from storage on startup
 async function loadCounters() {
-    const result = await chrome.storage.local.get({
+    const result = await api.storage.local.get({
         totalPromotedBlocked: 0,
         totalSuggestedBlocked: 0,
         enabled: true
@@ -29,7 +31,7 @@ async function loadCounters() {
 
 // Save counters to storage
 async function saveCounters() {
-    await chrome.storage.local.set({
+    await api.storage.local.set({
         totalPromotedBlocked,
         totalSuggestedBlocked
     });
@@ -43,18 +45,18 @@ function resetSessionCounters() {
 }
 
 // Emit on URL change
-chrome.webNavigation.onHistoryStateUpdated.addListener((details) => {
-    chrome.tabs.sendMessage(details.tabId, { type: 'URL_CHANGED', url: details.url });
+api.webNavigation.onHistoryStateUpdated.addListener((details) => {
+    api.tabs.sendMessage(details.tabId, { type: 'URL_CHANGED', url: details.url });
     resetSessionCounters();
 });
 
-chrome.webNavigation.onReferenceFragmentUpdated.addListener((details) => {
-    chrome.tabs.sendMessage(details.tabId, { type: 'URL_CHANGED', url: details.url });
+api.webNavigation.onReferenceFragmentUpdated.addListener((details) => {
+    api.tabs.sendMessage(details.tabId, { type: 'URL_CHANGED', url: details.url });
     resetSessionCounters();
 });
 
 // Handle messages from content script and popup
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+api.runtime.onMessage.addListener((message, sender, sendResponse) => {
     // Handle blocked posts from content script
     if (message.type === 'BLOCKED' && sender.tab?.id) {
         const sessionPromoted = message.promoted || 0;
@@ -66,7 +68,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
         // Save and notify popup
         saveCounters();
-        chrome.runtime.sendMessage({
+        api.runtime.sendMessage({
             type: 'COUNTER_UPDATE',
             promoted: totalPromotedBlocked,
             suggested: totalSuggestedBlocked
@@ -88,7 +90,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         currentSessionPromoted = 0;
         currentSessionSuggested = 0;
         saveCounters();
-        chrome.runtime.sendMessage({
+        api.runtime.sendMessage({
             type: 'COUNTER_UPDATE',
             promoted: 0,
             suggested: 0
