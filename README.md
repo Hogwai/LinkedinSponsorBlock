@@ -61,8 +61,9 @@ Perfect for professionals, recruiters, or regular LinkedIn users who want a more
    - Go to the script page: [LinkedinSponsorBlock](https://greasyfork.org/fr/scripts/546877-linkedinsponsorblock)
    - Click "Install this script" and confirm
 
-2. **From Github:**
-   - Click here: [LinkedinSponsorBlock.user.js](https://github.com/Hogwai/LinkedinSponsorBlock/raw/refs/heads/main/LinkedinSponsorBlock.user.js) and confirm
+2. **From GitHub:**
+   - Click here: [LinkedinSponsorBlock.user.js](https://github.com/Hogwai/LinkedinSponsorBlock/releases/download/userscript-v1.1.13/LinkedinSponsorBlock.user.js) to install directly
+   - Or browse the userscript releases: [Releases](https://github.com/Hogwai/LinkedinSponsorBlock/releases?q=userscript&expanded=true)
 
 3. **Verify that the script is enabled:**
    - In the Tampermonkey dashboard (click the icon > "Dashboard"), ensure that the `LinkedinSponsorBlock` script is enabled (switch to "On")
