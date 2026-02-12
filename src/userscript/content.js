@@ -3,114 +3,245 @@ import { logger } from '../shared/logger.js';
 import { getUnscannedPosts } from '../shared/detection.js';
 import { createObserver } from '../shared/observer.js';
 import { isFeedPage, createPageManager } from '../shared/page.js';
+import { SETTINGS_KEYS, DEFAULT_SETTINGS } from '../shared/settings.js';
+import { createFloatingUI } from './ui.js';
+
+// ==================== STORAGE ====================
+const STORAGE_PREFIX = 'lsb_';
+
+function getStored(key, defaultValue) {
+    try {
+        const raw = localStorage.getItem(STORAGE_PREFIX + key);
+        return raw !== null ? JSON.parse(raw) : defaultValue;
+    } catch {
+        return defaultValue;
+    }
+}
+
+function setStored(key, value) {
+    try {
+        localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(value));
+    } catch { /* storage full or unavailable */ }
+}
+
+function getTotalCounters() {
+    return {
+        promoted: getStored(SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED, 0),
+        suggested: getStored(SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED, 0)
+    };
+}
+
+function addToTotalCounters(promoted, suggested) {
+    const current = getTotalCounters();
+    const updated = {
+        promoted: current.promoted + promoted,
+        suggested: current.suggested + suggested
+    };
+    setStored(SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED, updated.promoted);
+    setStored(SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED, updated.suggested);
+    return updated;
+}
+
+function resetTotalCounters() {
+    setStored(SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED, 0);
+    setStored(SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED, 0);
+}
 
 // ==================== STATE ====================
 const state = {
     observer: null,
     waiter: null,
-    sessionRemoved: 0,
+    sessionPromotedRemoved: 0,
+    sessionSuggestedRemoved: 0,
     isObserverConnected: false,
-    isCurrentlyFeedPage: false
-};
-
-// ==================== NOTIFIER ====================
-const notifier = {
-    pending: false,
-    scheduled: false,
-    queue() {
-        this.pending = true;
-        if (!this.scheduled) {
-            this.scheduled = true;
-            setTimeout(() => {
-                requestIdleCallback(() => {
-                    if (this.pending) {
-                        // Userscript has no background page to notify,
-                        // but keep the structure for consistency
-                        this.pending = false;
-                    }
-                    this.scheduled = false;
-                }, { timeout: 500 });
-            }, CONFIG.DELAYS.NOTIFICATION);
-        }
-    }
+    isCurrentlyFeedPage: false,
+    settings: {
+        [SETTINGS_KEYS.ENABLED]: getStored(SETTINGS_KEYS.ENABLED, DEFAULT_SETTINGS[SETTINGS_KEYS.ENABLED]),
+        [SETTINGS_KEYS.DISCREET]: getStored(SETTINGS_KEYS.DISCREET, DEFAULT_SETTINGS[SETTINGS_KEYS.DISCREET]),
+        [SETTINGS_KEYS.FILTER_PROMOTED]: getStored(SETTINGS_KEYS.FILTER_PROMOTED, DEFAULT_SETTINGS[SETTINGS_KEYS.FILTER_PROMOTED]),
+        [SETTINGS_KEYS.FILTER_SUGGESTED]: getStored(SETTINGS_KEYS.FILTER_SUGGESTED, DEFAULT_SETTINGS[SETTINGS_KEYS.FILTER_SUGGESTED]),
+        [SETTINGS_KEYS.LANGUAGE]: getStored(SETTINGS_KEYS.LANGUAGE, DEFAULT_SETTINGS[SETTINGS_KEYS.LANGUAGE]),
+        [SETTINGS_KEYS.POSITION]: getStored(SETTINGS_KEYS.POSITION, DEFAULT_SETTINGS[SETTINGS_KEYS.POSITION])
+    },
+    ui: null
 };
 
 // ==================== HIDE FUNCTIONS ====================
-function hideSuggestedPost(post) {
-    post.style.display = 'none';
-    post.setAttribute(CONFIG.ATTRIBUTES.SCANNED, 'true');
-    state.sessionRemoved++;
-    logger.log(`Suggested post hidden: "${post?.textContent?.trim().slice(0, 100)}"`);
-    return true;
-}
-
 function hidePromotedPost(post) {
     post.style.display = 'none';
     post.setAttribute(CONFIG.ATTRIBUTES.SCANNED, 'true');
-    state.sessionRemoved++;
+    state.sessionPromotedRemoved++;
     logger.log(`Promoted post hidden: "${post?.textContent?.trim().slice(0, 100)}"`);
+    return true;
+}
+
+function hideSuggestedPost(post) {
+    post.style.display = 'none';
+    post.setAttribute(CONFIG.ATTRIBUTES.SCANNED, 'true');
+    state.sessionSuggestedRemoved++;
+    logger.log(`Suggested post hidden: "${post?.textContent?.trim().slice(0, 100)}"`);
     return true;
 }
 
 // ==================== SCAN ====================
 function scanFeed(root = document) {
+    if (!state.settings[SETTINGS_KEYS.ENABLED]) return { promoted: 0, suggested: 0 };
+
     const groupedPosts = getUnscannedPosts(root);
-    let count = 0;
+    let promotedCount = 0;
+    let suggestedCount = 0;
 
-    for (const post of groupedPosts.sponsored) {
-        if (hidePromotedPost(post)) {
-            count += 1;
-        } else {
-            post.setAttribute(CONFIG.ATTRIBUTES.SCANNED, 'false');
+    if (state.settings[SETTINGS_KEYS.FILTER_PROMOTED]) {
+        for (const post of groupedPosts.sponsored) {
+            if (hidePromotedPost(post)) {
+                promotedCount++;
+            } else {
+                post.setAttribute(CONFIG.ATTRIBUTES.SCANNED, 'false');
+            }
         }
     }
 
-    for (const post of groupedPosts.suggested) {
-        if (hideSuggestedPost(post)) {
-            count += 1;
-        } else {
-            post.setAttribute(CONFIG.ATTRIBUTES.SCANNED, 'false');
+    if (state.settings[SETTINGS_KEYS.FILTER_SUGGESTED]) {
+        for (const post of groupedPosts.suggested) {
+            if (hideSuggestedPost(post)) {
+                suggestedCount++;
+            } else {
+                post.setAttribute(CONFIG.ATTRIBUTES.SCANNED, 'false');
+            }
         }
     }
 
-    if (count > 0) {
-        notifier.queue();
+    if (promotedCount > 0 || suggestedCount > 0) {
+        const totals = addToTotalCounters(promotedCount, suggestedCount);
+        const sessionTotal = state.sessionPromotedRemoved + state.sessionSuggestedRemoved;
+        if (state.ui) {
+            state.ui.updateCounters(sessionTotal, totals.promoted, totals.suggested);
+        }
     }
-    return count;
+
+    return { promoted: promotedCount, suggested: suggestedCount };
 }
 
 // ==================== OBSERVER & PAGE ====================
 const observer = createObserver(scanFeed, state);
 
 const pageManager = createPageManager(state, observer, () => {
-    state.sessionRemoved = 0;
+    state.sessionPromotedRemoved = 0;
+    state.sessionSuggestedRemoved = 0;
+    if (state.ui) {
+        const totals = getTotalCounters();
+        state.ui.updateCounters(0, totals.promoted, totals.suggested);
+    }
 });
+
+// ==================== UI ====================
+function initUI() {
+    const totals = getTotalCounters();
+    state.ui = createFloatingUI({
+        settings: { ...state.settings },
+        counters: totals,
+        onToggleEnabled(enabled) {
+            state.settings[SETTINGS_KEYS.ENABLED] = enabled;
+            setStored(SETTINGS_KEYS.ENABLED, enabled);
+            if (!enabled) {
+                observer.stop();
+            } else if (state.isCurrentlyFeedPage) {
+                observer.start();
+            }
+        },
+        onToggleDiscreet(discreet) {
+            state.settings[SETTINGS_KEYS.DISCREET] = discreet;
+            setStored(SETTINGS_KEYS.DISCREET, discreet);
+        },
+        onTogglePromoted(enabled) {
+            state.settings[SETTINGS_KEYS.FILTER_PROMOTED] = enabled;
+            setStored(SETTINGS_KEYS.FILTER_PROMOTED, enabled);
+        },
+        onToggleSuggested(enabled) {
+            state.settings[SETTINGS_KEYS.FILTER_SUGGESTED] = enabled;
+            setStored(SETTINGS_KEYS.FILTER_SUGGESTED, enabled);
+        },
+        onScan() {
+            return scanFeed();
+        },
+        getCounters() {
+            const totals = getTotalCounters();
+            return {
+                sessionTotal: state.sessionPromotedRemoved + state.sessionSuggestedRemoved,
+                totalPromoted: totals.promoted,
+                totalSuggested: totals.suggested
+            };
+        },
+        onLanguageChange(lang) {
+            state.settings[SETTINGS_KEYS.LANGUAGE] = lang;
+            setStored(SETTINGS_KEYS.LANGUAGE, lang);
+        },
+        onPositionChange(pos) {
+            state.settings[SETTINGS_KEYS.POSITION] = pos;
+            setStored(SETTINGS_KEYS.POSITION, pos);
+        }
+    });
+}
 
 // ==================== INIT ====================
 document.addEventListener('visibilitychange', () => {
     if (!state.isCurrentlyFeedPage) return;
+    if (!state.settings[SETTINGS_KEYS.ENABLED]) return;
     document.hidden ? observer.stop() : observer.start();
 });
 
-// URL polling (no background script in userscript)
+// URL change detection (SPA-compatible)
 let lastUrl = location.href;
-setInterval(() => {
-    if (location.href !== lastUrl) {
-        lastUrl = location.href;
+
+function handleUrlChange() {
+    const currentUrl = location.href;
+    if (currentUrl !== lastUrl) {
+        lastUrl = currentUrl;
         pageManager.handleUrlChange();
+        if (state.ui) {
+            state.isCurrentlyFeedPage ? state.ui.show() : state.ui.hide();
+        }
     }
-}, 500);
+}
+
+// Listen to history changes (SPA navigation)
+const originalPushState = history.pushState;
+const originalReplaceState = history.replaceState;
+
+history.pushState = function(...args) {
+    originalPushState.apply(this, args);
+    handleUrlChange();
+};
+
+history.replaceState = function(...args) {
+    originalReplaceState.apply(this, args);
+    handleUrlChange();
+};
+
+window.addEventListener('popstate', handleUrlChange);
+
+// Fallback polling for edge cases
+setInterval(handleUrlChange, 1000);
 
 state.isCurrentlyFeedPage = isFeedPage();
 
+function start() {
+    initUI();
+    if (state.isCurrentlyFeedPage) {
+        if (state.settings[SETTINGS_KEYS.ENABLED]) observer.start();
+    } else {
+        state.ui.hide();
+    }
+}
+
 if (document.body) {
-    if (state.isCurrentlyFeedPage) observer.start();
+    start();
 } else {
     state.waiter = new MutationObserver(() => {
         if (document.body) {
             state.waiter.disconnect();
             state.waiter = null;
-            if (state.isCurrentlyFeedPage) observer.start();
+            start();
         }
     });
     state.waiter.observe(document.documentElement, { childList: true });

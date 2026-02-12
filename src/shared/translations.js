@@ -1,0 +1,80 @@
+export const TRANSLATIONS = {
+    en: {
+        title: 'LinkedIn Sponsor Block',
+        enabled: 'Enabled',
+        discreetMode: 'Discreet mode',
+        extensionEnabled: 'Extension enabled',
+        extensionDisabled: 'Extension disabled',
+        extensionDisabledBanner: 'Extension is disabled',
+        enableExtension: 'Enable extension',
+        blockPromotedPosts: 'Block promoted posts',
+        blockSuggestedPosts: 'Block suggested posts',
+        blockedPromotedPosts: 'blocked promoted posts',
+        blockedSuggestedPosts: 'blocked suggested posts',
+        promotedBlocked: 'promoted blocked',
+        suggestedBlocked: 'suggested blocked',
+        filterOptions: 'Filter options',
+        scanNow: 'Scan now',
+        scanning: 'Scanning...',
+        noPostsFound: 'No posts found',
+        postsHidden: 'hidden',
+        promotedLabel: 'promoted',
+        suggestedLabel: 'suggested',
+        notOnLinkedIn: 'You are not on LinkedIn',
+        error: 'Error',
+        countersReset: 'Counters have been reset',
+        language: 'Language',
+        settingsTitle: 'Settings',
+        extensionSettings: 'Extension',
+        languageSettings: 'Language Settings',
+        counterSettings: 'Counter Settings',
+        resetCountersDescription: 'Reset all counters to zero. This action cannot be undone.',
+        resetCounters: 'Reset Counters',
+        confirmReset: 'Reset counters?',
+        yes: 'Yes',
+        no: 'No'
+    },
+    fr: {
+        title: 'LinkedIn Sponsor Block',
+        enabled: 'Activé',
+        discreetMode: 'Mode discret',
+        extensionEnabled: 'Extension activée',
+        extensionDisabled: 'Extension désactivée',
+        extensionDisabledBanner: 'L\'extension est désactivée',
+        enableExtension: 'Activer l\'extension',
+        blockPromotedPosts: 'Bloquer les posts sponsorisés',
+        blockSuggestedPosts: 'Bloquer les posts suggérés',
+        blockedPromotedPosts: 'posts promotionnels bloqués',
+        blockedSuggestedPosts: 'posts suggérés bloqués',
+        promotedBlocked: 'promotionnels bloqués',
+        suggestedBlocked: 'suggérés bloqués',
+        filterOptions: 'Options de filtrage',
+        scanNow: 'Analyser maintenant',
+        scanning: 'Analyse en cours...',
+        noPostsFound: 'Aucun post trouvé',
+        postsHidden: 'masqués',
+        promotedLabel: 'promotionnels',
+        suggestedLabel: 'suggérés',
+        notOnLinkedIn: 'Vous n\'êtes pas sur LinkedIn',
+        error: 'Erreur',
+        countersReset: 'Les compteurs ont été réinitialisés',
+        language: 'Langue',
+        settingsTitle: 'Paramètres',
+        extensionSettings: 'Extension',
+        languageSettings: 'Paramètres de langue',
+        counterSettings: 'Paramètres des compteurs',
+        resetCountersDescription: 'Réinitialiser tous les compteurs à zéro. Cette action est irréversible.',
+        resetCounters: 'Réinitialiser les compteurs',
+        confirmReset: 'Réinitialiser ?',
+        yes: 'Oui',
+        no: 'Non'
+    }
+};
+
+export function getTranslation(language, key) {
+    return (TRANSLATIONS[language] || TRANSLATIONS.en)[key] || key;
+}
+
+export function createTranslator(language) {
+    return (key) => getTranslation(language, key);
+}

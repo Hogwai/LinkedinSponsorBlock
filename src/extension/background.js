@@ -1,4 +1,5 @@
 import api from './browser-api.js';
+import { SETTINGS_KEYS } from '../shared/settings.js';
 
 // Global counters
 let totalPromotedBlocked = 0;
@@ -19,21 +20,21 @@ function updateBadge(enabled) {
 // Load counters from storage on startup
 async function loadCounters() {
     const result = await api.storage.local.get({
-        totalPromotedBlocked: 0,
-        totalSuggestedBlocked: 0,
-        enabled: true
+        [SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED]: 0,
+        [SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED]: 0,
+        [SETTINGS_KEYS.ENABLED]: true
     });
-    totalPromotedBlocked = result.totalPromotedBlocked;
-    totalSuggestedBlocked = result.totalSuggestedBlocked;
-    isEnabled = result.enabled;
+    totalPromotedBlocked = result[SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED];
+    totalSuggestedBlocked = result[SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED];
+    isEnabled = result[SETTINGS_KEYS.ENABLED];
     updateBadge(isEnabled);
 }
 
 // Save counters to storage
 async function saveCounters() {
     await api.storage.local.set({
-        totalPromotedBlocked,
-        totalSuggestedBlocked
+        [SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED]: totalPromotedBlocked,
+        [SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED]: totalSuggestedBlocked
     });
 }
 
