@@ -1,0 +1,48 @@
+name: Build Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Read versions
+        id: versions
+        run: |
+          echo "chrome=$(jq -r '.chrome' versions.json)" >> $GITHUB_OUTPUT
+          echo "firefox=$(jq -r '.firefox' versions.json)" >> $GITHUB_OUTPUT
+          echo "userscript=$(jq -r '.userscript' versions.json)" >> $GITHUB_OUTPUT
+
+      - name: Build all targets
+        run: |
+          VERSION=${{ steps.versions.outputs.userscript }} BUILD_TARGET=userscript npx rollup -c
+          VERSION=${{ steps.versions.outputs.chrome }} BUILD_TARGET=chrome npx rollup -c
+          VERSION=${{ steps.versions.outputs.firefox }} BUILD_TARGET=firefox npx rollup -c
+
+      - name: Verify builds
+        run: |
+          test -f dist/LinkedinSponsorBlock.user.js || exit 1
+          test -f dist/chrome/LinkedinSponsorBlock.user.js || exit 1
+          test -f dist/chrome/background.js || exit 1
+          test -f dist/chrome/popup.js || exit 1
+          test -f dist/chrome/manifest.json || exit 1
+          test -f dist/firefox/LinkedinSponsorBlock.user.js || exit 1
+          test -f dist/firefox/background.js || exit 1
+          test -f dist/firefox/popup.js || exit 1
+          test -f dist/firefox/manifest.json || exit 1
+          echo "✓ All builds completed successfully"

@@ -1,0 +1,193 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'versions.json'
+
+permissions:
+  contents: write
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      chrome-changed: ${{ steps.check.outputs.chrome-changed }}
+      firefox-changed: ${{ steps.check.outputs.firefox-changed }}
+      userscript-changed: ${{ steps.check.outputs.userscript-changed }}
+      chrome-version: ${{ steps.versions.outputs.chrome }}
+      firefox-version: ${{ steps.versions.outputs.firefox }}
+      userscript-version: ${{ steps.versions.outputs.userscript }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Read current versions
+        id: versions
+        run: |
+          echo "chrome=$(jq -r '.chrome' versions.json)" >> $GITHUB_OUTPUT
+          echo "firefox=$(jq -r '.firefox' versions.json)" >> $GITHUB_OUTPUT
+          echo "userscript=$(jq -r '.userscript' versions.json)" >> $GITHUB_OUTPUT
+
+      - name: Check which versions changed
+        id: check
+        run: |
+          # Get previous versions.json
+          git show HEAD^:versions.json > versions.old.json || echo '{"chrome":"0.0.0","firefox":"0.0.0","userscript":"0.0.0"}' > versions.old.json
+
+          OLD_CHROME=$(jq -r '.chrome' versions.old.json)
+          OLD_FIREFOX=$(jq -r '.firefox' versions.old.json)
+          OLD_USERSCRIPT=$(jq -r '.userscript' versions.old.json)
+
+          NEW_CHROME=$(jq -r '.chrome' versions.json)
+          NEW_FIREFOX=$(jq -r '.firefox' versions.json)
+          NEW_USERSCRIPT=$(jq -r '.userscript' versions.json)
+
+          echo "chrome-changed=$([[ "$OLD_CHROME" != "$NEW_CHROME" ]] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+          echo "firefox-changed=$([[ "$OLD_FIREFOX" != "$NEW_FIREFOX" ]] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+          echo "userscript-changed=$([[ "$OLD_USERSCRIPT" != "$NEW_USERSCRIPT" ]] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+
+  release-chrome:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.chrome-changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Chrome extension
+        run: VERSION=${{ needs.detect-changes.outputs.chrome-version }} BUILD_TARGET=chrome npx rollup -c
+
+      - name: Package Chrome extension
+        run: |
+          cd dist/chrome
+          zip -r ../../LinkedinSponsorBlock-chrome-${{ needs.detect-changes.outputs.chrome-version }}.zip .
+          cd ../..
+
+      - name: Create Chrome Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: chrome-v${{ needs.detect-changes.outputs.chrome-version }}
+          name: Chrome Extension v${{ needs.detect-changes.outputs.chrome-version }}
+          body: |
+            ## Chrome Extension Release
+
+            **Version**: ${{ needs.detect-changes.outputs.chrome-version }}
+
+            ### Installation
+            1. Download the ZIP file below
+            2. Extract it to a folder
+            3. Open Chrome and go to `chrome://extensions/`
+            4. Enable "Developer mode"
+            5. Click "Load unpacked" and select the extracted folder
+
+            ### Changes
+            See commit history for details.
+          files: |
+            LinkedinSponsorBlock-chrome-${{ needs.detect-changes.outputs.chrome-version }}.zip
+          draft: false
+          prerelease: false
+
+  release-firefox:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.firefox-changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Firefox extension
+        run: VERSION=${{ needs.detect-changes.outputs.firefox-version }} BUILD_TARGET=firefox npx rollup -c
+
+      - name: Package Firefox extension
+        run: |
+          cd dist/firefox
+          zip -r ../../LinkedinSponsorBlock-firefox-${{ needs.detect-changes.outputs.firefox-version }}.zip .
+          cd ../..
+
+      - name: Create Firefox Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: firefox-v${{ needs.detect-changes.outputs.firefox-version }}
+          name: Firefox Extension v${{ needs.detect-changes.outputs.firefox-version }}
+          body: |
+            ## Firefox Extension Release
+
+            **Version**: ${{ needs.detect-changes.outputs.firefox-version }}
+
+            ### Installation
+            1. Download the ZIP file below
+            2. Open Firefox and go to `about:debugging#/runtime/this-firefox`
+            3. Click "Load Temporary Add-on"
+            4. Select the manifest.json from the extracted folder
+
+            Note: For permanent installation, the extension must be signed by Mozilla.
+
+            ### Changes
+            See commit history for details.
+          files: |
+            LinkedinSponsorBlock-firefox-${{ needs.detect-changes.outputs.firefox-version }}.zip
+          draft: false
+          prerelease: false
+
+  release-userscript:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.userscript-changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Userscript
+        run: VERSION=${{ needs.detect-changes.outputs.userscript-version }} BUILD_TARGET=userscript npx rollup -c
+
+      - name: Create Userscript Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: userscript-v${{ needs.detect-changes.outputs.userscript-version }}
+          name: Userscript v${{ needs.detect-changes.outputs.userscript-version }}
+          body: |
+            ## Userscript Release
+
+            **Version**: ${{ needs.detect-changes.outputs.userscript-version }}
+
+            ### Installation
+            1. Install [Tampermonkey](https://www.tampermonkey.net/) or [Violentmonkey](https://violentmonkey.github.io/)
+            2. Click on the userscript file below to install it
+
+            **Direct install link**: [LinkedinSponsorBlock.user.js](https://github.com/${{ github.repository }}/releases/download/userscript-v${{ needs.detect-changes.outputs.userscript-version }}/LinkedinSponsorBlock.user.js)
+
+            ### Changes
+            See commit history for details.
+          files: |
+            dist/LinkedinSponsorBlock.user.js
+          draft: false
+          prerelease: false

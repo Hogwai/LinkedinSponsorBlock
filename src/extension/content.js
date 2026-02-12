@@ -3,6 +3,7 @@ import { logger } from '../shared/logger.js';
 import { getUnscannedPosts } from '../shared/detection.js';
 import { createObserver } from '../shared/observer.js';
 import { isFeedPage, createPageManager } from '../shared/page.js';
+import { SETTINGS_KEYS } from '../shared/settings.js';
 import api from './browser-api.js';
 
 // ==================== STATE ====================
@@ -14,9 +15,9 @@ const state = {
     isObserverConnected: false,
     isCurrentlyFeedPage: false,
     settings: {
-        enabled: true,
-        filterPromoted: true,
-        filterSuggested: true
+        [SETTINGS_KEYS.ENABLED]: true,
+        [SETTINGS_KEYS.FILTER_PROMOTED]: true,
+        [SETTINGS_KEYS.FILTER_SUGGESTED]: true
     }
 };
 
@@ -80,7 +81,7 @@ function hidePromotedPost(post) {
 
 // ==================== SCAN ====================
 function scanFeed(root = document) {
-    if (!state.settings.enabled) {
+    if (!state.settings[SETTINGS_KEYS.ENABLED]) {
         return { promoted: 0, suggested: 0 };
     }
 
@@ -88,7 +89,7 @@ function scanFeed(root = document) {
     let promotedCount = 0;
     let suggestedCount = 0;
 
-    if (state.settings.filterPromoted) {
+    if (state.settings[SETTINGS_KEYS.FILTER_PROMOTED]) {
         for (const post of groupedPosts.sponsored) {
             if (hidePromotedPost(post)) {
                 promotedCount += 1;
@@ -98,7 +99,7 @@ function scanFeed(root = document) {
         }
     }
 
-    if (state.settings.filterSuggested) {
+    if (state.settings[SETTINGS_KEYS.FILTER_SUGGESTED]) {
         for (const post of groupedPosts.suggested) {
             if (hideSuggestedPost(post)) {
                 suggestedCount += 1;
@@ -127,34 +128,34 @@ const pageManager = createPageManager(state, observer, () => {
 // ==================== SETTINGS ====================
 async function loadSettings() {
     const result = await api.storage.local.get({
-        enabled: true,
-        filterPromoted: true,
-        filterSuggested: true
+        [SETTINGS_KEYS.ENABLED]: true,
+        [SETTINGS_KEYS.FILTER_PROMOTED]: true,
+        [SETTINGS_KEYS.FILTER_SUGGESTED]: true
     });
     state.settings = result;
 }
 
 function updateSettings(newSettings) {
-    if (newSettings.enabled !== undefined) {
-        state.settings.enabled = newSettings.enabled;
-        if (!state.settings.enabled) {
+    if (newSettings[SETTINGS_KEYS.ENABLED] !== undefined) {
+        state.settings[SETTINGS_KEYS.ENABLED] = newSettings[SETTINGS_KEYS.ENABLED];
+        if (!state.settings[SETTINGS_KEYS.ENABLED]) {
             observer.stop();
         } else if (state.isCurrentlyFeedPage) {
             observer.start();
         }
     }
-    if (newSettings.filterPromoted !== undefined) {
-        state.settings.filterPromoted = newSettings.filterPromoted;
+    if (newSettings[SETTINGS_KEYS.FILTER_PROMOTED] !== undefined) {
+        state.settings[SETTINGS_KEYS.FILTER_PROMOTED] = newSettings[SETTINGS_KEYS.FILTER_PROMOTED];
     }
-    if (newSettings.filterSuggested !== undefined) {
-        state.settings.filterSuggested = newSettings.filterSuggested;
+    if (newSettings[SETTINGS_KEYS.FILTER_SUGGESTED] !== undefined) {
+        state.settings[SETTINGS_KEYS.FILTER_SUGGESTED] = newSettings[SETTINGS_KEYS.FILTER_SUGGESTED];
     }
 }
 
 // ==================== INIT ====================
 document.addEventListener('visibilitychange', () => {
     if (!state.isCurrentlyFeedPage) return;
-    if (!state.settings.enabled) return;
+    if (!state.settings[SETTINGS_KEYS.ENABLED]) return;
     document.hidden ? observer.stop() : observer.start();
 });
 
@@ -177,13 +178,13 @@ async function init() {
     state.isCurrentlyFeedPage = isFeedPage();
 
     if (document.body) {
-        if (state.isCurrentlyFeedPage && state.settings.enabled) observer.start();
+        if (state.isCurrentlyFeedPage && state.settings[SETTINGS_KEYS.ENABLED]) observer.start();
     } else {
         state.waiter = new MutationObserver(() => {
             if (document.body) {
                 state.waiter.disconnect();
                 state.waiter = null;
-                if (state.isCurrentlyFeedPage && state.settings.enabled) observer.start();
+                if (state.isCurrentlyFeedPage && state.settings[SETTINGS_KEYS.ENABLED]) observer.start();
             }
         });
         state.waiter.observe(document.documentElement, { childList: true });

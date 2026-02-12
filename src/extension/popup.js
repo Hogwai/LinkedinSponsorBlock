@@ -1,4 +1,6 @@
 import api from './browser-api.js';
+import { createTranslator } from '../shared/translations.js';
+import { SETTINGS_KEYS, DEFAULT_SETTINGS } from '../shared/settings.js';
 
 const statusEl = document.getElementById('status');
 const scanBtn = document.getElementById('manualScan');
@@ -17,79 +19,7 @@ const resetConfirm = document.getElementById('resetConfirm');
 const confirmResetBtn = document.getElementById('confirmReset');
 const cancelResetBtn = document.getElementById('cancelReset');
 
-// Translations
-const translations = {
-    en: {
-        'blockedPromotedPosts': 'blocked promoted posts',
-        'blockedSuggestedPosts': 'blocked suggested posts',
-        'filterOptions': 'Filter options',
-        'blockPromotedPosts': 'Block promoted posts',
-        'blockSuggestedPosts': 'Block suggested posts',
-        'scanNow': 'Scan now',
-        'extensionEnabled': 'Extension enabled',
-        'extensionDisabled': 'Extension disabled',
-        'extensionDisabledBanner': 'Extension is disabled',
-        'notOnLinkedIn': 'You are not on LinkedIn',
-        'scanning': 'Scanning...',
-        'error': 'Error',
-        'noPostsFound': 'No posts found',
-        'countersReset': 'Counters have been reset',
-        'language': 'Language',
-        'settingsTitle': 'Settings',
-        'extensionSettings': 'Extension',
-        'enableExtension': 'Enable extension',
-        'languageSettings': 'Language Settings',
-        'counterSettings': 'Counter Settings',
-        'resetCountersDescription': 'Reset all counters to zero. This action cannot be undone.',
-        'resetCounters': 'Reset Counters',
-        'confirmReset': 'Reset counters?',
-        'yes': 'Yes',
-        'no': 'No'
-    },
-    fr: {
-        'blockedPromotedPosts': 'posts promotionnels bloqués',
-        'blockedSuggestedPosts': 'posts suggérés bloqués',
-        'filterOptions': 'Options de filtrage',
-        'blockPromotedPosts': 'Bloquer les posts sponsorisés',
-        'blockSuggestedPosts': 'Bloquer les posts suggérés',
-        'scanNow': 'Analyser maintenant',
-        'extensionEnabled': 'Extension activée',
-        'extensionDisabled': 'Extension désactivée',
-        'extensionDisabledBanner': 'L\'extension est désactivée',
-        'notOnLinkedIn': 'Vous n\'êtes pas sur LinkedIn',
-        'scanning': 'Analyse en cours...',
-        'error': 'Erreur',
-        'noPostsFound': 'Aucun post trouvé',
-        'countersReset': 'Les compteurs ont été réinitialisés',
-        'language': 'Langue',
-        'settingsTitle': 'Paramètres',
-        'extensionSettings': 'Extension',
-        'enableExtension': 'Activer l\'extension',
-        'languageSettings': 'Paramètres de langue',
-        'counterSettings': 'Paramètres des compteurs',
-        'resetCountersDescription': 'Réinitialiser tous les compteurs à zéro. Cette action est irréversible.',
-        'resetCounters': 'Réinitialiser les compteurs',
-        'confirmReset': 'Réinitialiser ?',
-        'yes': 'Oui',
-        'no': 'Non'
-    }
-};
-
-// Default settings
-const defaultSettings = {
-    enabled: true,
-    filterPromoted: true,
-    filterSuggested: true,
-    totalPromotedBlocked: 0,
-    totalSuggestedBlocked: 0,
-    language: 'en'
-};
-
-// Get translation for a key
-function t(key) {
-    const currentLang = getCurrentLanguage();
-    return translations[currentLang][key] || key;
-}
+let t = createTranslator('en');
 
 // Get current language
 function getCurrentLanguage() {
@@ -98,6 +28,7 @@ function getCurrentLanguage() {
 
 // Update UI with current language
 function updateUILanguage() {
+    t = createTranslator(getCurrentLanguage());
     document.querySelectorAll('[data-translate]').forEach(element => {
         const key = element.getAttribute('data-translate');
         if (key) {
@@ -113,7 +44,7 @@ function updateUILanguage() {
 
 // Load settings from storage
 async function loadSettings() {
-    const result = await api.storage.local.get(defaultSettings);
+    const result = await api.storage.local.get(DEFAULT_SETTINGS);
 
     extensionToggle.checked = result.enabled;
     filterPromoted.checked = result.filterPromoted;
@@ -130,11 +61,11 @@ async function loadSettings() {
 // Update counters from background
 async function updateCounters() {
     const result = await api.storage.local.get({
-        totalPromotedBlocked: 0,
-        totalSuggestedBlocked: 0
+        [SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED]: 0,
+        [SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED]: 0
     });
-    promotedCountEl.textContent = result.totalPromotedBlocked;
-    suggestedCountEl.textContent = result.totalSuggestedBlocked;
+    promotedCountEl.textContent = result[SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED];
+    suggestedCountEl.textContent = result[SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED];
 }
 
 // Save settings to storage
@@ -219,8 +150,8 @@ cancelResetBtn.addEventListener('click', () => {
 // Confirm reset
 confirmResetBtn.addEventListener('click', async () => {
     await saveSettings({
-        totalPromotedBlocked: 0,
-        totalSuggestedBlocked: 0
+        [SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED]: 0,
+        [SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED]: 0
     });
 
     promotedCountEl.textContent = '0';
