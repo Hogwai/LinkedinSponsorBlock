@@ -6,6 +6,17 @@ on:
       - main
     paths:
       - 'versions.json'
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Target to release'
+        required: true
+        type: choice
+        options:
+          - chrome
+          - firefox
+          - userscript
+          - all
 
 permissions:
   contents: write
@@ -14,9 +25,9 @@ jobs:
   detect-changes:
     runs-on: ubuntu-latest
     outputs:
-      chrome-changed: ${{ steps.check.outputs.chrome-changed }}
-      firefox-changed: ${{ steps.check.outputs.firefox-changed }}
-      userscript-changed: ${{ steps.check.outputs.userscript-changed }}
+      chrome-changed: ${{ steps.final.outputs.chrome-changed }}
+      firefox-changed: ${{ steps.final.outputs.firefox-changed }}
+      userscript-changed: ${{ steps.final.outputs.userscript-changed }}
       chrome-version: ${{ steps.versions.outputs.chrome }}
       firefox-version: ${{ steps.versions.outputs.firefox }}
       userscript-version: ${{ steps.versions.outputs.userscript }}
@@ -33,7 +44,8 @@ jobs:
           echo "firefox=$(jq -r '.firefox' versions.json)" >> $GITHUB_OUTPUT
           echo "userscript=$(jq -r '.userscript' versions.json)" >> $GITHUB_OUTPUT
 
-      - name: Check which versions changed
+      - name: Check which versions changed (auto mode)
+        if: github.event_name == 'push'
         id: check
         run: |
           # Get previous versions.json
@@ -50,6 +62,43 @@ jobs:
           echo "chrome-changed=$([[ "$OLD_CHROME" != "$NEW_CHROME" ]] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
           echo "firefox-changed=$([[ "$OLD_FIREFOX" != "$NEW_FIREFOX" ]] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
           echo "userscript-changed=$([[ "$OLD_USERSCRIPT" != "$NEW_USERSCRIPT" ]] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+
+      - name: Set manual release targets
+        if: github.event_name == 'workflow_dispatch'
+        id: manual
+        run: |
+          TARGET="${{ github.event.inputs.target }}"
+          if [ "$TARGET" = "all" ]; then
+            echo "chrome-changed=true" >> $GITHUB_OUTPUT
+            echo "firefox-changed=true" >> $GITHUB_OUTPUT
+            echo "userscript-changed=true" >> $GITHUB_OUTPUT
+          elif [ "$TARGET" = "chrome" ]; then
+            echo "chrome-changed=true" >> $GITHUB_OUTPUT
+            echo "firefox-changed=false" >> $GITHUB_OUTPUT
+            echo "userscript-changed=false" >> $GITHUB_OUTPUT
+          elif [ "$TARGET" = "firefox" ]; then
+            echo "chrome-changed=false" >> $GITHUB_OUTPUT
+            echo "firefox-changed=true" >> $GITHUB_OUTPUT
+            echo "userscript-changed=false" >> $GITHUB_OUTPUT
+          elif [ "$TARGET" = "userscript" ]; then
+            echo "chrome-changed=false" >> $GITHUB_OUTPUT
+            echo "firefox-changed=false" >> $GITHUB_OUTPUT
+            echo "userscript-changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Merge check outputs
+        id: final
+        run: |
+          # Use manual outputs if workflow_dispatch, otherwise use auto-detected changes
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "chrome-changed=${{ steps.manual.outputs.chrome-changed }}" >> $GITHUB_OUTPUT
+            echo "firefox-changed=${{ steps.manual.outputs.firefox-changed }}" >> $GITHUB_OUTPUT
+            echo "userscript-changed=${{ steps.manual.outputs.userscript-changed }}" >> $GITHUB_OUTPUT
+          else
+            echo "chrome-changed=${{ steps.check.outputs.chrome-changed }}" >> $GITHUB_OUTPUT
+            echo "firefox-changed=${{ steps.check.outputs.firefox-changed }}" >> $GITHUB_OUTPUT
+            echo "userscript-changed=${{ steps.check.outputs.userscript-changed }}" >> $GITHUB_OUTPUT
+          fi
 
   release-chrome:
     needs: detect-changes
