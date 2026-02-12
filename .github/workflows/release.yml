@@ -157,6 +157,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -168,6 +170,22 @@ jobs:
 
       - name: Build Userscript
         run: VERSION=${{ needs.detect-changes.outputs.userscript-version }} BUILD_TARGET=userscript npx rollup -c
+
+      - name: Update README with new userscript link
+        run: |
+          VERSION=${{ needs.detect-changes.outputs.userscript-version }}
+          sed -i "s|https://github.com/Hogwai/LinkedinSponsorBlock/releases/download/userscript-v[^/]*/LinkedinSponsorBlock.user.js|https://github.com/Hogwai/LinkedinSponsorBlock/releases/download/userscript-v${VERSION}/LinkedinSponsorBlock.user.js|g" README.md
+
+          # Check if there are changes
+          if git diff --quiet README.md; then
+            echo "No changes to README.md"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add README.md
+            git commit -m "chore: update userscript link to v${VERSION}"
+            git push
+          fi
 
       - name: Create Userscript Release
         uses: softprops/action-gh-release@v2
