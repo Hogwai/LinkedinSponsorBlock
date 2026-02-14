@@ -105,5 +105,14 @@ api.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 });
 
+// Record install date on first run
+async function recordInstallDate() {
+    const result = await api.storage.local.get({ [SETTINGS_KEYS.INSTALL_DATE]: 0 });
+    if (!result[SETTINGS_KEYS.INSTALL_DATE]) {
+        await api.storage.local.set({ [SETTINGS_KEYS.INSTALL_DATE]: Date.now() });
+    }
+}
+
 // Initialize counters on startup
 loadCounters();
+recordInstallDate();

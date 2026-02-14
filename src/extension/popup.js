@@ -1,6 +1,7 @@
 import api from './browser-api.js';
 import { createTranslator } from '../shared/translations.js';
 import { SETTINGS_KEYS, DEFAULT_SETTINGS } from '../shared/settings.js';
+import { CONFIG } from '../shared/config.js';
 
 const statusEl = document.getElementById('status');
 const scanBtn = document.getElementById('manualScan');
@@ -18,6 +19,11 @@ const resetCountersBtn = document.getElementById('resetCounters');
 const resetConfirm = document.getElementById('resetConfirm');
 const confirmResetBtn = document.getElementById('confirmReset');
 const cancelResetBtn = document.getElementById('cancelReset');
+const supportToggle = document.getElementById('supportToggle');
+const supportContent = document.getElementById('supportContent');
+const reviewLink = document.getElementById('reviewLink');
+const reviewBanner = document.getElementById('reviewBanner');
+const dismissBannerBtn = document.getElementById('dismissBanner');
 
 let t = createTranslator('en');
 
@@ -233,6 +239,39 @@ function setStatus(text, type = '') {
     statusEl.className = type;
 }
 
+// Support section collapsible toggle
+supportToggle.addEventListener('click', () => {
+    supportToggle.classList.toggle('open');
+    supportContent.classList.toggle('open');
+});
+
+// Set review link based on platform
+const isFirefox = typeof browser !== 'undefined' && browser.runtime?.getURL;
+reviewLink.href = isFirefox ? CONFIG.REVIEW_URLS.firefox : CONFIG.REVIEW_URLS.chrome;
+
+// Review banner (time-based, dismissable)
+async function checkReviewBanner() {
+    const result = await api.storage.local.get({
+        [SETTINGS_KEYS.INSTALL_DATE]: 0,
+        [SETTINGS_KEYS.REVIEW_BANNER_DISMISSED]: false
+    });
+    if (result[SETTINGS_KEYS.REVIEW_BANNER_DISMISSED]) return;
+
+    const installDate = result[SETTINGS_KEYS.INSTALL_DATE];
+    if (!installDate) return;
+
+    const daysSinceInstall = (Date.now() - installDate) / (1000 * 60 * 60 * 24);
+    if (daysSinceInstall >= CONFIG.REVIEW_THRESHOLD_DAYS) {
+        reviewBanner.style.display = '';
+    }
+}
+
+dismissBannerBtn.addEventListener('click', async () => {
+    reviewBanner.style.display = 'none';
+    await api.storage.local.set({ [SETTINGS_KEYS.REVIEW_BANNER_DISMISSED]: true });
+});
+
 // Initialize
 loadSettings();
 updateCounters();
+checkReviewBanner();

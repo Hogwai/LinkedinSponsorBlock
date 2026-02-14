@@ -66,6 +66,11 @@ const state = {
     ui: null
 };
 
+// Record install date on first run
+if (!getStored(SETTINGS_KEYS.INSTALL_DATE, 0)) {
+    setStored(SETTINGS_KEYS.INSTALL_DATE, Date.now());
+}
+
 // ==================== HIDE FUNCTIONS ====================
 function hidePromotedPost(post) {
     post.style.display = 'none';
@@ -138,7 +143,17 @@ const pageManager = createPageManager(state, observer, () => {
 function initUI() {
     const totals = getTotalCounters();
     state.ui = createFloatingUI({
-        settings: { ...state.settings },
+        settings: {
+            ...state.settings,
+            installDate: getStored(SETTINGS_KEYS.INSTALL_DATE, 0),
+            reviewThresholdDays: CONFIG.REVIEW_THRESHOLD_DAYS,
+            reviewUrl: CONFIG.REVIEW_URLS.userscript,
+            githubUrl: CONFIG.GITHUB_URL,
+            reviewBannerDismissed: getStored(SETTINGS_KEYS.REVIEW_BANNER_DISMISSED, false),
+            onDismissBanner() {
+                setStored(SETTINGS_KEYS.REVIEW_BANNER_DISMISSED, true);
+            }
+        },
         counters: totals,
         onToggleEnabled(enabled) {
             state.settings[SETTINGS_KEYS.ENABLED] = enabled;

@@ -33,4 +33,11 @@ export const CONFIG = {
         'Vorgeschlagen',  // GERMAN
         'Sugerencias', // SPANISH
     ].map(t => t.toLowerCase())),
+    REVIEW_URLS: {
+        chrome: 'https://chromewebstore.google.com/detail/linkedin-sponsor-block/dmgglmnbmokkdocpamjkcgjfjceoocbh/reviews',
+        firefox: 'https://addons.mozilla.org/en-US/firefox/addon/linkedin-sponsor-block/reviews/',
+        userscript: 'https://greasyfork.org/fr/scripts/546877-linkedin-sponsor-block/feedback'
+    },
+    GITHUB_URL: 'https://github.com/Hogwai/LinkedinSponsorBlock',
+    REVIEW_THRESHOLD_DAYS: 7
 };

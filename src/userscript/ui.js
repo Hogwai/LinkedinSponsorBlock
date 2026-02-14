@@ -277,6 +277,112 @@ const STYLES = `
         border-color: #0A66C2;
     }
 
+    /* ---- Review banner ---- */
+    .lsb-review-banner {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 12px;
+        margin: 0 12px 4px;
+        background: rgba(10, 102, 194, 0.1);
+        border: 1px solid rgba(10, 102, 194, 0.25);
+        border-radius: 6px;
+        font-size: 11px;
+        color: #0A66C2;
+        line-height: 1.3;
+    }
+
+    .lsb-dismiss-btn {
+        background: none;
+        border: 1px solid rgba(10, 102, 194, 0.25);
+        color: #0A66C2;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 10px;
+        cursor: pointer;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .lsb-dismiss-btn:hover {
+        background: rgba(10, 102, 194, 0.1);
+    }
+
+    /* ---- Support section (collapsible) ---- */
+    .lsb-support-section {
+        border-top: 1px solid #eee;
+    }
+
+    .lsb-support-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding: 8px 16px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .lsb-support-header:hover {
+        background: #f8f8f8;
+    }
+
+    .lsb-support-chevron {
+        transition: transform 0.2s;
+        color: #999;
+    }
+
+    .lsb-support-header.open .lsb-support-chevron {
+        transform: rotate(180deg);
+    }
+
+    .lsb-support-body {
+        display: none;
+        padding: 0 16px 10px;
+    }
+
+    .lsb-support-body.open {
+        display: block;
+    }
+
+    .lsb-support-body p {
+        font-size: 11px;
+        color: #666;
+        line-height: 1.4;
+        margin-bottom: 8px;
+    }
+
+    .lsb-support-links {
+        display: flex;
+        gap: 6px;
+    }
+
+    .lsb-support-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 5px 10px;
+        background: linear-gradient(135deg, #0A66C2, #0077B5);
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        transition: opacity 0.2s;
+        flex: 1;
+        justify-content: center;
+    }
+
+    .lsb-support-link:hover {
+        opacity: 0.9;
+    }
+
     /* ---- Disabled state ---- */
     .lsb-panel.disabled .lsb-filter-toggle { opacity: 0.4; pointer-events: none; }
     .lsb-panel.disabled .lsb-scan-btn { opacity: 0.4; pointer-events: none; }
@@ -303,6 +409,10 @@ function createHTML() {
                         <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
                     </svg>
                 </button>
+            </div>
+            <div class="lsb-review-banner" id="lsb-review-banner" style="display:none;">
+                <span data-t="reviewBanner">Enjoying it? Leave a review or star us on GitHub!</span>
+                <button class="lsb-dismiss-btn" id="lsb-dismiss-banner" data-t="dismiss">Dismiss</button>
             </div>
             <div class="lsb-toggles">
                 <label class="lsb-toggle-row">
@@ -336,6 +446,27 @@ function createHTML() {
             </div>
             <button class="lsb-scan-btn" id="lsb-scan" data-t="scanNow">Scan now</button>
             <div class="lsb-status" id="lsb-status"></div>
+            <div class="lsb-support-section" id="lsb-support-section">
+                <button class="lsb-support-header" id="lsb-support-toggle">
+                    <span data-t="supportTitle">Support</span>
+                    <svg class="lsb-support-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none">
+                        <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                <div class="lsb-support-body" id="lsb-support-body">
+                    <p data-t="supportDescription">This project is free and open-source. A review or a star encourages me to keep improving it!</p>
+                    <div class="lsb-support-links">
+                        <a class="lsb-support-link" id="lsb-review-link" href="#" target="_blank">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor"/></svg>
+                            <span data-t="leaveReview">Leave a review</span>
+                        </a>
+                        <a class="lsb-support-link" id="lsb-github-link" href="#" target="_blank">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.009-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.607.069-.607 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.167 22 16.418 22 12c0-5.523-4.477-10-10-10z" fill="currentColor"/></svg>
+                            <span data-t="githubRepo">GitHub</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
             <div class="lsb-footer">
                 <select id="lsb-language" class="lsb-lang-select">
                     <option value="en">EN</option>
@@ -385,6 +516,11 @@ export function createFloatingUI({
     const langSelect = $('lsb-language');
     const posSelect = $('lsb-position');
     const statusEl = $('lsb-status');
+    const supportSection = $('lsb-support-section');
+    const supportToggleBtn = $('lsb-support-toggle');
+    const supportBody = $('lsb-support-body');
+    const reviewLinkEl = $('lsb-review-link');
+    const githubLinkEl = $('lsb-github-link');
 
     let currentLang = settings.language || 'en';
     let statusTimer = null;
@@ -430,6 +566,31 @@ export function createFloatingUI({
     updateDisabledState(settings.enabled);
     if (settings.discreet) fab.classList.add('discreet');
     applyTranslations();
+
+    // Support section - always visible
+    reviewLinkEl.href = settings.reviewUrl || '#';
+    githubLinkEl.href = settings.githubUrl || 'https://github.com/Hogwai/LinkedinSponsorBlock';
+    supportSection.style.display = '';
+
+    // Support section collapsible toggle
+    supportToggleBtn.addEventListener('click', () => {
+        supportToggleBtn.classList.toggle('open');
+        supportBody.classList.toggle('open');
+    });
+
+    // Review banner (time-based, dismissable)
+    const bannerEl = $('lsb-review-banner');
+    const dismissBtn = $('lsb-dismiss-banner');
+    if (settings.installDate && !settings.reviewBannerDismissed) {
+        const daysSinceInstall = (Date.now() - settings.installDate) / (1000 * 60 * 60 * 24);
+        if (daysSinceInstall >= (settings.reviewThresholdDays || 7)) {
+            bannerEl.style.display = '';
+        }
+    }
+    dismissBtn.addEventListener('click', () => {
+        bannerEl.style.display = 'none';
+        if (settings.onDismissBanner) settings.onDismissBanner();
+    });
 
     // ---- Events ----
     fab.addEventListener('click', (e) => {
