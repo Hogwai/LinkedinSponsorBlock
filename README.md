@@ -68,7 +68,7 @@ Perfect for professionals, recruiters, or regular LinkedIn users who want a more
    - Click "Install this script" and confirm
 
 2. **From GitHub:**
-   - Click here: [LinkedinSponsorBlock.user.js](https://github.com/Hogwai/LinkedinSponsorBlock/releases/download/userscript-v1.2.0/LinkedinSponsorBlock.user.js) to install directly
+   - Click here: [LinkedinSponsorBlock.user.js](https://github.com/Hogwai/LinkedinSponsorBlock/releases/download/userscript-v1.2.1/LinkedinSponsorBlock.user.js) to install directly
    - Or browse the userscript releases: [Releases](https://github.com/Hogwai/LinkedinSponsorBlock/releases?q=userscript&expanded=true)
 
 3. **Verify that the script is enabled:**
