@@ -1,0 +1,84 @@
+name: 🐛 Bug Report
+description: Report a bug or issue
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Installation Type
+      description: How are you using LinkedinSponsorBlock?
+      options:
+        - Chrome Extension
+        - Firefox Extension
+        - Userscript (Tampermonkey/Greasemonkey)
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Which version are you using? (visible in settings or extension manager)
+      placeholder: "e.g. 1.2.0"
+    validations:
+      required: true
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and Version
+      description: Which browser are you using?
+      placeholder: "e.g. Chrome 120.0.6099.129, Firefox 121.0"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear description of the issue
+      placeholder: "Sponsored posts are not being detected/hidden..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce this issue?
+      placeholder: |
+        1. Go to linkedin.com/feed
+        2. Scroll down the page
+        3. Notice that...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What should happen instead?
+      placeholder: "Sponsored posts should be hidden/blocked..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Console Logs (optional)
+      description: |
+        If available, paste console logs from your browser (F12 > Console)
+        Tip: You can attach images by dragging them into this area
+      render: shell
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other useful context (screenshots, specific configuration, etc.)
