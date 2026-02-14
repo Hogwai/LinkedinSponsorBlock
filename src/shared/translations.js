@@ -32,7 +32,13 @@ export const TRANSLATIONS = {
         resetCounters: 'Reset Counters',
         confirmReset: 'Reset counters?',
         yes: 'Yes',
-        no: 'No'
+        no: 'No',
+        supportTitle: 'Support',
+        supportDescription: 'This project is free and open-source. A review or a star encourages me to keep improving it!',
+        leaveReview: 'Leave a review',
+        githubRepo: 'GitHub',
+        reviewBanner: 'Enjoying it? Leave a review or star us on GitHub!',
+        dismiss: 'Dismiss'
     },
     fr: {
         title: 'LinkedIn Sponsor Block',
@@ -67,7 +73,13 @@ export const TRANSLATIONS = {
         resetCounters: 'Réinitialiser les compteurs',
         confirmReset: 'Réinitialiser ?',
         yes: 'Oui',
-        no: 'Non'
+        no: 'Non',
+        supportTitle: 'Soutenir',
+        supportDescription: 'Ce projet est gratuit et open-source. Un avis ou une étoile m\'encourage à continuer de l\'améliorer !',
+        leaveReview: 'Laisser un avis',
+        githubRepo: 'GitHub',
+        reviewBanner: 'Ça vous plaît ? Laissez un avis ou une étoile sur GitHub !',
+        dismiss: 'Masquer'
     }
 };
 

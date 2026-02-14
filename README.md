@@ -20,6 +20,12 @@ These posts look like regular updates but are labeled **"Promotion."** Even stan
 |:-------:|:--------:|
 | ![Settings English](img/linkedin_sponsor_block_settings_en.png) | ![Settings Français](img/linkedin_sponsor_block_settings_fr.png) |
 
+### Userscript
+
+| English | Français |
+|:-------:|:--------:|
+| ![Userscript English](img/linkedin_sponsor_block_userscript_en.png) | ![Userscript Français](img/linkedin_sponsor_block_userscript_fr.png) |
+
 ## Features
 
 - 🚫 **Automatic removal** – Hides sponsored posts, suggested content, and partner promotions

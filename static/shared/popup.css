@@ -144,7 +144,7 @@ body {
     display: flex;
     align-items: center;
     cursor: pointer;
-    padding: 10px 0;
+    padding: 6px 0;
     position: relative;
 }
 
@@ -186,8 +186,8 @@ body {
 }
 
 .checkbox-label {
-    margin-left: 12px;
-    font-size: 14px;
+    margin-left: 10px;
+    font-size: 13px;
     color: #495057;
 }
 
@@ -201,27 +201,24 @@ body {
 
 /* Language Selector */
 .language-selector {
-    margin-top: 16px;
-    padding-top: 16px;
-    border-top: 1px solid rgba(10, 102, 194, 0.1);
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
 .language-selector label {
-    font-size: 14px;
+    font-size: 13px;
     color: #495057;
     font-weight: 500;
 }
 
 .language-selector select {
-    padding: 6px 10px;
+    padding: 5px 8px;
     border: 1px solid #ced4da;
     border-radius: 4px;
     background: white;
     color: #495057;
-    font-size: 14px;
+    font-size: 13px;
     cursor: pointer;
     transition: all 0.2s;
 }
@@ -290,14 +287,14 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px 20px;
+    padding: 12px 16px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     flex-shrink: 0;
 }
 
 .modal-header h3 {
     margin: 0;
-    font-size: 16px;
+    font-size: 15px;
     color: #212529;
 }
 
@@ -315,14 +312,14 @@ body {
 }
 
 .modal-body {
-    padding: 16px 20px;
+    padding: 10px 16px;
     overflow-y: auto;
     flex: 1;
     min-height: 0;
 }
 
 .settings-section {
-    margin-bottom: 24px;
+    margin-bottom: 14px;
 }
 
 .settings-section:last-child {
@@ -330,25 +327,25 @@ body {
 }
 
 .settings-section h4 {
-    margin: 0 0 12px 0;
-    font-size: 16px;
+    margin: 0 0 8px 0;
+    font-size: 14px;
     color: #495057;
 }
 
 .settings-section p {
-    margin: 0 0 16px 0;
-    font-size: 14px;
+    margin: 0 0 10px 0;
+    font-size: 12px;
     color: #6c757d;
-    line-height: 1.5;
+    line-height: 1.4;
 }
 
 .danger-btn {
     background: #dc3545;
     color: white;
     border: none;
-    padding: 10px 16px;
+    padding: 8px 14px;
     border-radius: 6px;
-    font-size: 14px;
+    font-size: 13px;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
@@ -378,8 +375,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    padding: 10px;
+    gap: 8px;
+    padding: 8px;
     background: rgba(220, 53, 69, 0.1);
     border-radius: 6px;
     animation: fadeIn 0.2s ease-out;
@@ -494,6 +491,104 @@ body {
 
 #status.pending {
     color: #f39c12;
+}
+
+/* Review banner */
+.review-banner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+    margin-bottom: 16px;
+    background: rgba(10, 102, 194, 0.1);
+    border: 1px solid rgba(10, 102, 194, 0.3);
+    border-radius: 8px;
+    font-size: 12px;
+    color: #0A66C2;
+    line-height: 1.4;
+}
+
+.dismiss-banner-btn {
+    background: none;
+    border: 1px solid rgba(10, 102, 194, 0.3);
+    color: #0A66C2;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.dismiss-banner-btn:hover {
+    background: rgba(10, 102, 194, 0.1);
+}
+
+/* Collapsible sections */
+.collapsible-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: inherit;
+}
+
+.collapsible-header h4 {
+    margin: 0;
+}
+
+.collapsible-chevron {
+    transition: transform 0.2s;
+    color: #6c757d;
+}
+
+.collapsible-header.open .collapsible-chevron {
+    transform: rotate(180deg);
+}
+
+.collapsible-content {
+    display: none;
+    margin-top: 8px;
+}
+
+.collapsible-content.open {
+    display: block;
+}
+
+/* Support links */
+.support-links {
+    display: flex;
+    gap: 6px;
+}
+
+.support-link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    background: linear-gradient(135deg, #0A66C2 0%, #0077B5 100%);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+    flex: 1;
+    justify-content: center;
+}
+
+.support-link-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(10, 102, 194, 0.4);
+    color: white;
+    text-decoration: none;
 }
 
 /* Footer */
