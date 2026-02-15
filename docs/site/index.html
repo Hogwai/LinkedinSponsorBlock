@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinkedIn Sponsor Block — Clean up your LinkedIn feed</title>
+  <meta name="description" content="Automatically remove sponsored posts, suggested content, and partner promotions from your LinkedIn feed. Available as a Chrome extension, Firefox add-on, and userscript.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            linkedin: '#0A66C2',
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="icon" type="image/png" href="img/icon_128.png">
+</head>
+<body class="bg-white text-slate-800 font-sans">
+
+  <!-- Navbar -->
+  <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur border-b border-slate-200">
+    <div class="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
+      <a href="#" class="flex items-center gap-2 font-semibold text-slate-900">
+        <img src="img/icon_128.png" alt="" class="w-6 h-6">
+        LinkedIn Sponsor Block
+      </a>
+      <!-- Desktop links -->
+      <div class="hidden sm:flex items-center gap-6 text-sm text-slate-600">
+        <a href="#features" class="hover:text-slate-900 transition-colors">Features</a>
+        <a href="#preview" class="hover:text-slate-900 transition-colors">Preview</a>
+        <a href="https://github.com/Hogwai/LinkedinSponsorBlock" target="_blank" rel="noopener noreferrer" class="hover:text-slate-900 transition-colors" aria-label="GitHub">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+        </a>
+      </div>
+      <!-- Mobile hamburger -->
+      <button id="menu-btn" class="sm:hidden p-2 text-slate-600 hover:text-slate-900" aria-label="Menu">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="hidden sm:hidden border-t border-slate-200 bg-white px-4 pb-3">
+      <a href="#features" class="block py-2 text-sm text-slate-600 hover:text-slate-900">Features</a>
+      <a href="#preview" class="block py-2 text-sm text-slate-600 hover:text-slate-900">Preview</a>
+      <a href="https://github.com/Hogwai/LinkedinSponsorBlock" target="_blank" rel="noopener noreferrer" class="block py-2 text-sm text-slate-600 hover:text-slate-900">GitHub</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="max-w-3xl mx-auto px-4 pt-20 pb-16 text-center">
+    <img src="img/icon_128.png" alt="LinkedIn Sponsor Block icon" class="w-20 h-20 mx-auto mb-6">
+    <h1 class="text-4xl sm:text-5xl font-bold text-slate-900 mb-4">LinkedIn Sponsor Block</h1>
+    <p class="text-xl text-slate-600 mb-4">Clean up your LinkedIn feed and see only what matters.</p>
+    <p class="text-base text-slate-500 max-w-xl mx-auto mb-8">
+      Tired of sponsored posts, suggested content, or partner promotions cluttering your feed?
+      LinkedIn Sponsor Block automatically removes them, giving you a cleaner, more productive experience.
+    </p>
+    <div class="flex flex-wrap justify-center gap-3">
+      <a href="https://chromewebstore.google.com/detail/linkedin-sponsor-block/dmgglmnbmokkdocpamjkcgjfjceoocbh" target="_blank" rel="noopener noreferrer"
+         class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-linkedin text-white font-medium text-sm hover:opacity-90 transition-opacity">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C8.21 0 4.831 1.757 2.632 4.501l3.953 3.301A7.144 7.144 0 0112 4.858c1.39 0 2.679.4 3.775 1.085L19.4 2.318A11.94 11.94 0 0012 0z"/><path d="M23.8 12.3c0-.79-.07-1.54-.19-2.27H12v4.3h6.62a5.78 5.78 0 01-2.4 3.72l3.88 3.01c2.26-2.09 3.7-5.17 3.7-8.76z" fill="#4285F4"/><path d="M5.276 14.268A7.142 7.142 0 014.858 12c0-.795.153-1.554.418-2.268L1.323 6.431A11.94 11.94 0 000 12c0 1.985.484 3.858 1.323 5.569l3.953-3.301z" fill="#FBBC05"/><path d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.01c-1.08.72-2.45 1.15-4.05 1.15a7.144 7.144 0 01-6.724-4.74l-3.953 3.301C3.421 20.99 7.36 24 12 24z" fill="#34A853"/><path d="M12 0C7.36 0 3.421 3.01 1.323 6.431l3.953 3.301A7.144 7.144 0 0112 4.858V0z" fill="#EA4335"/></svg>
+        Chrome
+      </a>
+      <a href="https://addons.mozilla.org/en-US/firefox/addon/linkedin-sponsor-block/" target="_blank" rel="noopener noreferrer"
+         class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-orange-500 text-white font-medium text-sm hover:opacity-90 transition-opacity">
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8.824 7.287c.008 0 .004 0 0 0zm-2.8-1.4c.006 0 .003 0 0 0zm16.754 2.161c-.505-1.215-1.53-2.528-2.333-2.943.654 1.283 1.033 2.57 1.177 3.53l.002.02c-1.314-3.278-3.544-4.6-5.366-7.477-.091-.147-.184-.292-.273-.446a3.545 3.545 0 01-.13-.24 2.118 2.118 0 01-.172-.46.03.03 0 00-.027-.03.038.038 0 00-.021 0l-.006.001a.037.037 0 00-.01.005L15.624 0c-2.585 1.515-3.657 4.168-3.932 5.856a6.197 6.197 0 00-2.305.587.297.297 0 00-.147.37c.057.162.24.24.396.17a5.622 5.622 0 012.008-.523l.067-.005a5.847 5.847 0 011.957.222l.095.03a5.816 5.816 0 01.616.228c.08.036.16.073.238.112l.107.055a5.835 5.835 0 01.368.211 5.953 5.953 0 012.034 2.104c-.62-.437-1.733-.868-2.803-.681 4.183 2.09 3.06 9.292-2.737 9.02a5.164 5.164 0 01-1.513-.292 4.42 4.42 0 01-.538-.232c-1.42-.735-2.593-2.121-2.74-3.806 0 0 .537-2 3.845-2 .357 0 1.38-.998 1.398-1.287-.005-.095-2.029-.9-2.817-1.677-.422-.416-.622-.616-.8-.767a3.47 3.47 0 00-.301-.227 5.388 5.388 0 01-.032-2.842c-1.195.544-2.124 1.403-2.8 2.163h-.006c-.46-.584-.428-2.51-.402-2.913-.006-.025-.343.176-.389.206-.406.29-.787.616-1.136.974-.397.403-.76.839-1.085 1.303a9.566 9.566 0 00-1.487 3.377c-.091.47-.15.943-.177 1.419a9.843 9.843 0 00.27 3.385 8.882 8.882 0 003.06 5.056 7.888 7.888 0 002.856 1.324 8.566 8.566 0 002.216.292 8.267 8.267 0 005.38-1.951 7.81 7.81 0 002.373-3.011 10.548 10.548 0 00.744-3.468c.03-2.447-.533-5.197-1.897-7.252z"/></svg>
+        Firefox
+      </a>
+      <a href="https://greasyfork.org/en/scripts/546877-linkedin-sponsor-block" target="_blank" rel="noopener noreferrer"
+         class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-800 text-white font-medium text-sm hover:opacity-90 transition-opacity">
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+        Userscript
+      </a>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features" class="max-w-5xl mx-auto px-4 py-16">
+    <h2 class="text-2xl font-bold text-slate-900 text-center mb-10">Features</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="bg-slate-50 rounded-xl p-6">
+        <div class="text-3xl mb-3">🚫</div>
+        <h3 class="font-semibold text-slate-900 mb-1">Automatic removal</h3>
+        <p class="text-sm text-slate-500">Hides sponsored posts, suggested content, and partner promotions silently.</p>
+      </div>
+      <div class="bg-slate-50 rounded-xl p-6">
+        <div class="text-3xl mb-3">🌐</div>
+        <h3 class="font-semibold text-slate-900 mb-1">Multilingual support</h3>
+        <p class="text-sm text-slate-500">Works with all languages available on LinkedIn — detection is language-agnostic.</p>
+      </div>
+      <div class="bg-slate-50 rounded-xl p-6">
+        <div class="text-3xl mb-3">🌍</div>
+        <h3 class="font-semibold text-slate-900 mb-1">Localized UI</h3>
+        <p class="text-sm text-slate-500">Extension interface available in English and French.</p>
+      </div>
+      <div class="bg-slate-50 rounded-xl p-6">
+        <div class="text-3xl mb-3">⚡</div>
+        <h3 class="font-semibold text-slate-900 mb-1">Lightweight &amp; discreet</h3>
+        <p class="text-sm text-slate-500">Runs in the background without slowing your browsing experience.</p>
+      </div>
+      <div class="bg-slate-50 rounded-xl p-6">
+        <div class="text-3xl mb-3">📊</div>
+        <h3 class="font-semibold text-slate-900 mb-1">Counter tracking</h3>
+        <p class="text-sm text-slate-500">See how many sponsored posts have been blocked in real time.</p>
+      </div>
+      <div class="bg-slate-50 rounded-xl p-6">
+        <div class="text-3xl mb-3">⚙️</div>
+        <h3 class="font-semibold text-slate-900 mb-1">Customizable filters</h3>
+        <p class="text-sm text-slate-500">Choose what to block — promoted, suggested, or both.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Preview -->
+  <section id="preview" class="max-w-5xl mx-auto px-4 py-16">
+    <h2 class="text-2xl font-bold text-slate-900 text-center mb-10">Preview</h2>
+    <div class="flex flex-col sm:flex-row justify-center items-center gap-8">
+      <div class="text-center">
+        <img src="img/popup_en.png" alt="LinkedIn Sponsor Block popup" class="rounded-xl shadow-lg max-w-xs mx-auto">
+        <p class="text-sm text-slate-500 mt-3">Extension popup</p>
+      </div>
+      <div class="text-center">
+        <img src="img/settings_en.png" alt="LinkedIn Sponsor Block settings" class="rounded-xl shadow-lg max-w-xs mx-auto">
+        <p class="text-sm text-slate-500 mt-3">Settings</p>
+      </div>
+      <div class="text-center">
+        <img src="img/userscript_en.png" alt="LinkedIn Sponsor Block userscript" class="rounded-xl shadow-lg max-w-xs mx-auto">
+        <p class="text-sm text-slate-500 mt-3">Userscript panel</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-200 mt-8">
+    <div class="max-w-5xl mx-auto px-4 py-8 text-center text-sm text-slate-500">
+      <p>
+        Open source under the
+        <a href="https://github.com/Hogwai/LinkedinSponsorBlock/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" class="text-linkedin hover:underline">MIT License</a>.
+        View on <a href="https://github.com/Hogwai/LinkedinSponsorBlock" target="_blank" rel="noopener noreferrer" class="text-linkedin hover:underline">GitHub</a>.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Mobile menu toggle -->
+  <script>
+    document.getElementById('menu-btn').addEventListener('click', function () {
+      document.getElementById('mobile-menu').classList.toggle('hidden');
+    });
+    // Close mobile menu when clicking an anchor link
+    document.querySelectorAll('#mobile-menu a[href^="#"]').forEach(function (link) {
+      link.addEventListener('click', function () {
+        document.getElementById('mobile-menu').classList.add('hidden');
+      });
+    });
+  </script>
+
+</body>
+</html>
