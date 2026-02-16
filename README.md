@@ -8,6 +8,9 @@ These posts look like regular updates but are labeled **"Promotion."** Even stan
 
 ## Preview
 
+<details>
+<summary><b>📸 Click to view screenshots</b></summary>
+
 ### Popup
 
 | English | Français |
@@ -26,6 +29,8 @@ These posts look like regular updates but are labeled **"Promotion."** Even stan
 |:-------:|:--------:|
 | ![Userscript English](img/linkedin_sponsor_block_userscript_en.png) | ![Userscript Français](img/linkedin_sponsor_block_userscript_fr.png) |
 
+</details>
+
 ## Features
 
 - 🚫 **Automatic removal** – Hides sponsored posts, suggested content, and partner promotions
@@ -38,17 +43,31 @@ These posts look like regular updates but are labeled **"Promotion."** Even stan
 
 Perfect for professionals, recruiters, or regular LinkedIn users who want a more relevant and distraction-free feed.
 
-## Installing
+---
 
-### Firefox Extension
+## 📥 Installation
 
-<a href="https://addons.mozilla.org/en-US/firefox/addon/linkedin-sponsor-block/" target="_blank"><img src="https://user-images.githubusercontent.com/585534/107280546-7b9b2a00-6a26-11eb-8f9f-f95932f4bfec.png" alt="Get LinkedIn Sponsor Block for Firefox"></a>
+Choose your preferred installation method:
 
-### Chrome Extension
+### 🌐 Chrome Extension
 
-<a href="https://chromewebstore.google.com/detail/linkedin-sponsor-block/dmgglmnbmokkdocpamjkcgjfjceoocbh" target="_blank"><img src="https://user-images.githubusercontent.com/585534/107280622-91a8ea80-6a26-11eb-8d07-77c548b28665.png" alt="Get LinkedIn Suggested Posts Remover for Chromium"></a>
+<a href="https://chromewebstore.google.com/detail/linkedin-sponsor-block/dmgglmnbmokkdocpamjkcgjfjceoocbh" target="_blank"><img src="https://user-images.githubusercontent.com/585534/107280622-91a8ea80-6a26-11eb-8d07-77c548b28665.png" alt="Get LinkedIn Suggested Posts Remover for Chromium" height="60"></a>
 
-### Userscript
+### 🦊 Firefox Extension
+
+<a href="https://addons.mozilla.org/en-US/firefox/addon/linkedin-sponsor-block/" target="_blank"><img src="https://user-images.githubusercontent.com/585534/107280546-7b9b2a00-6a26-11eb-8f9f-f95932f4bfec.png" alt="Get LinkedIn Sponsor Block for Firefox" height="60"></a>
+
+### 🔧 Userscript (Tampermonkey)
+
+<a href="https://greasyfork.org/fr/scripts/546877-linkedinsponsorblock" target="_blank"><img src="https://img.shields.io/badge/Install%20from-Greasyfork-990000?style=for-the-badge&logo=tampermonkey&logoColor=white" alt="Install from Greasyfork"></a>
+
+<a href="https://github.com/Hogwai/LinkedinSponsorBlock/releases/download/userscript-v1.2.1/LinkedinSponsorBlock.user.js" target="_blank"><img src="https://img.shields.io/badge/Install%20from-GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="Install from GitHub"></a>
+
+---
+
+## 📖 Detailed Installation Guide
+
+### Userscript Installation
 
 #### Prerequisites
 
@@ -95,6 +114,18 @@ Perfect for professionals, recruiters, or regular LinkedIn users who want a more
 **Persistent issues?**
 
 - Open an issue via [GitHub](https://github.com/Hogwai/LinkedinSponsorBlock/issues) or try to update the script
+
+---
+
+## Support
+
+Found this project useful? Consider supporting its development:
+
+- ⭐ Star this repository
+- 💬 Leave a review:
+  - [Chrome Web Store](https://chromewebstore.google.com/detail/linkedin-sponsor-block/dmgglmnbmokkdocpamjkcgjfjceoocbh/reviews)
+  - [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/linkedin-sponsor-block/reviews/)
+  - [Greasyfork](https://greasyfork.org/fr/scripts/546877-linkedin-sponsor-block/feedback)
 
 ## License
 

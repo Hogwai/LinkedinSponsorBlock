@@ -28,7 +28,12 @@ export const DEFAULT_SETTINGS = {
     [SETTINGS_KEYS.REVIEW_BANNER_DISMISSED]: false
 };
 
-export const LANGUAGES = ['en', 'fr'];
+export const LANGUAGES = ['en', 'fr', 'es', 'pt', 'de', 'it', 'hi', 'ar', 'zh', 'ja'];
+
+export function detectLanguage() {
+    const locale = (navigator.language || 'en').toLowerCase().split('-')[0];
+    return LANGUAGES.includes(locale) ? locale : 'en';
+}
 
 export const POSITIONS = {
     BOTTOM_RIGHT: 'br',
