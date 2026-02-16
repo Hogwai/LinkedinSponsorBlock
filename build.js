@@ -7,7 +7,10 @@ const SEMVER_RE = /^\d+\.\d+\.\d+$/;
 const TARGETS = ['chrome', 'firefox', 'userscript'];
 
 const { values } = parseArgs({
-    options: { target: { type: 'string' } },
+    options: {
+        target: { type: 'string' },
+        'no-version': { type: 'boolean', default: false },
+    },
     strict: false,
 });
 
@@ -55,12 +58,19 @@ async function askTargets() {
 }
 
 async function main() {
-    const targets = values.target ? [values.target] : await askTargets();
+    const targets = values.target
+        ? (values.target === 'all' ? [...TARGETS] : [values.target])
+        : await askTargets();
+    const skipVersion = values['no-version'];
 
-    console.log('\nVersions (press Enter to keep current):');
     const newVersions = {};
-    for (const t of targets) {
-        newVersions[t] = await askVersion(t);
+    if (skipVersion) {
+        for (const t of targets) newVersions[t] = versions[t];
+    } else {
+        console.log('\nVersions (press Enter to keep current):');
+        for (const t of targets) {
+            newVersions[t] = await askVersion(t);
+        }
     }
 
     // Confirmation
@@ -70,11 +80,13 @@ async function main() {
         console.log(`  ${t}: ${newVersions[t]}${changed ? ` (was ${versions[t]})` : ''}`);
     }
 
-    const confirm = await ask('\nProceed? (Y/n): ');
-    if (confirm.trim().toLowerCase() === 'n') {
-        console.log('Aborted.');
-        if (!closed) rl.close();
-        process.exit(0);
+    if (!skipVersion) {
+        const confirm = await ask('\nProceed? (Y/n): ');
+        if (confirm.trim().toLowerCase() === 'n') {
+            console.log('Aborted.');
+            if (!closed) rl.close();
+            process.exit(0);
+        }
     }
 
     if (!closed) rl.close();

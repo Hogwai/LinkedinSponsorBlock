@@ -1,5 +1,5 @@
 import { createTranslator } from '../shared/translations.js';
-import { POSITIONS } from '../shared/settings.js';
+import { POSITIONS, detectLanguage } from '../shared/settings.js';
 
 // ==================== STYLES ====================
 const STYLES = `
@@ -8,6 +8,18 @@ const STYLES = `
         position: fixed !important;
         z-index: 2147483647 !important;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    :host(.lang-ja) {
+        font-family: 'Meiryo', 'Yu Gothic', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif !important;
+    }
+
+    :host(.lang-zh) {
+        font-family: 'Microsoft YaHei UI', 'Microsoft YaHei', 'PingFang SC', 'SimHei', sans-serif !important;
+    }
+
+    :host(.lang-hi) {
+        font-family: 'Nirmala UI', 'Segoe UI', 'Mangal', sans-serif !important;
     }
 
     /* ---- Position variants ---- */
@@ -292,6 +304,16 @@ const STYLES = `
         line-height: 1.3;
     }
 
+    .lsb-review-banner a {
+        color: #0A66C2;
+        text-decoration: underline;
+        font-weight: 500;
+    }
+
+    .lsb-review-banner a:hover {
+        opacity: 0.8;
+    }
+
     .lsb-dismiss-btn {
         background: none;
         border: 1px solid rgba(10, 102, 194, 0.25);
@@ -411,7 +433,12 @@ function createHTML() {
                 </button>
             </div>
             <div class="lsb-review-banner" id="lsb-review-banner" style="display:none;">
-                <span data-t="reviewBanner">Enjoying it? Leave a review or star us on GitHub!</span>
+                <span>
+                    <span data-t="reviewBanner">Enjoying the extension?</span>
+                    <a id="lsb-review-banner-link" href="#" target="_blank" data-t="leaveReview">Leave a review</a>
+                    ·
+                    <a id="lsb-github-banner-link" href="#" target="_blank">⭐ GitHub</a>
+                </span>
                 <button class="lsb-dismiss-btn" id="lsb-dismiss-banner" data-t="dismiss">Dismiss</button>
             </div>
             <div class="lsb-toggles">
@@ -471,6 +498,14 @@ function createHTML() {
                 <select id="lsb-language" class="lsb-lang-select">
                     <option value="en">EN</option>
                     <option value="fr">FR</option>
+                    <option value="es">ES</option>
+                    <option value="pt">PT</option>
+                    <option value="de">DE</option>
+                    <option value="it">IT</option>
+                    <option value="hi">HI</option>
+                    <option value="ar">AR</option>
+                    <option value="zh">ZH</option>
+                    <option value="ja">JA</option>
                 </select>
                 <select id="lsb-position" class="lsb-pos-select" title="Position">
                     <option value="${POSITIONS.BOTTOM_RIGHT}">\u2198</option>
@@ -522,12 +557,17 @@ export function createFloatingUI({
     const reviewLinkEl = $('lsb-review-link');
     const githubLinkEl = $('lsb-github-link');
 
-    let currentLang = settings.language || 'en';
+    let currentLang = settings.language || detectLanguage();
     let statusTimer = null;
     let t = createTranslator(currentLang);
 
     function applyTranslations() {
         t = createTranslator(currentLang);
+
+        // Set lang class on host for per-language font overrides (prevents FOIT)
+        host.className = host.className.replace(/\blang-\w+\b/g, '').trim();
+        host.classList.add(`lang-${currentLang}`);
+
         shadow.querySelectorAll('[data-t]').forEach(el => {
             el.textContent = t(el.getAttribute('data-t'));
         });
@@ -580,7 +620,11 @@ export function createFloatingUI({
 
     // Review banner (time-based, dismissable)
     const bannerEl = $('lsb-review-banner');
+    const bannerReviewLink = $('lsb-review-banner-link');
+    const bannerGithubLink = $('lsb-github-banner-link');
     const dismissBtn = $('lsb-dismiss-banner');
+    bannerReviewLink.href = settings.reviewUrl || '#';
+    bannerGithubLink.href = settings.githubUrl || 'https://github.com/Hogwai/LinkedinSponsorBlock';
     if (settings.installDate && !settings.reviewBannerDismissed) {
         const daysSinceInstall = (Date.now() - settings.installDate) / (1000 * 60 * 60 * 24);
         if (daysSinceInstall >= (settings.reviewThresholdDays || 7)) {

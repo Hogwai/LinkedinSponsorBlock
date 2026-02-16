@@ -1,6 +1,6 @@
 import api from './browser-api.js';
 import { createTranslator } from '../shared/translations.js';
-import { SETTINGS_KEYS, DEFAULT_SETTINGS } from '../shared/settings.js';
+import { SETTINGS_KEYS, DEFAULT_SETTINGS, detectLanguage } from '../shared/settings.js';
 import { CONFIG } from '../shared/config.js';
 
 const statusEl = document.getElementById('status');
@@ -23,6 +23,7 @@ const supportToggle = document.getElementById('supportToggle');
 const supportContent = document.getElementById('supportContent');
 const reviewLink = document.getElementById('reviewLink');
 const reviewBanner = document.getElementById('reviewBanner');
+const reviewBannerLink = document.getElementById('reviewBannerLink');
 const dismissBannerBtn = document.getElementById('dismissBanner');
 
 let t = createTranslator('en');
@@ -33,19 +34,48 @@ function getCurrentLanguage() {
 }
 
 // Update UI with current language
-function updateUILanguage() {
-    t = createTranslator(getCurrentLanguage());
-    document.querySelectorAll('[data-translate]').forEach(element => {
-        const key = element.getAttribute('data-translate');
-        if (key) {
-            element.textContent = t(key);
-        }
-    });
+let isFirstLoad = true;
 
+function updateUILanguage() {
+    const lang = getCurrentLanguage();
+    t = createTranslator(lang);
+
+    // Set lang class on body for per-language font overrides (prevents FOIT)
+    document.body.className = document.body.className.replace(/\blang-\w+\b/g, '').trim();
+    document.body.classList.add(`lang-${lang}`);
+    document.documentElement.lang = lang;
+
+    const elements = [...document.querySelectorAll('[data-translate]')];
     const btnText = scanBtn.querySelector('.btn-text');
-    if (btnText) {
-        btnText.textContent = t('scanNow');
+    if (btnText) elements.push(btnText);
+
+    if (isFirstLoad) {
+        // No animation on initial popup open
+        elements.forEach(el => {
+            const key = el.getAttribute('data-translate') || 'scanNow';
+            el.textContent = t(key);
+        });
+        isFirstLoad = false;
+        return;
     }
+
+    // Show skeleton placeholders, then reveal translations one by one
+    elements.forEach(el => el.classList.add('skeleton'));
+
+    let i = 0;
+    function updateNext() {
+        if (i >= elements.length) return;
+        const el = elements[i++];
+        const key = el.getAttribute('data-translate') || 'scanNow';
+        el.classList.remove('skeleton');
+        el.classList.add('skeleton-reveal');
+        el.textContent = t(key);
+        requestAnimationFrame(() => {
+            el.classList.remove('skeleton-reveal');
+        });
+        setTimeout(updateNext, 50);
+    }
+    setTimeout(updateNext, 150);
 }
 
 // Load settings from storage
@@ -58,7 +88,7 @@ async function loadSettings() {
     promotedCountEl.textContent = result.totalPromotedBlocked;
     suggestedCountEl.textContent = result.totalSuggestedBlocked;
 
-    languageSelect.value = result.language || 'en';
+    languageSelect.value = result.language || detectLanguage();
 
     updateDisabledState(result.enabled);
     updateUILanguage();
@@ -247,7 +277,9 @@ supportToggle.addEventListener('click', () => {
 
 // Set review link based on platform
 const isFirefox = typeof browser !== 'undefined' && browser.runtime?.getURL;
-reviewLink.href = isFirefox ? CONFIG.REVIEW_URLS.firefox : CONFIG.REVIEW_URLS.chrome;
+const reviewUrl = isFirefox ? CONFIG.REVIEW_URLS.firefox : CONFIG.REVIEW_URLS.chrome;
+reviewLink.href = reviewUrl;
+reviewBannerLink.href = reviewUrl;
 
 // Review banner (time-based, dismissable)
 async function checkReviewBanner() {
