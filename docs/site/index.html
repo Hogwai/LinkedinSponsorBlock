@@ -5,6 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LinkedIn Sponsor Block — Clean up your LinkedIn feed</title>
   <meta name="description" content="Automatically remove sponsored posts, suggested content, and partner promotions from your LinkedIn feed. Available as a Chrome extension, Firefox add-on, and userscript.">
+  <meta name="keywords" content="LinkedIn, ad blocker, sponsored posts, browser extension, Chrome, Firefox, userscript, clean feed, remove ads, productivity">
+  <meta name="author" content="Hogwai">
+  <link rel="canonical" href="https://hogwai.github.io/LinkedinSponsorBlock/">
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="LinkedIn Sponsor Block — Clean up your LinkedIn feed">
+  <meta property="og:description" content="Automatically remove sponsored posts, suggested content, and partner promotions from your LinkedIn feed. Available as a Chrome extension, Firefox add-on, and userscript.">
+  <meta property="og:image" content="https://hogwai.github.io/LinkedinSponsorBlock/img/popup_en.png">
+  <meta property="og:url" content="https://hogwai.github.io/LinkedinSponsorBlock/">
+  <meta property="og:site_name" content="LinkedIn Sponsor Block">
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="LinkedIn Sponsor Block — Clean up your LinkedIn feed">
+  <meta name="twitter:description" content="Automatically remove sponsored posts, suggested content, and partner promotions from your LinkedIn feed.">
+  <meta name="twitter:image" content="https://hogwai.github.io/LinkedinSponsorBlock/img/popup_en.png">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -18,6 +33,72 @@
     }
   </script>
   <link rel="icon" type="image/png" href="img/icon_128.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "LinkedIn Sponsor Block",
+    "description": "Automatically remove sponsored posts, suggested content, and partner promotions from your LinkedIn feed.",
+    "applicationCategory": "BrowserExtension",
+    "operatingSystem": "Chrome, Firefox",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "url": "https://hogwai.github.io/LinkedinSponsorBlock/",
+    "license": "https://github.com/Hogwai/LinkedinSponsorBlock/blob/main/LICENSE",
+    "downloadUrl": "https://chromewebstore.google.com/detail/linkedin-sponsor-block/dmgglmnbmokkdocpamjkcgjfjceoocbh"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Does LinkedIn Sponsor Block work with LinkedIn Premium?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. LinkedIn Sponsor Block works the same way regardless of your LinkedIn subscription. It removes sponsored and suggested content from both free and Premium feeds."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is my data safe with LinkedIn Sponsor Block?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Absolutely. The extension runs entirely locally in your browser. It does not collect, transmit, or store any personal data. The source code is fully open source and auditable on GitHub."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does LinkedIn Sponsor Block work in languages other than English?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. The detection engine is language-agnostic and works with all languages supported by LinkedIn. The extension UI itself is available in English and French."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I choose what types of content to block?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. You can independently toggle blocking for promoted posts and suggested content in the extension settings."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What if LinkedIn changes its layout?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The extension uses a robust detection approach based on LinkedIn's internal markup rather than fragile CSS selectors. It is actively maintained and updated when changes occur."
+        }
+      }
+    ]
+  }
+  </script>
 </head>
 <body class="bg-white text-slate-800 font-sans">
 
@@ -31,6 +112,8 @@
       <!-- Desktop links -->
       <div class="hidden sm:flex items-center gap-6 text-sm text-slate-600">
         <a href="#features" class="hover:text-slate-900 transition-colors">Features</a>
+        <a href="#how-it-works" class="hover:text-slate-900 transition-colors">How it works</a>
+        <a href="#faq" class="hover:text-slate-900 transition-colors">FAQ</a>
         <a href="#preview" class="hover:text-slate-900 transition-colors">Preview</a>
         <a href="https://github.com/Hogwai/LinkedinSponsorBlock" target="_blank" rel="noopener noreferrer" class="hover:text-slate-900 transition-colors" aria-label="GitHub">
           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
@@ -44,6 +127,8 @@
     <!-- Mobile menu -->
     <div id="mobile-menu" class="hidden sm:hidden border-t border-slate-200 bg-white px-4 pb-3">
       <a href="#features" class="block py-2 text-sm text-slate-600 hover:text-slate-900">Features</a>
+      <a href="#how-it-works" class="block py-2 text-sm text-slate-600 hover:text-slate-900">How it works</a>
+      <a href="#faq" class="block py-2 text-sm text-slate-600 hover:text-slate-900">FAQ</a>
       <a href="#preview" class="block py-2 text-sm text-slate-600 hover:text-slate-900">Preview</a>
       <a href="https://github.com/Hogwai/LinkedinSponsorBlock" target="_blank" rel="noopener noreferrer" class="block py-2 text-sm text-slate-600 hover:text-slate-900">GitHub</a>
     </div>
@@ -51,7 +136,7 @@
 
   <!-- Hero -->
   <section class="max-w-3xl mx-auto px-4 pt-20 pb-16 text-center">
-    <img src="img/icon_128.png" alt="LinkedIn Sponsor Block icon" class="w-20 h-20 mx-auto mb-6">
+    <img src="img/icon_128.png" alt="LinkedIn Sponsor Block icon — browser extension to remove sponsored posts from LinkedIn" class="w-20 h-20 mx-auto mb-6" width="128" height="128">
     <h1 class="text-4xl sm:text-5xl font-bold text-slate-900 mb-4">LinkedIn Sponsor Block</h1>
     <p class="text-xl text-slate-600 mb-4">Clean up your LinkedIn feed and see only what matters.</p>
     <p class="text-base text-slate-500 max-w-xl mx-auto mb-8">
@@ -114,20 +199,90 @@
     </div>
   </section>
 
+  <!-- How it works -->
+  <section id="how-it-works" class="max-w-3xl mx-auto px-4 py-16">
+    <h2 class="text-2xl font-bold text-slate-900 text-center mb-10">How it works</h2>
+    <div class="space-y-8">
+      <div class="flex items-start gap-4">
+        <div class="flex-shrink-0 w-10 h-10 rounded-full bg-linkedin text-white flex items-center justify-center font-bold">1</div>
+        <div>
+          <h3 class="font-semibold text-slate-900 mb-1">Install the extension or userscript</h3>
+          <p class="text-sm text-slate-500">Available on the Chrome Web Store, Firefox Add-ons, or as a Tampermonkey userscript. One click to install, no configuration required.</p>
+        </div>
+      </div>
+      <div class="flex items-start gap-4">
+        <div class="flex-shrink-0 w-10 h-10 rounded-full bg-linkedin text-white flex items-center justify-center font-bold">2</div>
+        <div>
+          <h3 class="font-semibold text-slate-900 mb-1">Browse LinkedIn as usual</h3>
+          <p class="text-sm text-slate-500">The extension runs in the background, continuously scanning your feed as new posts load. It detects sponsored posts, suggested content, and partner promotions using LinkedIn's own markup.</p>
+        </div>
+      </div>
+      <div class="flex items-start gap-4">
+        <div class="flex-shrink-0 w-10 h-10 rounded-full bg-linkedin text-white flex items-center justify-center font-bold">3</div>
+        <div>
+          <h3 class="font-semibold text-slate-900 mb-1">Unwanted content is hidden instantly</h3>
+          <p class="text-sm text-slate-500">Matching posts are removed from the DOM before you ever see them. A real-time counter tracks how many posts have been blocked during your session.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="max-w-3xl mx-auto px-4 py-16">
+    <h2 class="text-2xl font-bold text-slate-900 text-center mb-10">Frequently asked questions</h2>
+    <div class="space-y-6">
+      <details class="group bg-slate-50 rounded-xl p-5">
+        <summary class="font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between">
+          Does it work with LinkedIn Premium?
+          <svg class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+        </summary>
+        <p class="text-sm text-slate-500 mt-3">Yes. LinkedIn Sponsor Block works the same way regardless of your LinkedIn subscription. It removes sponsored and suggested content from both free and Premium feeds.</p>
+      </details>
+      <details class="group bg-slate-50 rounded-xl p-5">
+        <summary class="font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between">
+          Is my data safe?
+          <svg class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+        </summary>
+        <p class="text-sm text-slate-500 mt-3">Absolutely. The extension runs entirely locally in your browser. It does not collect, transmit, or store any personal data. The source code is fully open source and auditable on GitHub.</p>
+      </details>
+      <details class="group bg-slate-50 rounded-xl p-5">
+        <summary class="font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between">
+          Does it work in languages other than English?
+          <svg class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+        </summary>
+        <p class="text-sm text-slate-500 mt-3">Yes. The detection engine is language-agnostic and works with all languages supported by LinkedIn. The extension UI itself is available in English and French.</p>
+      </details>
+      <details class="group bg-slate-50 rounded-xl p-5">
+        <summary class="font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between">
+          Can I choose what types of content to block?
+          <svg class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+        </summary>
+        <p class="text-sm text-slate-500 mt-3">Yes. You can independently toggle blocking for promoted posts and suggested content in the extension settings. This lets you keep the types of content you find useful.</p>
+      </details>
+      <details class="group bg-slate-50 rounded-xl p-5">
+        <summary class="font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between">
+          What if LinkedIn changes its layout?
+          <svg class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+        </summary>
+        <p class="text-sm text-slate-500 mt-3">The extension uses a robust detection approach based on LinkedIn's internal markup rather than fragile CSS selectors. It is actively maintained and updated when changes occur.</p>
+      </details>
+    </div>
+  </section>
+
   <!-- Preview -->
   <section id="preview" class="max-w-5xl mx-auto px-4 py-16">
     <h2 class="text-2xl font-bold text-slate-900 text-center mb-10">Preview</h2>
     <div class="flex flex-col sm:flex-row justify-center items-center gap-8">
       <div class="text-center">
-        <img src="img/popup_en.png" alt="LinkedIn Sponsor Block popup" class="rounded-xl shadow-lg max-w-xs mx-auto">
+        <img src="img/popup_en.png" alt="LinkedIn Sponsor Block extension popup showing blocked sponsored posts counter and toggle" class="rounded-xl shadow-lg max-w-xs mx-auto" loading="lazy" width="496" height="619">
         <p class="text-sm text-slate-500 mt-3">Extension popup</p>
       </div>
       <div class="text-center">
-        <img src="img/settings_en.png" alt="LinkedIn Sponsor Block settings" class="rounded-xl shadow-lg max-w-xs mx-auto">
+        <img src="img/settings_en.png" alt="LinkedIn Sponsor Block settings panel with filter customization options" class="rounded-xl shadow-lg max-w-xs mx-auto" loading="lazy" width="429" height="545">
         <p class="text-sm text-slate-500 mt-3">Settings</p>
       </div>
       <div class="text-center">
-        <img src="img/userscript_en.png" alt="LinkedIn Sponsor Block userscript" class="rounded-xl shadow-lg max-w-xs mx-auto">
+        <img src="img/userscript_en.png" alt="LinkedIn Sponsor Block userscript floating panel on LinkedIn feed" class="rounded-xl shadow-lg max-w-xs mx-auto" loading="lazy" width="355" height="500">
         <p class="text-sm text-slate-500 mt-3">Userscript panel</p>
       </div>
     </div>
