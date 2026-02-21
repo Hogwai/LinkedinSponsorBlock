@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://hogwai.github.io/LinkedinSponsorBlock/sitemap.xml
