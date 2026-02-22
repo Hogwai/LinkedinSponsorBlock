@@ -11,7 +11,7 @@
     "clean": "rm -rf dist"
   },
   "devDependencies": {
-    "rollup": "^4.0.0",
+    "rollup": "^4.58.0",
     "rollup-plugin-copy": "^3.5.0"
   }
 }
