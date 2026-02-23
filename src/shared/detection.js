@@ -1,5 +1,23 @@
 import { CONFIG } from './config.js';
 
+function isSponsored(post) {
+    const { attributeMatch, childSelectors } = CONFIG.DETECTION.SPONSORED;
+    const attrValue = post.getAttribute(attributeMatch.attr)?.toLowerCase();
+    if (attrValue && attributeMatch.patterns.some(p => attrValue.includes(p.toLowerCase()))) {
+        return true;
+    }
+    return childSelectors.some(sel => post.querySelector(sel));
+}
+
+function isSuggested(post) {
+    const { keywordMatch, childSelectors } = CONFIG.DETECTION.SUGGESTED;
+    const candidates = post.querySelectorAll(keywordMatch.selector);
+    if (Array.from(candidates).some(el => keywordMatch.keywords.has(el.textContent.trim().toLowerCase()))) {
+        return true;
+    }
+    return childSelectors.some(sel => post.querySelector(sel));
+}
+
 export function getUnscannedPosts(root) {
     const selector = CONFIG.SELECTORS.POST_CONTAINERS
         .map(s => `${s}:not([${CONFIG.ATTRIBUTES.SCANNED}])`)
@@ -20,20 +38,9 @@ export function getUnscannedPosts(root) {
     };
 
     posts.forEach(post => {
-        const lowerAttr = post.getAttribute('data-view-tracking-scope')?.toLowerCase();
-
-        if (CONFIG.SPONSORED_PATTERNS.some(p => lowerAttr.includes(p.toLowerCase()))) {
+        if (isSponsored(post)) {
             groups.sponsored.push(post);
-            return;
-        }
-
-        const candidateContainers = post.querySelectorAll('p[componentkey]');
-        const isSuggested = Array.from(candidateContainers).find(p => {
-            const label = p.textContent.trim().toLowerCase();
-            return CONFIG.SUGGESTION_KEYWORDS.has(label);
-        });
-
-        if (isSuggested) {
+        } else if (isSuggested(post)) {
             groups.suggested.push(post);
         }
     });

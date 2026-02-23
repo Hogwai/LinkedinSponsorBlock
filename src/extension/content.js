@@ -66,7 +66,7 @@ function hideSuggestedPost(post) {
     post.setAttribute(CONFIG.ATTRIBUTES.SCANNED, 'true');
     state.sessionSuggestedRemoved++;
     notifier.queue();
-    logger.log(`Suggested post hidden: "${post?.textContent?.trim().slice(0, 100)}"`);
+    logger.log(`Suggested post hidden: "${post?.textContent?.replace(/\s+/g, ' ').trim().slice(0, 100)}"`);
     return true;
 }
 
@@ -75,7 +75,7 @@ function hidePromotedPost(post) {
     post.setAttribute(CONFIG.ATTRIBUTES.SCANNED, 'true');
     state.sessionPromotedRemoved++;
     notifier.queue();
-    logger.log(`Promoted post hidden: "${post?.textContent?.trim().slice(0, 100)}"`);
+    logger.log(`Promoted post hidden: "${post?.textContent?.replace(/\s+/g, ' ').trim().slice(0, 100)}"`);
     return true;
 }
 
