@@ -62,7 +62,7 @@ Choose your preferred installation method:
 
 <a href="https://greasyfork.org/fr/scripts/546877-linkedinsponsorblock" target="_blank"><img src="https://img.shields.io/badge/Install%20from-Greasyfork-990000?style=for-the-badge&logo=tampermonkey&logoColor=white" alt="Install from Greasyfork"></a>
 
-<a href="https://github.com/Hogwai/LinkedinSponsorBlock/releases/download/userscript-v1.2.2/LinkedinSponsorBlock.user.js" target="_blank"><img src="https://img.shields.io/badge/Install%20from-GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="Install from GitHub"></a>
+<a href="https://github.com/Hogwai/LinkedinSponsorBlock/releases/download/userscript-v1.2.3/LinkedinSponsorBlock.user.js" target="_blank"><img src="https://img.shields.io/badge/Install%20from-GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="Install from GitHub"></a>
 
 ---
 
@@ -88,7 +88,7 @@ Choose your preferred installation method:
    - Click "Install this script" and confirm
 
 2. **From GitHub:**
-   - Click here: [LinkedinSponsorBlock.user.js](https://github.com/Hogwai/LinkedinSponsorBlock/releases/download/userscript-v1.2.2/LinkedinSponsorBlock.user.js) to install directly
+   - Click here: [LinkedinSponsorBlock.user.js](https://github.com/Hogwai/LinkedinSponsorBlock/releases/download/userscript-v1.2.3/LinkedinSponsorBlock.user.js) to install directly
    - Or browse the userscript releases: [Releases](https://github.com/Hogwai/LinkedinSponsorBlock/releases?q=userscript&expanded=true)
 
 3. **Verify that the script is enabled:**
