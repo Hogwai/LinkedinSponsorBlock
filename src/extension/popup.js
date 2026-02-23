@@ -303,7 +303,18 @@ dismissBannerBtn.addEventListener('click', async () => {
     await api.storage.local.set({ [SETTINGS_KEYS.REVIEW_BANNER_DISMISSED]: true });
 });
 
+// Detect mobile (popup opens in a tab on Firefox Android)
+async function detectMobile() {
+    try {
+        const info = await api.runtime.getPlatformInfo();
+        if (info.os === 'android') {
+            document.body.classList.add('tab-mode');
+        }
+    } catch { /* Chrome desktop — no Android */ }
+}
+
 // Initialize
+detectMobile();
 loadSettings();
 updateCounters();
 checkReviewBanner();

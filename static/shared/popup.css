@@ -683,3 +683,72 @@ body.lang-hi {
     font-size: 13px;
     font-weight: 500;
 }
+
+/* Mobile responsive — popup opens in a separate tab on Firefox Android */
+.tab-mode .container {
+    padding: 24px 20px;
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+.tab-mode .logo h1 { font-size: 20px; }
+.tab-mode .logo svg { width: 32px; height: 32px; }
+.tab-mode .settings-btn-icon { padding: 12px; }
+.tab-mode .settings-btn-icon svg { width: 26px; height: 26px; }
+
+/* Stats */
+.tab-mode .stats { padding: 20px; border-radius: 14px; margin-bottom: 24px; }
+.tab-mode .stat-value { font-size: 36px; }
+.tab-mode .stat-label { font-size: 12px; }
+.tab-mode .stat-divider { height: 48px; }
+
+/* Settings / Filters */
+.tab-mode .settings { padding: 20px; border-radius: 14px; margin-bottom: 24px; }
+.tab-mode .settings h2 { font-size: 14px; margin-bottom: 16px; }
+.tab-mode .checkbox-item { padding: 10px 0; }
+.tab-mode .checkmark { height: 26px; width: 26px; border-radius: 6px; }
+.tab-mode .checkmark:after { width: 7px; height: 13px; border-width: 0 2.5px 2.5px 0; }
+.tab-mode .checkbox-label { margin-left: 14px; font-size: 16px; }
+
+/* Scan button */
+.tab-mode .scan-btn { padding: 16px 24px; font-size: 17px; border-radius: 12px; }
+.tab-mode .scan-btn svg { width: 20px; height: 20px; }
+
+/* Status */
+.tab-mode #status { font-size: 15px; margin-top: 16px; }
+
+/* Banners */
+.tab-mode .disabled-banner { padding: 14px; font-size: 15px; border-radius: 10px; margin-bottom: 20px; }
+.tab-mode .disabled-banner svg { width: 20px; height: 20px; }
+.tab-mode .review-banner { padding: 14px; font-size: 14px; border-radius: 10px; margin-bottom: 20px; }
+.tab-mode .dismiss-banner-btn { padding: 6px 14px; font-size: 13px; }
+
+/* Footer */
+.tab-mode .footer { font-size: 13px; margin-top: 20px; padding-top: 16px; }
+
+/* Modal */
+.tab-mode .modal-content { width: 95%; max-width: 460px; border-radius: 16px; }
+.tab-mode .modal-header { padding: 16px 20px; }
+.tab-mode .modal-header h3 { font-size: 18px; }
+.tab-mode .close-btn { padding: 8px; }
+.tab-mode .close-btn svg { width: 24px; height: 24px; }
+.tab-mode .modal-body { padding: 14px 20px; }
+.tab-mode .settings-section { margin-bottom: 20px; }
+.tab-mode .settings-section h4 { font-size: 16px; margin-bottom: 12px; }
+.tab-mode .settings-section p { font-size: 14px; }
+
+/* Language selector */
+.tab-mode .language-selector label { font-size: 16px; }
+.tab-mode .language-selector select { padding: 8px 12px; font-size: 16px; }
+
+/* Danger / confirm buttons */
+.tab-mode .danger-btn { padding: 12px 18px; font-size: 16px; border-radius: 10px; }
+.tab-mode .confirm-actions { padding: 12px; border-radius: 10px; }
+.tab-mode .confirm-actions span { font-size: 15px; }
+.tab-mode .confirm-btn, .tab-mode .cancel-btn { padding: 10px 18px; font-size: 15px; border-radius: 6px; }
+
+/* Support links */
+.tab-mode .support-link-btn { padding: 10px 16px; font-size: 14px; border-radius: 10px; }
+
+/* Collapsible */
+.tab-mode .collapsible-chevron { width: 20px; height: 20px; }
