@@ -27,6 +27,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Update sitemap lastmod
+        run: sed -i "s|<lastmod>.*</lastmod>|<lastmod>$(date -u +%Y-%m-%d)</lastmod>|" docs/site/sitemap.xml
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
