@@ -1,18 +1,16 @@
 import { CONFIG } from './config.js';
 
 export function createObserver(scanFn, state) {
-    function start() {
-        if (state.isObserverConnected) return;
+    let retryCount = 0;
 
+    function findFeed() {
         const { FEED_WRAPPER } = CONFIG.SELECTORS;
-        const feed = document.querySelector(FEED_WRAPPER.newFeed) ||
-            document.querySelector(FEED_WRAPPER.mobile);
+        return document.querySelector(FEED_WRAPPER.newFeed) ||
+            document.querySelector(FEED_WRAPPER.mobile) ||
+            document.querySelector(FEED_WRAPPER.desktop);
+    }
 
-        if (!feed) {
-            setTimeout(start, CONFIG.DELAYS.OBSERVER_RETRY);
-            return;
-        }
-
+    function connect(root) {
         let debounceTimeout = null;
 
         state.observer = new MutationObserver(mutations => {
@@ -42,7 +40,28 @@ export function createObserver(scanFn, state) {
         });
 
         state.isObserverConnected = true;
-        scanFn(feed);
+        retryCount = 0;
+        scanFn(root);
+    }
+
+    function start() {
+        if (state.isObserverConnected) return;
+
+        const feed = findFeed();
+
+        if (feed) {
+            connect(feed);
+            return;
+        }
+
+        if (retryCount < CONFIG.DELAYS.MAX_OBSERVER_RETRIES) {
+            retryCount++;
+            setTimeout(start, CONFIG.DELAYS.OBSERVER_RETRY);
+            return;
+        }
+
+        // Feed wrapper not found after retries — start anyway with document
+        connect(document);
     }
 
     function stop() {

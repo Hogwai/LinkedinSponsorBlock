@@ -4,6 +4,7 @@ export const CONFIG = {
     },
     DELAYS: {
         OBSERVER_RETRY: 200,
+        MAX_OBSERVER_RETRIES: 15,
         NOTIFICATION: 300
     },
     SELECTORS: {
