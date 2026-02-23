@@ -1,6 +1,6 @@
 export function isFeedPage() {
     const path = location.pathname;
-    return path.startsWith('/feed') || path.startsWith('/preload');
+    return path === '/' || path.startsWith('/feed') || path.startsWith('/preload');
 }
 
 export function createPageManager(state, observer, resetFn) {
