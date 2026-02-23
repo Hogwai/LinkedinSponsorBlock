@@ -34,6 +34,7 @@ These posts look like regular updates but are labeled **"Promotion."** Even stan
 ## Features
 
 - 🚫 **Automatic removal** – Hides sponsored posts, suggested content, and partner promotions
+- 📱 **Desktop & mobile** – Works on both desktop and mobile versions of LinkedIn (Firefox & userscript)
 - 🌐 **Multilingual support** – Works with all languages available on LinkedIn
 - 🌍 **Localized UI** – Extension interface available in English and French
 - ⚡ **Lightweight & discreet** – Runs in the background without slowing your browsing

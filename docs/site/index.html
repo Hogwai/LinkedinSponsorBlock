@@ -40,7 +40,7 @@
     "@type": "SoftwareApplication",
     "name": "LinkedIn Sponsor Block",
     "alternateName": "LinkedIn Ad Blocker",
-    "description": "Free LinkedIn ad blocker that removes promoted posts, sponsored content, and suggested posts from your LinkedIn feed. Block ads on LinkedIn with one click.",
+    "description": "Free LinkedIn ad blocker that removes promoted posts, sponsored content, and suggested posts from your LinkedIn feed on desktop and mobile. Block ads on LinkedIn with one click.",
     "applicationCategory": "BrowserExtension",
     "operatingSystem": "Chrome, Firefox",
     "offers": {
@@ -106,6 +106,14 @@
         "acceptedAnswer": {
           "@type": "Answer",
           "text": "Yes. You can independently toggle blocking for promoted posts and suggested content in the extension settings."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does LinkedIn Sponsor Block work on mobile?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. The Firefox extension and userscript (via Tampermonkey) both support LinkedIn's mobile web version. Promoted and suggested posts are detected and hidden on mobile just like on desktop."
         }
       },
       {
@@ -194,6 +202,11 @@
         <div class="text-3xl mb-3">🚫</div>
         <h3 class="font-semibold text-slate-900 mb-1">Automatic removal</h3>
         <p class="text-sm text-slate-500">Hides sponsored posts, suggested content, and partner promotions silently.</p>
+      </div>
+      <div class="bg-slate-50 rounded-xl p-6">
+        <div class="text-3xl mb-3">📱</div>
+        <h3 class="font-semibold text-slate-900 mb-1">Desktop &amp; mobile</h3>
+        <p class="text-sm text-slate-500">Works on both desktop and mobile versions of LinkedIn (Firefox &amp; userscript).</p>
       </div>
       <div class="bg-slate-50 rounded-xl p-6">
         <div class="text-3xl mb-3">🌐</div>
@@ -316,6 +329,13 @@
           <svg class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
         </summary>
         <p class="text-sm text-slate-500 mt-3">Yes. You can independently toggle blocking for promoted posts and suggested content in the extension settings. This lets you keep the types of content you find useful.</p>
+      </details>
+      <details class="group bg-slate-50 rounded-xl p-5">
+        <summary class="font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between">
+          Does it work on mobile?
+          <svg class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+        </summary>
+        <p class="text-sm text-slate-500 mt-3">Yes. The Firefox extension and userscript (via Tampermonkey) both support LinkedIn's mobile web version. Promoted and suggested posts are detected and hidden on mobile just like on desktop.</p>
       </details>
       <details class="group bg-slate-50 rounded-xl p-5">
         <summary class="font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between">
