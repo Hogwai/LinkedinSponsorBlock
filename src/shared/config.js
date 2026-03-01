@@ -42,10 +42,37 @@ export const CONFIG = {
                     'Suggested',  // ENGLISH
                     'Vorgeschlagen',  // GERMAN
                     'Sugerencias', // SPANISH
+                    'Sugestões' // PORTUGUESE
                 ].map(t => t.toLowerCase()))
             },
             // Mobile: child element selectors indicating suggested content
             childSelectors: ['p[data-test-id="main-feed-card__header"]']
+        },
+        RECOMMENDED: {
+            // Desktop: keywords matched against text content of child elements
+            keywordMatch: {
+                selector: 'p[componentkey]',
+                keywords: new Set([
+                    'Recommended for you',      // ENGLISH
+                    'Recommandé pour vous',     // FRENCH
+                    'Te recomendamos',          // SPANISH
+                    'Recomendações para você',  // PORTUGUESE
+                    'Für Sie empfohlen',        // GERMAN
+                    'Consigliato per te',       // ITALIAN
+                    'आपके लिए सुझाव',           // HINDI
+                    'مقترح لك',                // ARABIC
+                    '为您推荐',                 // CHINESE (SIMPLIFIED)
+                    '精選內容',                 // CHINESE (TRADITIONAL)
+                    'おすすめのコース',          // JAPANESE
+                    'Рекомендуем для вас',      // RUSSIAN
+                    'Polecane dla Ciebie',      // POLISH
+                    '맞춤 추천',                 // KOREAN
+                    'Рекомендовані для вас',    // UKRAINIAN
+                    'Aanbevolen voor u',        // DUTCH
+                    'Doporučeno pro vás',       // CZECH
+                ].map(t => t.toLowerCase()))
+            },
+            childSelectors: []
         }
     },
     REVIEW_URLS: {

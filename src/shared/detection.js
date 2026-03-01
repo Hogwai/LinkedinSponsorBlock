@@ -18,6 +18,15 @@ function isSuggested(post) {
     return childSelectors.some(sel => post.querySelector(sel));
 }
 
+function isRecommended(post) {
+    const { keywordMatch, childSelectors } = CONFIG.DETECTION.RECOMMENDED;
+    const candidates = post.querySelectorAll(keywordMatch.selector);
+    if (Array.from(candidates).some(el => keywordMatch.keywords.has(el.textContent.trim().toLowerCase()))) {
+        return true;
+    }
+    return childSelectors.some(sel => post.querySelector(sel));
+}
+
 export function getUnscannedPosts(root) {
     const selector = CONFIG.SELECTORS.POST_CONTAINERS
         .map(s => `${s}:not([${CONFIG.ATTRIBUTES.SCANNED}])`)
@@ -34,6 +43,7 @@ export function getUnscannedPosts(root) {
     const groups = {
         sponsored: [],
         suggested: [],
+        recommended: [],
         content: [],
     };
 
@@ -42,6 +52,8 @@ export function getUnscannedPosts(root) {
             groups.sponsored.push(post);
         } else if (isSuggested(post)) {
             groups.suggested.push(post);
+        } else if (isRecommended(post)) {
+            groups.recommended.push(post);
         }
     });
 

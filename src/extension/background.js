@@ -4,9 +4,10 @@ import { SETTINGS_KEYS } from '../shared/settings.js';
 // Global counters
 let totalPromotedBlocked = 0;
 let totalSuggestedBlocked = 0;
-let currentSessionPromoted = 0;
-let currentSessionSuggested = 0;
 let isEnabled = true;
+
+// Gate: all message handlers wait for counters to be loaded
+const countersReady = loadCounters();
 
 // Update badge based on enabled state
 function updateBadge(enabled) {
@@ -38,64 +39,58 @@ async function saveCounters() {
     });
 }
 
-// Reset session counters when navigating to a new LinkedIn page
-function resetSessionCounters() {
-    currentSessionPromoted = 0;
-    currentSessionSuggested = 0;
-    saveCounters();
-}
-
 // Emit on URL change
 api.webNavigation.onHistoryStateUpdated.addListener((details) => {
     api.tabs.sendMessage(details.tabId, { type: 'URL_CHANGED', url: details.url });
-    resetSessionCounters();
 });
 
 api.webNavigation.onReferenceFragmentUpdated.addListener((details) => {
     api.tabs.sendMessage(details.tabId, { type: 'URL_CHANGED', url: details.url });
-    resetSessionCounters();
 });
 
 // Handle messages from content script and popup
 api.runtime.onMessage.addListener((message, sender, sendResponse) => {
     // Handle blocked posts from content script
     if (message.type === 'BLOCKED' && sender.tab?.id) {
-        const sessionPromoted = message.promoted || 0;
-        const sessionSuggested = message.suggested || 0;
-
-        // Update global counters
-        totalPromotedBlocked += sessionPromoted;
-        totalSuggestedBlocked += sessionSuggested;
-
-        // Save and notify popup
-        saveCounters();
-        api.runtime.sendMessage({
-            type: 'COUNTER_UPDATE',
-            promoted: totalPromotedBlocked,
-            suggested: totalSuggestedBlocked
-        }).catch(() => { }); // Popup may not be open
+        (async () => {
+            await countersReady;
+            totalPromotedBlocked += message.promoted || 0;
+            totalSuggestedBlocked += message.suggested || 0;
+            await saveCounters();
+            api.runtime.sendMessage({
+                type: 'COUNTER_UPDATE',
+                promoted: totalPromotedBlocked,
+                suggested: totalSuggestedBlocked
+            }).catch(() => { });
+        })();
+        return true;
     }
 
     // Handle request for current counters from popup
     if (message.type === 'GET_COUNTERS') {
-        sendResponse({
-            promoted: totalPromotedBlocked,
-            suggested: totalSuggestedBlocked
+        countersReady.then(() => {
+            sendResponse({
+                promoted: totalPromotedBlocked,
+                suggested: totalSuggestedBlocked
+            });
         });
+        return true;
     }
 
     // Handle reset counters
     if (message.type === 'RESET_COUNTERS') {
-        totalPromotedBlocked = 0;
-        totalSuggestedBlocked = 0;
-        currentSessionPromoted = 0;
-        currentSessionSuggested = 0;
-        saveCounters();
-        api.runtime.sendMessage({
-            type: 'COUNTER_UPDATE',
-            promoted: 0,
-            suggested: 0
-        }).catch(() => { });
+        (async () => {
+            await countersReady;
+            totalPromotedBlocked = 0;
+            totalSuggestedBlocked = 0;
+            await saveCounters();
+            api.runtime.sendMessage({
+                type: 'COUNTER_UPDATE',
+                promoted: 0,
+                suggested: 0
+            }).catch(() => { });
+        })();
+        return true;
     }
 
     // Handle settings change (enable/disable extension)
@@ -113,6 +108,4 @@ async function recordInstallDate() {
     }
 }
 
-// Initialize counters on startup
-loadCounters();
 recordInstallDate();
