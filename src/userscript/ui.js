@@ -292,6 +292,7 @@ const STYLES = `
     /* ---- Review banner ---- */
     .lsb-review-banner {
         display: flex;
+        flex-direction: column;
         align-items: center;
         gap: 6px;
         padding: 8px 12px;
@@ -302,6 +303,7 @@ const STYLES = `
         font-size: 11px;
         color: #0A66C2;
         line-height: 1.3;
+        text-align: center;
     }
 
     .lsb-review-banner a {
@@ -433,13 +435,14 @@ function createHTML() {
                 </button>
             </div>
             <div class="lsb-review-banner" id="lsb-review-banner" style="display:none;">
+                <span data-t="reviewBannerUserscript">Enjoying the userscript?</span>
                 <span>
-                    <span data-t="reviewBanner">Enjoying the extension?</span>
                     <a id="lsb-review-banner-link" href="#" target="_blank" data-t="leaveReview">Leave a review</a>
                     ·
                     <a id="lsb-github-banner-link" href="#" target="_blank">⭐ GitHub</a>
+                    ·
+                    <button class="lsb-dismiss-btn" id="lsb-dismiss-banner" data-t="dismiss">Dismiss</button>
                 </span>
-                <button class="lsb-dismiss-btn" id="lsb-dismiss-banner" data-t="dismiss">Dismiss</button>
             </div>
             <div class="lsb-toggles">
                 <label class="lsb-toggle-row">
@@ -467,6 +470,13 @@ function createHTML() {
                     <span data-t="blockSuggestedPosts">Block suggested</span>
                     <span class="lsb-toggle-wrap">
                         <input type="checkbox" id="lsb-filter-suggested">
+                        <span class="lsb-switch"></span>
+                    </span>
+                </label>
+                <label class="lsb-toggle-row lsb-filter-toggle">
+                    <span data-t="blockRecommendedPosts">Block "Recommended for you"</span>
+                    <span class="lsb-toggle-wrap">
+                        <input type="checkbox" id="lsb-filter-recommended">
                         <span class="lsb-switch"></span>
                     </span>
                 </label>
@@ -526,6 +536,7 @@ export function createFloatingUI({
     onToggleDiscreet,
     onTogglePromoted,
     onToggleSuggested,
+    onToggleRecommended,
     onScan,
     onLanguageChange,
     onPositionChange,
@@ -547,6 +558,7 @@ export function createFloatingUI({
     const discreetInput = $('lsb-discreet');
     const promotedInput = $('lsb-filter-promoted');
     const suggestedInput = $('lsb-filter-suggested');
+    const recommendedInput = $('lsb-filter-recommended');
     const scanBtn = $('lsb-scan');
     const langSelect = $('lsb-language');
     const posSelect = $('lsb-position');
@@ -601,6 +613,7 @@ export function createFloatingUI({
     discreetInput.checked = settings.discreet || false;
     promotedInput.checked = settings.filterPromoted;
     suggestedInput.checked = settings.filterSuggested;
+    recommendedInput.checked = settings.filterRecommended;
     langSelect.value = currentLang;
     posSelect.value = settings.position || 'br';
     updateDisabledState(settings.enabled);
@@ -672,6 +685,10 @@ export function createFloatingUI({
         onToggleSuggested(suggestedInput.checked);
     });
 
+    recommendedInput.addEventListener('change', () => {
+        onToggleRecommended(recommendedInput.checked);
+    });
+
     scanBtn.addEventListener('click', () => {
         const result = onScan();
         const promoted = result?.promoted || 0;
@@ -719,6 +736,9 @@ export function createFloatingUI({
             }
             if (newSettings.filterSuggested !== undefined) {
                 suggestedInput.checked = newSettings.filterSuggested;
+            }
+            if (newSettings.filterRecommended !== undefined) {
+                recommendedInput.checked = newSettings.filterRecommended;
             }
         },
         show() {

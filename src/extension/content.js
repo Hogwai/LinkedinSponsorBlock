@@ -17,7 +17,8 @@ const state = {
     settings: {
         [SETTINGS_KEYS.ENABLED]: true,
         [SETTINGS_KEYS.FILTER_PROMOTED]: true,
-        [SETTINGS_KEYS.FILTER_SUGGESTED]: true
+        [SETTINGS_KEYS.FILTER_SUGGESTED]: true,
+        [SETTINGS_KEYS.FILTER_RECOMMENDED]: true
     }
 };
 
@@ -70,6 +71,15 @@ function hideSuggestedPost(post) {
     return true;
 }
 
+function hideRecommendedPost(post) {
+    post.style.display = 'none';
+    post.setAttribute(CONFIG.ATTRIBUTES.SCANNED, 'true');
+    state.sessionSuggestedRemoved++;
+    notifier.queue();
+    logger.log(`Recommended post hidden: "${post?.textContent?.replace(/\s+/g, ' ').trim().slice(0, 100)}"`);
+    return true;
+}
+
 function hidePromotedPost(post) {
     post.style.display = 'none';
     post.setAttribute(CONFIG.ATTRIBUTES.SCANNED, 'true');
@@ -109,6 +119,16 @@ function scanFeed(root = document) {
         }
     }
 
+    if (state.settings[SETTINGS_KEYS.FILTER_RECOMMENDED]) {
+        for (const post of groupedPosts.recommended) {
+            if (hideRecommendedPost(post)) {
+                suggestedCount += 1;
+            } else {
+                post.setAttribute(CONFIG.ATTRIBUTES.SCANNED, 'false');
+            }
+        }
+    }
+
     if (promotedCount > 0 || suggestedCount > 0) {
         notifier.queue();
     }
@@ -130,7 +150,8 @@ async function loadSettings() {
     const result = await api.storage.local.get({
         [SETTINGS_KEYS.ENABLED]: true,
         [SETTINGS_KEYS.FILTER_PROMOTED]: true,
-        [SETTINGS_KEYS.FILTER_SUGGESTED]: true
+        [SETTINGS_KEYS.FILTER_SUGGESTED]: true,
+        [SETTINGS_KEYS.FILTER_RECOMMENDED]: true
     });
     state.settings = result;
 }
@@ -149,6 +170,9 @@ function updateSettings(newSettings) {
     }
     if (newSettings[SETTINGS_KEYS.FILTER_SUGGESTED] !== undefined) {
         state.settings[SETTINGS_KEYS.FILTER_SUGGESTED] = newSettings[SETTINGS_KEYS.FILTER_SUGGESTED];
+    }
+    if (newSettings[SETTINGS_KEYS.FILTER_RECOMMENDED] !== undefined) {
+        state.settings[SETTINGS_KEYS.FILTER_RECOMMENDED] = newSettings[SETTINGS_KEYS.FILTER_RECOMMENDED];
     }
 }
 

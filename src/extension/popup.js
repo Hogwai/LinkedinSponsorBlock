@@ -8,6 +8,7 @@ const scanBtn = document.getElementById('manualScan');
 const extensionToggle = document.getElementById('extensionToggle');
 const filterPromoted = document.getElementById('filterPromoted');
 const filterSuggested = document.getElementById('filterSuggested');
+const filterRecommended = document.getElementById('filterRecommended');
 const languageSelect = document.getElementById('languageSelect');
 const promotedCountEl = document.getElementById('promotedCount');
 const suggestedCountEl = document.getElementById('suggestedCount');
@@ -85,6 +86,7 @@ async function loadSettings() {
     extensionToggle.checked = result.enabled;
     filterPromoted.checked = result.filterPromoted;
     filterSuggested.checked = result.filterSuggested;
+    filterRecommended.checked = result.filterRecommended;
     promotedCountEl.textContent = result.totalPromotedBlocked;
     suggestedCountEl.textContent = result.totalSuggestedBlocked;
 
@@ -144,6 +146,12 @@ filterPromoted.addEventListener('change', async () => {
 filterSuggested.addEventListener('change', async () => {
     await saveSettings({ filterSuggested: filterSuggested.checked });
     notifyContentScript({ type: 'SETTINGS_CHANGED', filterSuggested: filterSuggested.checked });
+});
+
+// Filter recommended toggle
+filterRecommended.addEventListener('change', async () => {
+    await saveSettings({ filterRecommended: filterRecommended.checked });
+    notifyContentScript({ type: 'SETTINGS_CHANGED', filterRecommended: filterRecommended.checked });
 });
 
 // Language selector change
@@ -229,8 +237,8 @@ scanBtn.addEventListener('click', async () => {
             setStatus(t('error'), 'error');
         } else if (response) {
             const msg = [];
-            if (response.promoted > 0) msg.push(`${response.promoted} promoted`);
-            if (response.suggested > 0) msg.push(`${response.suggested} suggested`);
+            if (response.promoted > 0) msg.push(`${response.promoted} promoted post`);
+            if (response.suggested > 0) msg.push(`${response.suggested} suggested post`);
             if (msg.length > 0) {
                 setStatus(`${msg.join(', ')} hidden`, 'success');
             } else {

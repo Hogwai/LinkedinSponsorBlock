@@ -60,6 +60,7 @@ const state = {
         [SETTINGS_KEYS.DISCREET]: getStored(SETTINGS_KEYS.DISCREET, DEFAULT_SETTINGS[SETTINGS_KEYS.DISCREET]),
         [SETTINGS_KEYS.FILTER_PROMOTED]: getStored(SETTINGS_KEYS.FILTER_PROMOTED, DEFAULT_SETTINGS[SETTINGS_KEYS.FILTER_PROMOTED]),
         [SETTINGS_KEYS.FILTER_SUGGESTED]: getStored(SETTINGS_KEYS.FILTER_SUGGESTED, DEFAULT_SETTINGS[SETTINGS_KEYS.FILTER_SUGGESTED]),
+        [SETTINGS_KEYS.FILTER_RECOMMENDED]: getStored(SETTINGS_KEYS.FILTER_RECOMMENDED, DEFAULT_SETTINGS[SETTINGS_KEYS.FILTER_RECOMMENDED]),
         [SETTINGS_KEYS.LANGUAGE]: getStored(SETTINGS_KEYS.LANGUAGE, DEFAULT_SETTINGS[SETTINGS_KEYS.LANGUAGE]),
         [SETTINGS_KEYS.POSITION]: getStored(SETTINGS_KEYS.POSITION, DEFAULT_SETTINGS[SETTINGS_KEYS.POSITION])
     },
@@ -88,6 +89,14 @@ function hideSuggestedPost(post) {
     return true;
 }
 
+function hideRecommendedPost(post) {
+    post.style.display = 'none';
+    post.setAttribute(CONFIG.ATTRIBUTES.SCANNED, 'true');
+    state.sessionSuggestedRemoved++;
+    logger.log(`Recommended post hidden: "${post?.textContent?.replace(/\s+/g, ' ').trim().slice(0, 100)}"`);
+    return true;
+}
+
 // ==================== SCAN ====================
 function scanFeed(root = document) {
     if (!state.settings[SETTINGS_KEYS.ENABLED]) return { promoted: 0, suggested: 0 };
@@ -109,6 +118,16 @@ function scanFeed(root = document) {
     if (state.settings[SETTINGS_KEYS.FILTER_SUGGESTED]) {
         for (const post of groupedPosts.suggested) {
             if (hideSuggestedPost(post)) {
+                suggestedCount++;
+            } else {
+                post.setAttribute(CONFIG.ATTRIBUTES.SCANNED, 'false');
+            }
+        }
+    }
+
+    if (state.settings[SETTINGS_KEYS.FILTER_RECOMMENDED]) {
+        for (const post of groupedPosts.recommended) {
+            if (hideRecommendedPost(post)) {
                 suggestedCount++;
             } else {
                 post.setAttribute(CONFIG.ATTRIBUTES.SCANNED, 'false');
@@ -175,6 +194,10 @@ function initUI() {
         onToggleSuggested(enabled) {
             state.settings[SETTINGS_KEYS.FILTER_SUGGESTED] = enabled;
             setStored(SETTINGS_KEYS.FILTER_SUGGESTED, enabled);
+        },
+        onToggleRecommended(enabled) {
+            state.settings[SETTINGS_KEYS.FILTER_RECOMMENDED] = enabled;
+            setStored(SETTINGS_KEYS.FILTER_RECOMMENDED, enabled);
         },
         onScan() {
             return scanFeed();
