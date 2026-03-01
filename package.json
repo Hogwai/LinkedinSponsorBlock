@@ -12,7 +12,7 @@
     "debug:android": "node scripts/debug-android.js"
   },
   "devDependencies": {
-    "rollup": "^4.58.0",
+    "rollup": "^4.59.0",
     "rollup-plugin-copy": "^3.5.0"
   }
 }
