@@ -50,9 +50,17 @@ Perfect for professionals, recruiters, or regular LinkedIn users who want a more
 
 Choose your preferred installation method:
 
-### 🌐 Chrome Extension
+### 🌐 Google Chrome & Chromium-based browsers
 
-<a href="https://chromewebstore.google.com/detail/linkedin-sponsor-block/dmgglmnbmokkdocpamjkcgjfjceoocbh" target="_blank"><img src="https://user-images.githubusercontent.com/585534/107280622-91a8ea80-6a26-11eb-8d07-77c548b28665.png" alt="Get LinkedIn Suggested Posts Remover for Chromium" height="60"></a>
+Available on the [Chrome Web Store](https://chromewebstore.google.com/detail/linkedin-sponsor-block/dmgglmnbmokkdocpamjkcgjfjceoocbh) for Chrome and all Chromium-based browsers:
+
+<a href="https://chromewebstore.google.com/detail/linkedin-sponsor-block/dmgglmnbmokkdocpamjkcgjfjceoocbh" target="_blank"><img src="https://user-images.githubusercontent.com/585534/107280622-91a8ea80-6a26-11eb-8d07-77c548b28665.png" alt="Get LinkedIn Sponsor Block for Chrome" height="60"></a>
+
+[![Microsoft Edge](https://custom-icon-badges.demolab.com/badge/Microsoft%20Edge-2771D8?logo=edge-white&logoColor=white)](https://chromewebstore.google.com/detail/linkedin-sponsor-block/dmgglmnbmokkdocpamjkcgjfjceoocbh)
+[![Brave](https://img.shields.io/badge/Brave-FB542B?logo=Brave&logoColor=white)](https://chromewebstore.google.com/detail/linkedin-sponsor-block/dmgglmnbmokkdocpamjkcgjfjceoocbh)
+[![Vivaldi](https://img.shields.io/badge/Vivaldi-EF3939?logo=Vivaldi&logoColor=white)](https://chromewebstore.google.com/detail/linkedin-sponsor-block/dmgglmnbmokkdocpamjkcgjfjceoocbh)
+[![Opera](https://img.shields.io/badge/Opera-FF1B2D?logo=Opera&logoColor=white)](https://chromewebstore.google.com/detail/linkedin-sponsor-block/dmgglmnbmokkdocpamjkcgjfjceoocbh)
+[![Arc](https://img.shields.io/badge/Arc-FCBFBD?logo=arc&logoColor=000)](https://chromewebstore.google.com/detail/linkedin-sponsor-block/dmgglmnbmokkdocpamjkcgjfjceoocbh)
 
 ### 🦊 Firefox Extension
 
