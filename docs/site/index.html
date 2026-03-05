@@ -141,14 +141,22 @@
       </a>
       <!-- Desktop links -->
       <div class="hidden sm:flex items-center gap-6 text-sm text-slate-600">
-        <a href="#features" class="hover:text-slate-900 transition-colors">Features</a>
-        <a href="#why" class="hover:text-slate-900 transition-colors">Why</a>
-        <a href="#how-it-works" class="hover:text-slate-900 transition-colors">How it works</a>
-        <a href="#faq" class="hover:text-slate-900 transition-colors">FAQ</a>
-        <a href="#preview" class="hover:text-slate-900 transition-colors">Preview</a>
+        <a href="#features" class="hover:text-slate-900 transition-colors" data-i18n="navFeatures">Features</a>
+        <a href="#why" class="hover:text-slate-900 transition-colors" data-i18n="navWhy">Why</a>
+        <a href="#how-it-works" class="hover:text-slate-900 transition-colors" data-i18n="navHow">How it works</a>
+        <a href="#faq" class="hover:text-slate-900 transition-colors" data-i18n="navFaq">FAQ</a>
+        <a href="#preview" class="hover:text-slate-900 transition-colors" data-i18n="navPreview">Preview</a>
         <a href="https://github.com/Hogwai/LinkedinSponsorBlock" target="_blank" rel="noopener noreferrer" class="hover:text-slate-900 transition-colors" aria-label="GitHub">
           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
         </a>
+        <span class="w-px h-4 bg-slate-300"></span>
+        <div class="flex items-center gap-1 text-xs">
+          <button data-lang="en" onclick="setLanguage('en')" class="px-1.5 py-0.5 rounded hover:bg-slate-100 transition-colors text-linkedin font-bold">EN</button>
+          <button data-lang="fr" onclick="setLanguage('fr')" class="px-1.5 py-0.5 rounded hover:bg-slate-100 transition-colors text-slate-600">FR</button>
+          <button data-lang="es" onclick="setLanguage('es')" class="px-1.5 py-0.5 rounded hover:bg-slate-100 transition-colors text-slate-600">ES</button>
+          <button data-lang="pt" onclick="setLanguage('pt')" class="px-1.5 py-0.5 rounded hover:bg-slate-100 transition-colors text-slate-600">PT</button>
+          <button data-lang="de" onclick="setLanguage('de')" class="px-1.5 py-0.5 rounded hover:bg-slate-100 transition-colors text-slate-600">DE</button>
+        </div>
       </div>
       <!-- Mobile hamburger -->
       <button id="menu-btn" class="sm:hidden p-2 text-slate-600 hover:text-slate-900" aria-label="Menu">
@@ -157,12 +165,19 @@
     </div>
     <!-- Mobile menu -->
     <div id="mobile-menu" class="hidden sm:hidden border-t border-slate-200 bg-white px-4 pb-3">
-      <a href="#features" class="block py-2 text-sm text-slate-600 hover:text-slate-900">Features</a>
-      <a href="#why" class="block py-2 text-sm text-slate-600 hover:text-slate-900">Why</a>
-      <a href="#how-it-works" class="block py-2 text-sm text-slate-600 hover:text-slate-900">How it works</a>
-      <a href="#faq" class="block py-2 text-sm text-slate-600 hover:text-slate-900">FAQ</a>
-      <a href="#preview" class="block py-2 text-sm text-slate-600 hover:text-slate-900">Preview</a>
+      <a href="#features" class="block py-2 text-sm text-slate-600 hover:text-slate-900" data-i18n="navFeatures">Features</a>
+      <a href="#why" class="block py-2 text-sm text-slate-600 hover:text-slate-900" data-i18n="navWhy">Why</a>
+      <a href="#how-it-works" class="block py-2 text-sm text-slate-600 hover:text-slate-900" data-i18n="navHow">How it works</a>
+      <a href="#faq" class="block py-2 text-sm text-slate-600 hover:text-slate-900" data-i18n="navFaq">FAQ</a>
+      <a href="#preview" class="block py-2 text-sm text-slate-600 hover:text-slate-900" data-i18n="navPreview">Preview</a>
       <a href="https://github.com/Hogwai/LinkedinSponsorBlock" target="_blank" rel="noopener noreferrer" class="block py-2 text-sm text-slate-600 hover:text-slate-900">GitHub</a>
+      <div class="flex items-center gap-2 py-2 text-xs">
+        <button data-lang="en" onclick="setLanguage('en')" class="px-2 py-1 rounded hover:bg-slate-100 transition-colors text-linkedin font-bold">EN</button>
+        <button data-lang="fr" onclick="setLanguage('fr')" class="px-2 py-1 rounded hover:bg-slate-100 transition-colors text-slate-600">FR</button>
+        <button data-lang="es" onclick="setLanguage('es')" class="px-2 py-1 rounded hover:bg-slate-100 transition-colors text-slate-600">ES</button>
+        <button data-lang="pt" onclick="setLanguage('pt')" class="px-2 py-1 rounded hover:bg-slate-100 transition-colors text-slate-600">PT</button>
+        <button data-lang="de" onclick="setLanguage('de')" class="px-2 py-1 rounded hover:bg-slate-100 transition-colors text-slate-600">DE</button>
+      </div>
     </div>
   </nav>
 
@@ -170,8 +185,8 @@
   <section class="max-w-3xl mx-auto px-4 pt-20 pb-16 text-center">
     <img src="img/icon_128.png" alt="LinkedIn Sponsor Block icon, browser extension to remove sponsored posts from LinkedIn" class="w-20 h-20 mx-auto mb-6" width="128" height="128">
     <h1 class="text-4xl sm:text-5xl font-bold text-slate-900 mb-4">LinkedIn Sponsor Block</h1>
-    <h2 class="text-xl text-slate-600 mb-4 font-normal">The free ad blocker for LinkedIn. Remove promoted posts, sponsored content, and suggested posts from your feed.</h2>
-    <p class="text-base text-slate-500 max-w-xl mx-auto mb-8">
+    <h2 class="text-xl text-slate-600 mb-4 font-normal" data-i18n="heroSubtitle">The free ad blocker for LinkedIn. Remove promoted posts, sponsored content, and suggested posts from your feed.</h2>
+    <p class="text-base text-slate-500 max-w-xl mx-auto mb-8" data-i18n="heroDescription">
       Tired of LinkedIn ads, promoted posts, and sponsored content cluttering your feed?
       LinkedIn Sponsor Block is a lightweight ad blocker that automatically hides them, giving you a cleaner, ad-free LinkedIn experience.
     </p>
@@ -192,7 +207,7 @@
         Userscript
       </a>
     </div>
-    <p class="text-sm text-slate-500 mt-4">Also available for all Chromium-based browsers via the Chrome Web Store:</p>
+    <p class="text-sm text-slate-500 mt-4" data-i18n="heroChromium">Also available for all Chromium-based browsers via the Chrome Web Store:</p>
     <div class="flex flex-wrap justify-center gap-2 mt-2">
       <a href="https://chromewebstore.google.com/detail/linkedin-sponsor-block/dmgglmnbmokkdocpamjkcgjfjceoocbh" target="_blank" rel="noopener noreferrer">
         <img src="https://custom-icon-badges.demolab.com/badge/Microsoft%20Edge-2771D8?logo=edge-white&logoColor=white" alt="Microsoft Edge">
@@ -214,60 +229,60 @@
 
   <!-- Features -->
   <section id="features" class="max-w-5xl mx-auto px-4 py-16">
-    <h2 class="text-2xl font-bold text-slate-900 text-center mb-10">Features</h2>
+    <h2 class="text-2xl font-bold text-slate-900 text-center mb-10" data-i18n="featuresTitle">Features</h2>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       <div class="bg-slate-50 rounded-xl p-6">
         <div class="text-3xl mb-3">🚫</div>
-        <h3 class="font-semibold text-slate-900 mb-1">Automatic removal</h3>
-        <p class="text-sm text-slate-500">Hides sponsored posts, suggested content, and partner promotions silently.</p>
+        <h3 class="font-semibold text-slate-900 mb-1" data-i18n="featureAutoTitle">Automatic removal</h3>
+        <p class="text-sm text-slate-500" data-i18n="featureAutoDesc">Hides sponsored posts, suggested content, and partner promotions silently.</p>
       </div>
       <div class="bg-slate-50 rounded-xl p-6">
         <div class="text-3xl mb-3">📱</div>
-        <h3 class="font-semibold text-slate-900 mb-1">Desktop &amp; mobile</h3>
-        <p class="text-sm text-slate-500">Works on both desktop and mobile versions of LinkedIn (Firefox &amp; userscript).</p>
+        <h3 class="font-semibold text-slate-900 mb-1" data-i18n="featureMobileTitle">Desktop &amp; mobile</h3>
+        <p class="text-sm text-slate-500" data-i18n="featureMobileDesc">Works on both desktop and mobile versions of LinkedIn (Firefox &amp; userscript).</p>
       </div>
       <div class="bg-slate-50 rounded-xl p-6">
         <div class="text-3xl mb-3">🌐</div>
-        <h3 class="font-semibold text-slate-900 mb-1">Multilingual support</h3>
-        <p class="text-sm text-slate-500">Works with all languages available on LinkedIn. Detection is language-agnostic.</p>
+        <h3 class="font-semibold text-slate-900 mb-1" data-i18n="featureMultilingualTitle">Multilingual support</h3>
+        <p class="text-sm text-slate-500" data-i18n="featureMultilingualDesc">Works with all languages available on LinkedIn. Detection is language-agnostic.</p>
       </div>
       <div class="bg-slate-50 rounded-xl p-6">
         <div class="text-3xl mb-3">🌍</div>
-        <h3 class="font-semibold text-slate-900 mb-1">Localized UI</h3>
-        <p class="text-sm text-slate-500">Extension interface available in English and French.</p>
+        <h3 class="font-semibold text-slate-900 mb-1" data-i18n="featureLocalizedTitle">Localized UI</h3>
+        <p class="text-sm text-slate-500" data-i18n="featureLocalizedDesc">Extension interface available in English and French.</p>
       </div>
       <div class="bg-slate-50 rounded-xl p-6">
         <div class="text-3xl mb-3">⚡</div>
-        <h3 class="font-semibold text-slate-900 mb-1">Lightweight &amp; discreet</h3>
-        <p class="text-sm text-slate-500">Runs in the background without slowing your browsing experience.</p>
+        <h3 class="font-semibold text-slate-900 mb-1" data-i18n="featureLightTitle">Lightweight &amp; discreet</h3>
+        <p class="text-sm text-slate-500" data-i18n="featureLightDesc">Runs in the background without slowing your browsing experience.</p>
       </div>
       <div class="bg-slate-50 rounded-xl p-6">
         <div class="text-3xl mb-3">📊</div>
-        <h3 class="font-semibold text-slate-900 mb-1">Counter tracking</h3>
-        <p class="text-sm text-slate-500">See how many sponsored posts have been blocked in real time.</p>
+        <h3 class="font-semibold text-slate-900 mb-1" data-i18n="featureCounterTitle">Counter tracking</h3>
+        <p class="text-sm text-slate-500" data-i18n="featureCounterDesc">See how many sponsored posts have been blocked in real time.</p>
       </div>
       <div class="bg-slate-50 rounded-xl p-6">
         <div class="text-3xl mb-3">⚙️</div>
-        <h3 class="font-semibold text-slate-900 mb-1">Customizable filters</h3>
-        <p class="text-sm text-slate-500">Choose what to block: promoted, suggested, or both.</p>
+        <h3 class="font-semibold text-slate-900 mb-1" data-i18n="featureFilterTitle">Customizable filters</h3>
+        <p class="text-sm text-slate-500" data-i18n="featureFilterDesc">Choose what to block: promoted, suggested, or both.</p>
       </div>
     </div>
   </section>
 
   <!-- Why block ads -->
   <section id="why" class="max-w-3xl mx-auto px-4 py-16">
-    <h2 class="text-2xl font-bold text-slate-900 text-center mb-6">Why block ads on LinkedIn?</h2>
+    <h2 class="text-2xl font-bold text-slate-900 text-center mb-6" data-i18n="whyTitle">Why block ads on LinkedIn?</h2>
     <div class="text-slate-600 space-y-4 text-base leading-relaxed">
-      <p>
+      <p data-i18n-html="whyP1">
         LinkedIn's feed is increasingly filled with <strong>promoted posts</strong>, <strong>sponsored content</strong>, and <strong>suggested posts</strong> that interrupt your professional browsing.
         Unlike organic content from your network, these LinkedIn ads are paid placements designed to capture your attention, not to help you.
       </p>
-      <p>
+      <p data-i18n-html="whyP2">
         A <strong>LinkedIn ad blocker</strong> like LinkedIn Sponsor Block lets you take back control of your feed.
         It removes promoted and sponsored posts automatically, so you only see updates from people and companies you actually follow.
         No more irrelevant ads, no more "suggested for you" clutter. Just the content that matters.
       </p>
-      <p>
+      <p data-i18n-html="whyP3">
         Whether you're job hunting, networking, or staying informed, a clean LinkedIn feed helps you stay focused and productive.
         LinkedIn Sponsor Block is <strong>free</strong>, <strong>open source</strong>, and works on <strong>Chrome</strong>, <strong>Firefox</strong>, and as a <strong>userscript</strong>.
       </p>
@@ -276,27 +291,27 @@
 
   <!-- How it works -->
   <section id="how-it-works" class="max-w-3xl mx-auto px-4 py-16">
-    <h2 class="text-2xl font-bold text-slate-900 text-center mb-10">How it works</h2>
+    <h2 class="text-2xl font-bold text-slate-900 text-center mb-10" data-i18n="howTitle">How it works</h2>
     <div class="space-y-8">
       <div class="flex items-start gap-4">
         <div class="flex-shrink-0 w-10 h-10 rounded-full bg-linkedin text-white flex items-center justify-center font-bold">1</div>
         <div>
-          <h3 class="font-semibold text-slate-900 mb-1">Install the extension or userscript</h3>
-          <p class="text-sm text-slate-500">Available on the Chrome Web Store, Firefox Add-ons, or as a Tampermonkey userscript. One click to install, no configuration required.</p>
+          <h3 class="font-semibold text-slate-900 mb-1" data-i18n="howStep1Title">Install the extension or userscript</h3>
+          <p class="text-sm text-slate-500" data-i18n="howStep1Desc">Available on the Chrome Web Store, Firefox Add-ons, or as a Tampermonkey userscript. One click to install, no configuration required.</p>
         </div>
       </div>
       <div class="flex items-start gap-4">
         <div class="flex-shrink-0 w-10 h-10 rounded-full bg-linkedin text-white flex items-center justify-center font-bold">2</div>
         <div>
-          <h3 class="font-semibold text-slate-900 mb-1">Browse LinkedIn as usual</h3>
-          <p class="text-sm text-slate-500">The extension runs in the background, continuously scanning your feed as new posts load. It detects sponsored posts, suggested content, and partner promotions using LinkedIn's own markup.</p>
+          <h3 class="font-semibold text-slate-900 mb-1" data-i18n="howStep2Title">Browse LinkedIn as usual</h3>
+          <p class="text-sm text-slate-500" data-i18n="howStep2Desc">The extension runs in the background, continuously scanning your feed as new posts load. It detects sponsored posts, suggested content, and partner promotions using LinkedIn's own markup.</p>
         </div>
       </div>
       <div class="flex items-start gap-4">
         <div class="flex-shrink-0 w-10 h-10 rounded-full bg-linkedin text-white flex items-center justify-center font-bold">3</div>
         <div>
-          <h3 class="font-semibold text-slate-900 mb-1">Unwanted content is hidden instantly</h3>
-          <p class="text-sm text-slate-500">Matching posts are removed from the DOM before you ever see them. A real-time counter tracks how many posts have been blocked during your session.</p>
+          <h3 class="font-semibold text-slate-900 mb-1" data-i18n="howStep3Title">Unwanted content is hidden instantly</h3>
+          <p class="text-sm text-slate-500" data-i18n="howStep3Desc">Matching posts are removed from the DOM before you ever see them. A real-time counter tracks how many posts have been blocked during your session.</p>
         </div>
       </div>
     </div>
@@ -304,82 +319,82 @@
 
   <!-- FAQ -->
   <section id="faq" class="max-w-3xl mx-auto px-4 py-16">
-    <h2 class="text-2xl font-bold text-slate-900 text-center mb-10">Frequently asked questions</h2>
+    <h2 class="text-2xl font-bold text-slate-900 text-center mb-10" data-i18n="faqTitle">Frequently asked questions</h2>
     <div class="space-y-6">
       <details class="group bg-slate-50 rounded-xl p-5">
         <summary class="font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between">
-          How do I block ads on LinkedIn?
+          <span data-i18n="faq1Q">How do I block ads on LinkedIn?</span>
           <svg class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
         </summary>
-        <p class="text-sm text-slate-500 mt-3">Install LinkedIn Sponsor Block from the <a href="https://chromewebstore.google.com/detail/linkedin-sponsor-block/dmgglmnbmokkdocpamjkcgjfjceoocbh" class="text-linkedin hover:underline">Chrome Web Store</a>, <a href="https://addons.mozilla.org/en-US/firefox/addon/linkedin-sponsor-block/" class="text-linkedin hover:underline">Firefox Add-ons</a>, or as a <a href="https://greasyfork.org/en/scripts/546877-linkedin-sponsor-block" class="text-linkedin hover:underline">userscript</a>. Once installed, it automatically detects and removes promoted posts, sponsored content, and suggested posts from your LinkedIn feed. No configuration needed.</p>
+        <p class="text-sm text-slate-500 mt-3" data-i18n-html="faq1A">Install LinkedIn Sponsor Block from the <a href="https://chromewebstore.google.com/detail/linkedin-sponsor-block/dmgglmnbmokkdocpamjkcgjfjceoocbh" class="text-linkedin hover:underline">Chrome Web Store</a>, <a href="https://addons.mozilla.org/en-US/firefox/addon/linkedin-sponsor-block/" class="text-linkedin hover:underline">Firefox Add-ons</a>, or as a <a href="https://greasyfork.org/en/scripts/546877-linkedin-sponsor-block" class="text-linkedin hover:underline">userscript</a>. Once installed, it automatically detects and removes promoted posts, sponsored content, and suggested posts from your LinkedIn feed. No configuration needed.</p>
       </details>
       <details class="group bg-slate-50 rounded-xl p-5">
         <summary class="font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between">
-          How to remove promoted posts from LinkedIn?
+          <span data-i18n="faq2Q">How to remove promoted posts from LinkedIn?</span>
           <svg class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
         </summary>
-        <p class="text-sm text-slate-500 mt-3">LinkedIn doesn't offer a built-in way to permanently remove promoted posts from your feed. LinkedIn Sponsor Block solves this by automatically hiding all promoted and sponsored posts as they appear. It works in real time, so new promoted posts are removed before you even see them.</p>
+        <p class="text-sm text-slate-500 mt-3" data-i18n="faq2A">LinkedIn doesn't offer a built-in way to permanently remove promoted posts from your feed. LinkedIn Sponsor Block solves this by automatically hiding all promoted and sponsored posts as they appear. It works in real time, so new promoted posts are removed before you even see them.</p>
       </details>
       <details class="group bg-slate-50 rounded-xl p-5">
         <summary class="font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between">
-          Does it work with LinkedIn Premium?
+          <span data-i18n="faq3Q">Does it work with LinkedIn Premium?</span>
           <svg class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
         </summary>
-        <p class="text-sm text-slate-500 mt-3">Yes. LinkedIn Sponsor Block works the same way regardless of your LinkedIn subscription. It removes sponsored and suggested content from both free and Premium feeds.</p>
+        <p class="text-sm text-slate-500 mt-3" data-i18n="faq3A">Yes. LinkedIn Sponsor Block works the same way regardless of your LinkedIn subscription. It removes sponsored and suggested content from both free and Premium feeds.</p>
       </details>
       <details class="group bg-slate-50 rounded-xl p-5">
         <summary class="font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between">
-          Is my data safe?
+          <span data-i18n="faq4Q">Is my data safe?</span>
           <svg class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
         </summary>
-        <p class="text-sm text-slate-500 mt-3">Absolutely. The extension runs entirely locally in your browser. It does not collect, transmit, or store any personal data. The source code is fully open source and auditable on GitHub.</p>
+        <p class="text-sm text-slate-500 mt-3" data-i18n="faq4A">Absolutely. The extension runs entirely locally in your browser. It does not collect, transmit, or store any personal data. The source code is fully open source and auditable on GitHub.</p>
       </details>
       <details class="group bg-slate-50 rounded-xl p-5">
         <summary class="font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between">
-          Does it work in languages other than English?
+          <span data-i18n="faq5Q">Does it work in languages other than English?</span>
           <svg class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
         </summary>
-        <p class="text-sm text-slate-500 mt-3">Yes. The detection engine is language-agnostic and works with all languages supported by LinkedIn. The extension UI itself is available in English and French.</p>
+        <p class="text-sm text-slate-500 mt-3" data-i18n="faq5A">Yes. The detection engine is language-agnostic and works with all languages supported by LinkedIn. The extension UI itself is available in English and French.</p>
       </details>
       <details class="group bg-slate-50 rounded-xl p-5">
         <summary class="font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between">
-          Can I choose what types of content to block?
+          <span data-i18n="faq6Q">Can I choose what types of content to block?</span>
           <svg class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
         </summary>
-        <p class="text-sm text-slate-500 mt-3">Yes. You can independently toggle blocking for promoted posts and suggested content in the extension settings. This lets you keep the types of content you find useful.</p>
+        <p class="text-sm text-slate-500 mt-3" data-i18n="faq6A">Yes. You can independently toggle blocking for promoted posts and suggested content in the extension settings. This lets you keep the types of content you find useful.</p>
       </details>
       <details class="group bg-slate-50 rounded-xl p-5">
         <summary class="font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between">
-          Does it work on mobile?
+          <span data-i18n="faq7Q">Does it work on mobile?</span>
           <svg class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
         </summary>
-        <p class="text-sm text-slate-500 mt-3">Yes. The Firefox extension and userscript (via Tampermonkey) both support LinkedIn's mobile web version. Promoted and suggested posts are detected and hidden on mobile just like on desktop.</p>
+        <p class="text-sm text-slate-500 mt-3" data-i18n="faq7A">Yes. The Firefox extension and userscript (via Tampermonkey) both support LinkedIn's mobile web version. Promoted and suggested posts are detected and hidden on mobile just like on desktop.</p>
       </details>
       <details class="group bg-slate-50 rounded-xl p-5">
         <summary class="font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between">
-          What if LinkedIn changes its layout?
+          <span data-i18n="faq8Q">What if LinkedIn changes its layout?</span>
           <svg class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
         </summary>
-        <p class="text-sm text-slate-500 mt-3">The extension uses a robust detection approach based on LinkedIn's internal markup rather than fragile CSS selectors. It is actively maintained and updated when changes occur.</p>
+        <p class="text-sm text-slate-500 mt-3" data-i18n="faq8A">The extension uses a robust detection approach based on LinkedIn's internal markup rather than fragile CSS selectors. It is actively maintained and updated when changes occur.</p>
       </details>
     </div>
   </section>
 
   <!-- Preview -->
   <section id="preview" class="max-w-5xl mx-auto px-4 py-16">
-    <h2 class="text-2xl font-bold text-slate-900 text-center mb-10">Preview</h2>
+    <h2 class="text-2xl font-bold text-slate-900 text-center mb-10" data-i18n="previewTitle">Preview</h2>
     <div class="flex flex-col sm:flex-row justify-center items-center gap-8">
       <div class="text-center">
         <img src="img/popup_en.png" alt="LinkedIn Sponsor Block extension popup showing blocked sponsored posts counter and toggle" class="rounded-xl shadow-lg max-w-xs mx-auto" loading="lazy" width="496" height="619">
-        <p class="text-sm text-slate-500 mt-3">Extension popup</p>
+        <p class="text-sm text-slate-500 mt-3" data-i18n="previewPopup">Extension popup</p>
       </div>
       <div class="text-center">
         <img src="img/settings_en.png" alt="LinkedIn Sponsor Block settings panel with filter customization options" class="rounded-xl shadow-lg max-w-xs mx-auto" loading="lazy" width="429" height="545">
-        <p class="text-sm text-slate-500 mt-3">Settings</p>
+        <p class="text-sm text-slate-500 mt-3" data-i18n="previewSettings">Settings</p>
       </div>
       <div class="text-center">
         <img src="img/userscript_en.png" alt="LinkedIn Sponsor Block userscript floating panel on LinkedIn feed" class="rounded-xl shadow-lg max-w-xs mx-auto" loading="lazy" width="355" height="500">
-        <p class="text-sm text-slate-500 mt-3">Userscript panel</p>
+        <p class="text-sm text-slate-500 mt-3" data-i18n="previewUserscript">Userscript panel</p>
       </div>
     </div>
   </section>
@@ -389,13 +404,357 @@
   <!-- Footer -->
   <footer class="border-t border-slate-200 mt-8">
     <div class="max-w-5xl mx-auto px-4 py-8 text-center text-sm text-slate-500">
-      <p>
+      <p data-i18n-html="footer">
         Open source under the
         <a href="https://github.com/Hogwai/LinkedinSponsorBlock/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" class="text-linkedin hover:underline">MIT License</a>.
         View on <a href="https://github.com/Hogwai/LinkedinSponsorBlock" target="_blank" rel="noopener noreferrer" class="text-linkedin hover:underline">GitHub</a>.
       </p>
     </div>
   </footer>
+
+  <!-- i18n translations and language switching -->
+  <script>
+    var SITE_TRANSLATIONS = {
+      en: {
+        // Navbar
+        navFeatures: 'Features',
+        navWhy: 'Why',
+        navHow: 'How it works',
+        navFaq: 'FAQ',
+        navPreview: 'Preview',
+        // Hero
+        heroSubtitle: 'The free ad blocker for LinkedIn. Remove promoted posts, sponsored content, and suggested posts from your feed.',
+        heroDescription: 'Tired of LinkedIn ads, promoted posts, and sponsored content cluttering your feed? LinkedIn Sponsor Block is a lightweight ad blocker that automatically hides them, giving you a cleaner, ad-free LinkedIn experience.',
+        heroChromium: 'Also available for all Chromium-based browsers via the Chrome Web Store:',
+        // Features
+        featuresTitle: 'Features',
+        featureAutoTitle: 'Automatic removal',
+        featureAutoDesc: 'Hides sponsored posts, suggested content, and partner promotions silently.',
+        featureMobileTitle: 'Desktop & mobile',
+        featureMobileDesc: 'Works on both desktop and mobile versions of LinkedIn (Firefox & userscript).',
+        featureMultilingualTitle: 'Multilingual support',
+        featureMultilingualDesc: 'Works with all languages available on LinkedIn. Detection is language-agnostic.',
+        featureLocalizedTitle: 'Localized UI',
+        featureLocalizedDesc: 'Extension interface available in English and French.',
+        featureLightTitle: 'Lightweight & discreet',
+        featureLightDesc: 'Runs in the background without slowing your browsing experience.',
+        featureCounterTitle: 'Counter tracking',
+        featureCounterDesc: 'See how many sponsored posts have been blocked in real time.',
+        featureFilterTitle: 'Customizable filters',
+        featureFilterDesc: 'Choose what to block: promoted, suggested, or both.',
+        // Why
+        whyTitle: 'Why block ads on LinkedIn?',
+        whyP1: 'LinkedIn\'s feed is increasingly filled with <strong>promoted posts</strong>, <strong>sponsored content</strong>, and <strong>suggested posts</strong> that interrupt your professional browsing. Unlike organic content from your network, these LinkedIn ads are paid placements designed to capture your attention, not to help you.',
+        whyP2: 'A <strong>LinkedIn ad blocker</strong> like LinkedIn Sponsor Block lets you take back control of your feed. It removes promoted and sponsored posts automatically, so you only see updates from people and companies you actually follow. No more irrelevant ads, no more "suggested for you" clutter. Just the content that matters.',
+        whyP3: 'Whether you\'re job hunting, networking, or staying informed, a clean LinkedIn feed helps you stay focused and productive. LinkedIn Sponsor Block is <strong>free</strong>, <strong>open source</strong>, and works on <strong>Chrome</strong>, <strong>Firefox</strong>, and as a <strong>userscript</strong>.',
+        // How it works
+        howTitle: 'How it works',
+        howStep1Title: 'Install the extension or userscript',
+        howStep1Desc: 'Available on the Chrome Web Store, Firefox Add-ons, or as a Tampermonkey userscript. One click to install, no configuration required.',
+        howStep2Title: 'Browse LinkedIn as usual',
+        howStep2Desc: 'The extension runs in the background, continuously scanning your feed as new posts load. It detects sponsored posts, suggested content, and partner promotions using LinkedIn\'s own markup.',
+        howStep3Title: 'Unwanted content is hidden instantly',
+        howStep3Desc: 'Matching posts are removed from the DOM before you ever see them. A real-time counter tracks how many posts have been blocked during your session.',
+        // FAQ
+        faqTitle: 'Frequently asked questions',
+        faq1Q: 'How do I block ads on LinkedIn?',
+        faq1A: 'Install LinkedIn Sponsor Block from the <a href="https://chromewebstore.google.com/detail/linkedin-sponsor-block/dmgglmnbmokkdocpamjkcgjfjceoocbh" class="text-linkedin hover:underline">Chrome Web Store</a>, <a href="https://addons.mozilla.org/en-US/firefox/addon/linkedin-sponsor-block/" class="text-linkedin hover:underline">Firefox Add-ons</a>, or as a <a href="https://greasyfork.org/en/scripts/546877-linkedin-sponsor-block" class="text-linkedin hover:underline">userscript</a>. Once installed, it automatically detects and removes promoted posts, sponsored content, and suggested posts from your LinkedIn feed. No configuration needed.',
+        faq2Q: 'How to remove promoted posts from LinkedIn?',
+        faq2A: 'LinkedIn doesn\'t offer a built-in way to permanently remove promoted posts from your feed. LinkedIn Sponsor Block solves this by automatically hiding all promoted and sponsored posts as they appear. It works in real time, so new promoted posts are removed before you even see them.',
+        faq3Q: 'Does it work with LinkedIn Premium?',
+        faq3A: 'Yes. LinkedIn Sponsor Block works the same way regardless of your LinkedIn subscription. It removes sponsored and suggested content from both free and Premium feeds.',
+        faq4Q: 'Is my data safe?',
+        faq4A: 'Absolutely. The extension runs entirely locally in your browser. It does not collect, transmit, or store any personal data. The source code is fully open source and auditable on GitHub.',
+        faq5Q: 'Does it work in languages other than English?',
+        faq5A: 'Yes. The detection engine is language-agnostic and works with all languages supported by LinkedIn. The extension UI itself is available in English and French.',
+        faq6Q: 'Can I choose what types of content to block?',
+        faq6A: 'Yes. You can independently toggle blocking for promoted posts and suggested content in the extension settings. This lets you keep the types of content you find useful.',
+        faq7Q: 'Does it work on mobile?',
+        faq7A: 'Yes. The Firefox extension and userscript (via Tampermonkey) both support LinkedIn\'s mobile web version. Promoted and suggested posts are detected and hidden on mobile just like on desktop.',
+        faq8Q: 'What if LinkedIn changes its layout?',
+        faq8A: 'The extension uses a robust detection approach based on LinkedIn\'s internal markup rather than fragile CSS selectors. It is actively maintained and updated when changes occur.',
+        // Preview
+        previewTitle: 'Preview',
+        previewPopup: 'Extension popup',
+        previewSettings: 'Settings',
+        previewUserscript: 'Userscript panel',
+        // Footer
+        footer: 'Open source under the <a href="https://github.com/Hogwai/LinkedinSponsorBlock/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" class="text-linkedin hover:underline">MIT License</a>. View on <a href="https://github.com/Hogwai/LinkedinSponsorBlock" target="_blank" rel="noopener noreferrer" class="text-linkedin hover:underline">GitHub</a>.'
+      },
+      fr: {
+        navFeatures: 'Fonctionnalités',
+        navWhy: 'Pourquoi',
+        navHow: 'Comment ça marche',
+        navFaq: 'FAQ',
+        navPreview: 'Aperçu',
+        heroSubtitle: 'Le bloqueur de publicités gratuit pour LinkedIn. Supprimez les posts sponsorisés, le contenu publicitaire et les suggestions de votre fil.',
+        heroDescription: 'Marre des publicités LinkedIn, des posts sponsorisés et du contenu promotionnel qui encombrent votre fil ? LinkedIn Sponsor Block est un bloqueur léger qui les masque automatiquement pour une expérience LinkedIn plus propre.',
+        heroChromium: 'Également disponible pour tous les navigateurs basés sur Chromium via le Chrome Web Store :',
+        featuresTitle: 'Fonctionnalités',
+        featureAutoTitle: 'Suppression automatique',
+        featureAutoDesc: 'Masque les posts sponsorisés, les suggestions et les promotions partenaires en silence.',
+        featureMobileTitle: 'Bureau et mobile',
+        featureMobileDesc: 'Fonctionne sur les versions bureau et mobile de LinkedIn (Firefox et userscript).',
+        featureMultilingualTitle: 'Support multilingue',
+        featureMultilingualDesc: 'Fonctionne avec toutes les langues disponibles sur LinkedIn. La détection est indépendante de la langue.',
+        featureLocalizedTitle: 'Interface localisée',
+        featureLocalizedDesc: 'Interface de l\'extension disponible en anglais et en français.',
+        featureLightTitle: 'Léger et discret',
+        featureLightDesc: 'Fonctionne en arrière-plan sans ralentir votre navigation.',
+        featureCounterTitle: 'Suivi par compteur',
+        featureCounterDesc: 'Voyez combien de posts sponsorisés ont été bloqués en temps réel.',
+        featureFilterTitle: 'Filtres personnalisables',
+        featureFilterDesc: 'Choisissez quoi bloquer : promotionnel, suggéré, ou les deux.',
+        whyTitle: 'Pourquoi bloquer les publicités sur LinkedIn ?',
+        whyP1: 'Le fil LinkedIn est de plus en plus rempli de <strong>posts sponsorisés</strong>, de <strong>contenu publicitaire</strong> et de <strong>suggestions</strong> qui interrompent votre navigation professionnelle. Contrairement au contenu organique de votre réseau, ces publicités LinkedIn sont des placements payés conçus pour capter votre attention, pas pour vous aider.',
+        whyP2: 'Un <strong>bloqueur de publicités LinkedIn</strong> comme LinkedIn Sponsor Block vous permet de reprendre le contrôle de votre fil. Il supprime automatiquement les posts sponsorisés et promotionnels, pour que vous ne voyiez que les mises à jour des personnes et entreprises que vous suivez. Plus de publicités non pertinentes, plus de suggestions non souhaitées. Juste le contenu qui compte.',
+        whyP3: 'Que vous cherchiez un emploi, développiez votre réseau ou restiez informé, un fil LinkedIn propre vous aide à rester concentré et productif. LinkedIn Sponsor Block est <strong>gratuit</strong>, <strong>open source</strong>, et fonctionne sur <strong>Chrome</strong>, <strong>Firefox</strong>, et en tant que <strong>userscript</strong>.',
+        howTitle: 'Comment ça marche',
+        howStep1Title: 'Installez l\'extension ou le userscript',
+        howStep1Desc: 'Disponible sur le Chrome Web Store, les modules Firefox, ou en tant que userscript Tampermonkey. Un clic pour installer, aucune configuration nécessaire.',
+        howStep2Title: 'Naviguez sur LinkedIn normalement',
+        howStep2Desc: 'L\'extension fonctionne en arrière-plan, analysant continuellement votre fil à mesure que de nouveaux posts se chargent. Elle détecte les posts sponsorisés, les suggestions et les promotions partenaires via le balisage interne de LinkedIn.',
+        howStep3Title: 'Le contenu indésirable est masqué instantanément',
+        howStep3Desc: 'Les posts correspondants sont retirés du DOM avant même que vous les voyiez. Un compteur en temps réel suit le nombre de posts bloqués pendant votre session.',
+        faqTitle: 'Questions fréquentes',
+        faq1Q: 'Comment bloquer les publicités sur LinkedIn ?',
+        faq1A: 'Installez LinkedIn Sponsor Block depuis le <a href="https://chromewebstore.google.com/detail/linkedin-sponsor-block/dmgglmnbmokkdocpamjkcgjfjceoocbh" class="text-linkedin hover:underline">Chrome Web Store</a>, les <a href="https://addons.mozilla.org/en-US/firefox/addon/linkedin-sponsor-block/" class="text-linkedin hover:underline">modules Firefox</a>, ou en tant que <a href="https://greasyfork.org/en/scripts/546877-linkedin-sponsor-block" class="text-linkedin hover:underline">userscript</a>. Une fois installé, il détecte et supprime automatiquement les posts sponsorisés, le contenu publicitaire et les suggestions de votre fil LinkedIn. Aucune configuration nécessaire.',
+        faq2Q: 'Comment supprimer les posts sponsorisés de LinkedIn ?',
+        faq2A: 'LinkedIn ne propose pas de moyen intégré pour supprimer définitivement les posts sponsorisés de votre fil. LinkedIn Sponsor Block résout ce problème en masquant automatiquement tous les posts sponsorisés et promotionnels dès qu\'ils apparaissent. Cela fonctionne en temps réel.',
+        faq3Q: 'Est-ce compatible avec LinkedIn Premium ?',
+        faq3A: 'Oui. LinkedIn Sponsor Block fonctionne de la même manière quel que soit votre abonnement LinkedIn. Il supprime le contenu sponsorisé et suggéré des fils gratuits et Premium.',
+        faq4Q: 'Mes données sont-elles en sécurité ?',
+        faq4A: 'Absolument. L\'extension fonctionne entièrement localement dans votre navigateur. Elle ne collecte, ne transmet et ne stocke aucune donnée personnelle. Le code source est entièrement open source et vérifiable sur GitHub.',
+        faq5Q: 'Est-ce que ça fonctionne dans d\'autres langues que l\'anglais ?',
+        faq5A: 'Oui. Le moteur de détection est indépendant de la langue et fonctionne avec toutes les langues supportées par LinkedIn. L\'interface de l\'extension est disponible en anglais et en français.',
+        faq6Q: 'Puis-je choisir les types de contenu à bloquer ?',
+        faq6A: 'Oui. Vous pouvez activer ou désactiver indépendamment le blocage des posts promotionnels et du contenu suggéré dans les paramètres de l\'extension. Cela vous permet de garder les types de contenu que vous trouvez utiles.',
+        faq7Q: 'Est-ce que ça fonctionne sur mobile ?',
+        faq7A: 'Oui. L\'extension Firefox et le userscript (via Tampermonkey) supportent tous deux la version web mobile de LinkedIn. Les posts sponsorisés et suggérés sont détectés et masqués sur mobile comme sur bureau.',
+        faq8Q: 'Et si LinkedIn change son interface ?',
+        faq8A: 'L\'extension utilise une approche de détection robuste basée sur le balisage interne de LinkedIn plutôt que sur des sélecteurs CSS fragiles. Elle est activement maintenue et mise à jour lorsque des changements surviennent.',
+        previewTitle: 'Aperçu',
+        previewPopup: 'Popup de l\'extension',
+        previewSettings: 'Paramètres',
+        previewUserscript: 'Panneau userscript',
+        footer: 'Open source sous la <a href="https://github.com/Hogwai/LinkedinSponsorBlock/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" class="text-linkedin hover:underline">licence MIT</a>. Voir sur <a href="https://github.com/Hogwai/LinkedinSponsorBlock" target="_blank" rel="noopener noreferrer" class="text-linkedin hover:underline">GitHub</a>.'
+      },
+      es: {
+        navFeatures: 'Funciones',
+        navWhy: 'Por qué',
+        navHow: 'Cómo funciona',
+        navFaq: 'FAQ',
+        navPreview: 'Vista previa',
+        heroSubtitle: 'El bloqueador de anuncios gratuito para LinkedIn. Elimina publicaciones promocionadas, contenido patrocinado y sugerencias de tu feed.',
+        heroDescription: 'Cansado de los anuncios de LinkedIn, publicaciones promocionadas y contenido patrocinado que llenan tu feed? LinkedIn Sponsor Block es un bloqueador ligero que los oculta automáticamente para una experiencia de LinkedIn más limpia.',
+        heroChromium: 'También disponible para todos los navegadores basados en Chromium a través del Chrome Web Store:',
+        featuresTitle: 'Funciones',
+        featureAutoTitle: 'Eliminación automática',
+        featureAutoDesc: 'Oculta publicaciones patrocinadas, contenido sugerido y promociones de socios de forma silenciosa.',
+        featureMobileTitle: 'Escritorio y móvil',
+        featureMobileDesc: 'Funciona en las versiones de escritorio y móvil de LinkedIn (Firefox y userscript).',
+        featureMultilingualTitle: 'Soporte multilingüe',
+        featureMultilingualDesc: 'Funciona con todos los idiomas disponibles en LinkedIn. La detección es independiente del idioma.',
+        featureLocalizedTitle: 'Interfaz localizada',
+        featureLocalizedDesc: 'Interfaz de la extensión disponible en inglés y francés.',
+        featureLightTitle: 'Ligero y discreto',
+        featureLightDesc: 'Funciona en segundo plano sin ralentizar tu navegación.',
+        featureCounterTitle: 'Seguimiento por contador',
+        featureCounterDesc: 'Ve cuántas publicaciones patrocinadas han sido bloqueadas en tiempo real.',
+        featureFilterTitle: 'Filtros personalizables',
+        featureFilterDesc: 'Elige qué bloquear: promocionado, sugerido o ambos.',
+        whyTitle: '¿Por qué bloquear anuncios en LinkedIn?',
+        whyP1: 'El feed de LinkedIn está cada vez más lleno de <strong>publicaciones promocionadas</strong>, <strong>contenido patrocinado</strong> y <strong>sugerencias</strong> que interrumpen tu navegación profesional. A diferencia del contenido orgánico de tu red, estos anuncios de LinkedIn son colocaciones de pago diseñadas para captar tu atención, no para ayudarte.',
+        whyP2: 'Un <strong>bloqueador de anuncios de LinkedIn</strong> como LinkedIn Sponsor Block te permite recuperar el control de tu feed. Elimina publicaciones promocionadas y patrocinadas automáticamente, para que solo veas actualizaciones de personas y empresas que realmente sigues. Sin más anuncios irrelevantes, sin más sugerencias no deseadas. Solo el contenido que importa.',
+        whyP3: 'Ya sea que estés buscando empleo, haciendo networking o manteniéndote informado, un feed de LinkedIn limpio te ayuda a mantenerte enfocado y productivo. LinkedIn Sponsor Block es <strong>gratuito</strong>, <strong>open source</strong>, y funciona en <strong>Chrome</strong>, <strong>Firefox</strong>, y como <strong>userscript</strong>.',
+        howTitle: 'Cómo funciona',
+        howStep1Title: 'Instala la extensión o el userscript',
+        howStep1Desc: 'Disponible en el Chrome Web Store, complementos de Firefox o como userscript de Tampermonkey. Un clic para instalar, sin configuración necesaria.',
+        howStep2Title: 'Navega por LinkedIn como siempre',
+        howStep2Desc: 'La extensión funciona en segundo plano, escaneando continuamente tu feed a medida que se cargan nuevas publicaciones. Detecta publicaciones patrocinadas, contenido sugerido y promociones de socios usando el marcado propio de LinkedIn.',
+        howStep3Title: 'El contenido no deseado se oculta al instante',
+        howStep3Desc: 'Las publicaciones coincidentes se eliminan del DOM antes de que las veas. Un contador en tiempo real rastrea cuántas publicaciones han sido bloqueadas durante tu sesión.',
+        faqTitle: 'Preguntas frecuentes',
+        faq1Q: '¿Cómo bloqueo los anuncios en LinkedIn?',
+        faq1A: 'Instala LinkedIn Sponsor Block desde el <a href="https://chromewebstore.google.com/detail/linkedin-sponsor-block/dmgglmnbmokkdocpamjkcgjfjceoocbh" class="text-linkedin hover:underline">Chrome Web Store</a>, los <a href="https://addons.mozilla.org/en-US/firefox/addon/linkedin-sponsor-block/" class="text-linkedin hover:underline">complementos de Firefox</a>, o como <a href="https://greasyfork.org/en/scripts/546877-linkedin-sponsor-block" class="text-linkedin hover:underline">userscript</a>. Una vez instalado, detecta y elimina automáticamente las publicaciones patrocinadas, el contenido publicitario y las sugerencias de tu feed de LinkedIn. Sin configuración necesaria.',
+        faq2Q: '¿Cómo eliminar publicaciones promocionadas de LinkedIn?',
+        faq2A: 'LinkedIn no ofrece una forma integrada de eliminar permanentemente las publicaciones promocionadas de tu feed. LinkedIn Sponsor Block resuelve esto ocultando automáticamente todas las publicaciones patrocinadas y promocionadas a medida que aparecen. Funciona en tiempo real.',
+        faq3Q: '¿Funciona con LinkedIn Premium?',
+        faq3A: 'Sí. LinkedIn Sponsor Block funciona de la misma manera independientemente de tu suscripción a LinkedIn. Elimina el contenido patrocinado y sugerido de los feeds gratuitos y Premium.',
+        faq4Q: '¿Están seguros mis datos?',
+        faq4A: 'Absolutamente. La extensión funciona completamente de forma local en tu navegador. No recopila, transmite ni almacena ningún dato personal. El código fuente es completamente open source y auditable en GitHub.',
+        faq5Q: '¿Funciona en idiomas distintos al inglés?',
+        faq5A: 'Sí. El motor de detección es independiente del idioma y funciona con todos los idiomas soportados por LinkedIn. La interfaz de la extensión está disponible en inglés y francés.',
+        faq6Q: '¿Puedo elegir qué tipos de contenido bloquear?',
+        faq6A: 'Sí. Puedes activar o desactivar independientemente el bloqueo de publicaciones promocionadas y contenido sugerido en los ajustes de la extensión. Esto te permite mantener los tipos de contenido que te resultan útiles.',
+        faq7Q: '¿Funciona en móvil?',
+        faq7A: 'Sí. La extensión de Firefox y el userscript (vía Tampermonkey) soportan la versión web móvil de LinkedIn. Las publicaciones patrocinadas y sugeridas se detectan y ocultan en móvil igual que en escritorio.',
+        faq8Q: '¿Qué pasa si LinkedIn cambia su diseño?',
+        faq8A: 'La extensión utiliza un enfoque de detección robusto basado en el marcado interno de LinkedIn en lugar de selectores CSS frágiles. Se mantiene activamente y se actualiza cuando ocurren cambios.',
+        previewTitle: 'Vista previa',
+        previewPopup: 'Popup de la extensión',
+        previewSettings: 'Configuración',
+        previewUserscript: 'Panel del userscript',
+        footer: 'Open source bajo la <a href="https://github.com/Hogwai/LinkedinSponsorBlock/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" class="text-linkedin hover:underline">licencia MIT</a>. Ver en <a href="https://github.com/Hogwai/LinkedinSponsorBlock" target="_blank" rel="noopener noreferrer" class="text-linkedin hover:underline">GitHub</a>.'
+      },
+      pt: {
+        navFeatures: 'Funcionalidades',
+        navWhy: 'Por quê',
+        navHow: 'Como funciona',
+        navFaq: 'FAQ',
+        navPreview: 'Visualização',
+        heroSubtitle: 'O bloqueador de anúncios gratuito para LinkedIn. Remova publicações promovidas, conteúdo patrocinado e sugestões do seu feed.',
+        heroDescription: 'Cansado de anúncios do LinkedIn, publicações promovidas e conteúdo patrocinado enchendo seu feed? LinkedIn Sponsor Block é um bloqueador leve que os oculta automaticamente para uma experiência LinkedIn mais limpa.',
+        heroChromium: 'Também disponível para todos os navegadores baseados em Chromium via Chrome Web Store:',
+        featuresTitle: 'Funcionalidades',
+        featureAutoTitle: 'Remoção automática',
+        featureAutoDesc: 'Oculta publicações patrocinadas, conteúdo sugerido e promoções de parceiros silenciosamente.',
+        featureMobileTitle: 'Desktop e mobile',
+        featureMobileDesc: 'Funciona nas versões desktop e mobile do LinkedIn (Firefox e userscript).',
+        featureMultilingualTitle: 'Suporte multilíngue',
+        featureMultilingualDesc: 'Funciona com todos os idiomas disponíveis no LinkedIn. A detecção é independente do idioma.',
+        featureLocalizedTitle: 'Interface localizada',
+        featureLocalizedDesc: 'Interface da extensão disponível em inglês e francês.',
+        featureLightTitle: 'Leve e discreto',
+        featureLightDesc: 'Funciona em segundo plano sem diminuir a velocidade da sua navegação.',
+        featureCounterTitle: 'Rastreamento por contador',
+        featureCounterDesc: 'Veja quantas publicações patrocinadas foram bloqueadas em tempo real.',
+        featureFilterTitle: 'Filtros personalizáveis',
+        featureFilterDesc: 'Escolha o que bloquear: promovido, sugerido ou ambos.',
+        whyTitle: 'Por que bloquear anúncios no LinkedIn?',
+        whyP1: 'O feed do LinkedIn está cada vez mais cheio de <strong>publicações promovidas</strong>, <strong>conteúdo patrocinado</strong> e <strong>sugestões</strong> que interrompem sua navegação profissional. Ao contrário do conteúdo orgânico da sua rede, esses anúncios do LinkedIn são posicionamentos pagos projetados para capturar sua atenção, não para ajudá-lo.',
+        whyP2: 'Um <strong>bloqueador de anúncios do LinkedIn</strong> como o LinkedIn Sponsor Block permite que você retome o controle do seu feed. Ele remove publicações promovidas e patrocinadas automaticamente, para que você só veja atualizações de pessoas e empresas que realmente segue. Sem mais anúncios irrelevantes, sem mais sugestões indesejadas. Apenas o conteúdo que importa.',
+        whyP3: 'Esteja você procurando emprego, fazendo networking ou se mantendo informado, um feed de LinkedIn limpo ajuda você a manter o foco e a produtividade. LinkedIn Sponsor Block é <strong>gratuito</strong>, <strong>open source</strong>, e funciona no <strong>Chrome</strong>, <strong>Firefox</strong>, e como <strong>userscript</strong>.',
+        howTitle: 'Como funciona',
+        howStep1Title: 'Instale a extensão ou o userscript',
+        howStep1Desc: 'Disponível na Chrome Web Store, complementos do Firefox ou como userscript do Tampermonkey. Um clique para instalar, sem configuração necessária.',
+        howStep2Title: 'Navegue no LinkedIn normalmente',
+        howStep2Desc: 'A extensão funciona em segundo plano, escaneando continuamente seu feed à medida que novas publicações carregam. Ela detecta publicações patrocinadas, conteúdo sugerido e promoções de parceiros usando a marcação própria do LinkedIn.',
+        howStep3Title: 'O conteúdo indesejado é ocultado instantaneamente',
+        howStep3Desc: 'As publicações correspondentes são removidas do DOM antes mesmo de você vê-las. Um contador em tempo real rastreia quantas publicações foram bloqueadas durante sua sessão.',
+        faqTitle: 'Perguntas frequentes',
+        faq1Q: 'Como bloquear anúncios no LinkedIn?',
+        faq1A: 'Instale o LinkedIn Sponsor Block pela <a href="https://chromewebstore.google.com/detail/linkedin-sponsor-block/dmgglmnbmokkdocpamjkcgjfjceoocbh" class="text-linkedin hover:underline">Chrome Web Store</a>, <a href="https://addons.mozilla.org/en-US/firefox/addon/linkedin-sponsor-block/" class="text-linkedin hover:underline">complementos do Firefox</a>, ou como <a href="https://greasyfork.org/en/scripts/546877-linkedin-sponsor-block" class="text-linkedin hover:underline">userscript</a>. Uma vez instalado, ele detecta e remove automaticamente publicações patrocinadas, conteúdo publicitário e sugestões do seu feed do LinkedIn. Sem configuração necessária.',
+        faq2Q: 'Como remover publicações promovidas do LinkedIn?',
+        faq2A: 'O LinkedIn não oferece uma forma integrada de remover permanentemente publicações promovidas do seu feed. O LinkedIn Sponsor Block resolve isso ocultando automaticamente todas as publicações patrocinadas e promovidas à medida que aparecem. Funciona em tempo real.',
+        faq3Q: 'Funciona com o LinkedIn Premium?',
+        faq3A: 'Sim. O LinkedIn Sponsor Block funciona da mesma forma independentemente da sua assinatura do LinkedIn. Ele remove conteúdo patrocinado e sugerido de feeds gratuitos e Premium.',
+        faq4Q: 'Meus dados estão seguros?',
+        faq4A: 'Absolutamente. A extensão funciona inteiramente de forma local no seu navegador. Ela não coleta, transmite ou armazena nenhum dado pessoal. O código-fonte é totalmente open source e auditável no GitHub.',
+        faq5Q: 'Funciona em idiomas além do inglês?',
+        faq5A: 'Sim. O motor de detecção é independente do idioma e funciona com todos os idiomas suportados pelo LinkedIn. A interface da extensão está disponível em inglês e francês.',
+        faq6Q: 'Posso escolher quais tipos de conteúdo bloquear?',
+        faq6A: 'Sim. Você pode ativar ou desativar independentemente o bloqueio de publicações promovidas e conteúdo sugerido nas configurações da extensão. Isso permite manter os tipos de conteúdo que você considera úteis.',
+        faq7Q: 'Funciona no celular?',
+        faq7A: 'Sim. A extensão do Firefox e o userscript (via Tampermonkey) suportam a versão web mobile do LinkedIn. Publicações patrocinadas e sugeridas são detectadas e ocultadas no celular assim como no desktop.',
+        faq8Q: 'E se o LinkedIn mudar seu layout?',
+        faq8A: 'A extensão utiliza uma abordagem de detecção robusta baseada na marcação interna do LinkedIn em vez de seletores CSS frágeis. É ativamente mantida e atualizada quando mudanças ocorrem.',
+        previewTitle: 'Visualização',
+        previewPopup: 'Popup da extensão',
+        previewSettings: 'Configurações',
+        previewUserscript: 'Painel do userscript',
+        footer: 'Open source sob a <a href="https://github.com/Hogwai/LinkedinSponsorBlock/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" class="text-linkedin hover:underline">licença MIT</a>. Ver no <a href="https://github.com/Hogwai/LinkedinSponsorBlock" target="_blank" rel="noopener noreferrer" class="text-linkedin hover:underline">GitHub</a>.'
+      },
+      de: {
+        navFeatures: 'Funktionen',
+        navWhy: 'Warum',
+        navHow: 'So funktioniert es',
+        navFaq: 'FAQ',
+        navPreview: 'Vorschau',
+        heroSubtitle: 'Der kostenlose Werbeblocker für LinkedIn. Entfernen Sie beworbene Beiträge, gesponserte Inhalte und Vorschläge aus Ihrem Feed.',
+        heroDescription: 'Genervt von LinkedIn-Werbung, beworbenen Beiträgen und gesponserten Inhalten in Ihrem Feed? LinkedIn Sponsor Block ist ein leichtgewichtiger Werbeblocker, der sie automatisch ausblendet und Ihnen ein saubereres LinkedIn-Erlebnis bietet.',
+        heroChromium: 'Auch verfügbar für alle Chromium-basierten Browser über den Chrome Web Store:',
+        featuresTitle: 'Funktionen',
+        featureAutoTitle: 'Automatische Entfernung',
+        featureAutoDesc: 'Blendet gesponserte Beiträge, vorgeschlagene Inhalte und Partnerpromotions lautlos aus.',
+        featureMobileTitle: 'Desktop und Mobil',
+        featureMobileDesc: 'Funktioniert auf Desktop- und Mobilversionen von LinkedIn (Firefox und Userscript).',
+        featureMultilingualTitle: 'Mehrsprachige Unterstützung',
+        featureMultilingualDesc: 'Funktioniert mit allen auf LinkedIn verfügbaren Sprachen. Die Erkennung ist sprachunabhängig.',
+        featureLocalizedTitle: 'Lokalisierte Oberfläche',
+        featureLocalizedDesc: 'Erweiterungsoberfläche verfügbar auf Englisch und Französisch.',
+        featureLightTitle: 'Leicht und diskret',
+        featureLightDesc: 'Läuft im Hintergrund, ohne Ihr Browsing-Erlebnis zu verlangsamen.',
+        featureCounterTitle: 'Zähler-Tracking',
+        featureCounterDesc: 'Sehen Sie in Echtzeit, wie viele gesponserte Beiträge blockiert wurden.',
+        featureFilterTitle: 'Anpassbare Filter',
+        featureFilterDesc: 'Wählen Sie, was blockiert werden soll: beworben, vorgeschlagen oder beides.',
+        whyTitle: 'Warum Werbung auf LinkedIn blockieren?',
+        whyP1: 'Der LinkedIn-Feed ist zunehmend gefüllt mit <strong>beworbenen Beiträgen</strong>, <strong>gesponserten Inhalten</strong> und <strong>Vorschlägen</strong>, die Ihr professionelles Browsing unterbrechen. Im Gegensatz zu organischen Inhalten aus Ihrem Netzwerk sind diese LinkedIn-Anzeigen bezahlte Platzierungen, die Ihre Aufmerksamkeit gewinnen sollen, nicht Ihnen helfen.',
+        whyP2: 'Ein <strong>LinkedIn-Werbeblocker</strong> wie LinkedIn Sponsor Block gibt Ihnen die Kontrolle über Ihren Feed zurück. Er entfernt beworbene und gesponserte Beiträge automatisch, sodass Sie nur Updates von Personen und Unternehmen sehen, denen Sie tatsächlich folgen. Keine irrelevanten Anzeigen mehr, keine ungewünschten Vorschläge. Nur der Inhalt, der zählt.',
+        whyP3: 'Ob Sie auf Jobsuche sind, netzwerken oder informiert bleiben möchten, ein sauberer LinkedIn-Feed hilft Ihnen, fokussiert und produktiv zu bleiben. LinkedIn Sponsor Block ist <strong>kostenlos</strong>, <strong>Open Source</strong>, und funktioniert auf <strong>Chrome</strong>, <strong>Firefox</strong>, und als <strong>Userscript</strong>.',
+        howTitle: 'So funktioniert es',
+        howStep1Title: 'Installieren Sie die Erweiterung oder das Userscript',
+        howStep1Desc: 'Verfügbar im Chrome Web Store, bei Firefox-Add-ons oder als Tampermonkey-Userscript. Ein Klick zur Installation, keine Konfiguration erforderlich.',
+        howStep2Title: 'Surfen Sie wie gewohnt auf LinkedIn',
+        howStep2Desc: 'Die Erweiterung läuft im Hintergrund und scannt kontinuierlich Ihren Feed, wenn neue Beiträge geladen werden. Sie erkennt gesponserte Beiträge, vorgeschlagene Inhalte und Partnerpromotions anhand von LinkedIns eigenem Markup.',
+        howStep3Title: 'Unerwünschte Inhalte werden sofort ausgeblendet',
+        howStep3Desc: 'Übereinstimmende Beiträge werden aus dem DOM entfernt, bevor Sie sie sehen. Ein Echtzeit-Zähler verfolgt, wie viele Beiträge während Ihrer Sitzung blockiert wurden.',
+        faqTitle: 'Häufig gestellte Fragen',
+        faq1Q: 'Wie blockiere ich Werbung auf LinkedIn?',
+        faq1A: 'Installieren Sie LinkedIn Sponsor Block aus dem <a href="https://chromewebstore.google.com/detail/linkedin-sponsor-block/dmgglmnbmokkdocpamjkcgjfjceoocbh" class="text-linkedin hover:underline">Chrome Web Store</a>, den <a href="https://addons.mozilla.org/en-US/firefox/addon/linkedin-sponsor-block/" class="text-linkedin hover:underline">Firefox-Add-ons</a>, oder als <a href="https://greasyfork.org/en/scripts/546877-linkedin-sponsor-block" class="text-linkedin hover:underline">Userscript</a>. Nach der Installation erkennt und entfernt es automatisch gesponserte Beiträge, Werbeinhalte und Vorschläge aus Ihrem LinkedIn-Feed. Keine Konfiguration erforderlich.',
+        faq2Q: 'Wie entferne ich beworbene Beiträge von LinkedIn?',
+        faq2A: 'LinkedIn bietet keine integrierte Möglichkeit, beworbene Beiträge dauerhaft aus Ihrem Feed zu entfernen. LinkedIn Sponsor Block löst dies, indem es automatisch alle gesponserten und beworbenen Beiträge ausblendet, sobald sie erscheinen. Es funktioniert in Echtzeit.',
+        faq3Q: 'Funktioniert es mit LinkedIn Premium?',
+        faq3A: 'Ja. LinkedIn Sponsor Block funktioniert unabhängig von Ihrem LinkedIn-Abonnement gleich. Es entfernt gesponserte und vorgeschlagene Inhalte aus kostenlosen und Premium-Feeds.',
+        faq4Q: 'Sind meine Daten sicher?',
+        faq4A: 'Absolut. Die Erweiterung läuft vollständig lokal in Ihrem Browser. Sie sammelt, überträgt oder speichert keine persönlichen Daten. Der Quellcode ist vollständig Open Source und auf GitHub einsehbar.',
+        faq5Q: 'Funktioniert es in anderen Sprachen als Englisch?',
+        faq5A: 'Ja. Die Erkennungsengine ist sprachunabhängig und funktioniert mit allen von LinkedIn unterstützten Sprachen. Die Erweiterungsoberfläche ist auf Englisch und Französisch verfügbar.',
+        faq6Q: 'Kann ich wählen, welche Inhaltstypen blockiert werden?',
+        faq6A: 'Ja. Sie können das Blockieren von beworbenen Beiträgen und vorgeschlagenen Inhalten in den Erweiterungseinstellungen unabhängig voneinander aktivieren oder deaktivieren. So behalten Sie die Inhaltstypen, die Sie nützlich finden.',
+        faq7Q: 'Funktioniert es auf dem Handy?',
+        faq7A: 'Ja. Die Firefox-Erweiterung und das Userscript (über Tampermonkey) unterstützen beide die mobile Webversion von LinkedIn. Gesponserte und vorgeschlagene Beiträge werden auf dem Handy genauso erkannt und ausgeblendet wie auf dem Desktop.',
+        faq8Q: 'Was passiert, wenn LinkedIn sein Layout ändert?',
+        faq8A: 'Die Erweiterung verwendet einen robusten Erkennungsansatz, der auf LinkedIns internem Markup basiert, anstatt auf fragilen CSS-Selektoren. Sie wird aktiv gepflegt und aktualisiert, wenn Änderungen auftreten.',
+        previewTitle: 'Vorschau',
+        previewPopup: 'Erweiterungs-Popup',
+        previewSettings: 'Einstellungen',
+        previewUserscript: 'Userscript-Panel',
+        footer: 'Open Source unter der <a href="https://github.com/Hogwai/LinkedinSponsorBlock/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" class="text-linkedin hover:underline">MIT-Lizenz</a>. Ansehen auf <a href="https://github.com/Hogwai/LinkedinSponsorBlock" target="_blank" rel="noopener noreferrer" class="text-linkedin hover:underline">GitHub</a>.'
+      }
+    };
+
+    var SUPPORTED_LANGS = ['en', 'fr', 'es', 'pt', 'de'];
+
+    function setLanguage(lang) {
+      if (SUPPORTED_LANGS.indexOf(lang) === -1) lang = 'en';
+      var t = SITE_TRANSLATIONS[lang];
+
+      document.documentElement.lang = lang;
+
+      document.querySelectorAll('[data-i18n]').forEach(function(el) {
+        var key = el.getAttribute('data-i18n');
+        if (t[key]) el.textContent = t[key];
+      });
+      document.querySelectorAll('[data-i18n-html]').forEach(function(el) {
+        var key = el.getAttribute('data-i18n-html');
+        if (t[key]) el.innerHTML = t[key];
+      });
+
+      // Update active state on language selector buttons
+      document.querySelectorAll('[data-lang]').forEach(function(btn) {
+        if (btn.getAttribute('data-lang') === lang) {
+          btn.classList.add('text-linkedin', 'font-bold');
+          btn.classList.remove('text-slate-600');
+        } else {
+          btn.classList.remove('text-linkedin', 'font-bold');
+          btn.classList.add('text-slate-600');
+        }
+      });
+
+      try { localStorage.setItem('lsb-site-lang', lang); } catch(e) {}
+    }
+
+    // Restore saved language on load, default to English
+    (function() {
+      var saved;
+      try { saved = localStorage.getItem('lsb-site-lang'); } catch(e) {}
+      if (saved && SUPPORTED_LANGS.indexOf(saved) !== -1) {
+        setLanguage(saved);
+      }
+    })();
+  </script>
 
   <!-- Mobile menu toggle -->
   <script>
