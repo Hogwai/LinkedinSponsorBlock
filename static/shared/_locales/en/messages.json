@@ -1,0 +1,10 @@
+{
+    "extName": {
+        "message": "Linkedin Sponsor Block",
+        "description": "The name of the extension."
+    },
+    "extDescription": {
+        "message": "Clean up your Linkedin feed by removing sponsored posts, suggestions, and partner content.",
+        "description": "The description of the extension."
+    }
+}

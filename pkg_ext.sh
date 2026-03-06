@@ -19,6 +19,9 @@ if [[ "$PLATFORM" != "firefox" && "$PLATFORM" != "chrome" ]]; then
   exit 1
 fi
 
+# Read version from versions.json
+VERSION=$(jq -r ".$PLATFORM" versions.json)
+
 case "$PLATFORM" in
   firefox)
     if ! command -v web-ext >/dev/null 2>&1; then
@@ -40,9 +43,14 @@ case "$PLATFORM" in
       exit 1
     fi
 
-    echo "📦 Creating Chrome archive..."
-    zip -r -q "chrome_ext.zip" dist/chrome
-    echo "✅ Archive created: chrome_ext.zip"
+    OUTFILE="LinkedinSponsorBlock-chrome-${VERSION}.zip"
+    rm -f "$OUTFILE"
+
+    echo "📦 Creating Chrome archive (v${VERSION})..."
+    cd dist/chrome
+    zip -r -q "../../$OUTFILE" .
+    cd ../..
+    echo "✅ Archive created: $OUTFILE"
     ;;
 esac
 

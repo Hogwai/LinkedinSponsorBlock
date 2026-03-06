@@ -225,7 +225,7 @@ scanBtn.addEventListener('click', async () => {
     const [tab] = await api.tabs.query({ active: true, currentWindow: true });
 
     if (!tab?.url?.includes('linkedin.com')) {
-        setStatus(t('notOnLinkedIn'), 'error');
+        setStatus(t('notOnLinkedin'), 'error');
         return;
     }
 

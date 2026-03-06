@@ -1,6 +1,6 @@
 export const TRANSLATIONS = {
     en: {
-        title: 'LinkedIn Sponsor Block',
+        title: 'Linkedin Sponsor Block',
         enabled: 'Enabled',
         discreetMode: 'Discreet mode',
         extensionEnabled: 'Extension enabled',
@@ -21,7 +21,7 @@ export const TRANSLATIONS = {
         postsHidden: 'hidden',
         promotedLabel: 'promoted',
         suggestedLabel: 'suggested',
-        notOnLinkedIn: 'You are not on LinkedIn',
+        notOnLinkedin: 'You are not on Linkedin',
         error: 'Error',
         countersReset: 'Counters have been reset',
         language: 'Language',
@@ -44,7 +44,7 @@ export const TRANSLATIONS = {
         madeBy: 'Made by'
     },
     fr: {
-        title: 'LinkedIn Sponsor Block',
+        title: 'Linkedin Sponsor Block',
         enabled: 'Activé',
         discreetMode: 'Mode discret',
         extensionEnabled: 'Extension activée',
@@ -65,7 +65,7 @@ export const TRANSLATIONS = {
         postsHidden: 'masqués',
         promotedLabel: 'promotionnels',
         suggestedLabel: 'suggérés',
-        notOnLinkedIn: 'Vous n\'êtes pas sur LinkedIn',
+        notOnLinkedin: 'Vous n\'êtes pas sur Linkedin',
         error: 'Erreur',
         countersReset: 'Les compteurs ont été réinitialisés',
         language: 'Langue',
@@ -88,7 +88,7 @@ export const TRANSLATIONS = {
         madeBy: 'Créé par'
     },
     es: {
-        title: 'LinkedIn Sponsor Block',
+        title: 'Linkedin Sponsor Block',
         enabled: 'Activado',
         discreetMode: 'Modo discreto',
         extensionEnabled: 'Extensión activada',
@@ -109,7 +109,7 @@ export const TRANSLATIONS = {
         postsHidden: 'ocultas',
         promotedLabel: 'promocionadas',
         suggestedLabel: 'sugeridas',
-        notOnLinkedIn: 'No estás en LinkedIn',
+        notOnLinkedin: 'No estás en Linkedin',
         error: 'Error',
         countersReset: 'Los contadores han sido reiniciados',
         language: 'Idioma',
@@ -132,7 +132,7 @@ export const TRANSLATIONS = {
         madeBy: 'Hecho por'
     },
     pt: {
-        title: 'LinkedIn Sponsor Block',
+        title: 'Linkedin Sponsor Block',
         enabled: 'Ativado',
         discreetMode: 'Modo discreto',
         extensionEnabled: 'Extensão ativada',
@@ -153,7 +153,7 @@ export const TRANSLATIONS = {
         postsHidden: 'ocultas',
         promotedLabel: 'promovidas',
         suggestedLabel: 'sugeridas',
-        notOnLinkedIn: 'Você não está no LinkedIn',
+        notOnLinkedin: 'Você não está no Linkedin',
         error: 'Erro',
         countersReset: 'Os contadores foram redefinidos',
         language: 'Idioma',
@@ -176,7 +176,7 @@ export const TRANSLATIONS = {
         madeBy: 'Feito por'
     },
     de: {
-        title: 'LinkedIn Sponsor Block',
+        title: 'Linkedin Sponsor Block',
         enabled: 'Aktiviert',
         discreetMode: 'Diskreter Modus',
         extensionEnabled: 'Erweiterung aktiviert',
@@ -197,7 +197,7 @@ export const TRANSLATIONS = {
         postsHidden: 'ausgeblendet',
         promotedLabel: 'gesponserte',
         suggestedLabel: 'vorgeschlagene',
-        notOnLinkedIn: 'Sie sind nicht auf LinkedIn',
+        notOnLinkedin: 'Sie sind nicht auf Linkedin',
         error: 'Fehler',
         countersReset: 'Die Zähler wurden zurückgesetzt',
         language: 'Sprache',
@@ -220,7 +220,7 @@ export const TRANSLATIONS = {
         madeBy: 'Erstellt von'
     },
     it: {
-        title: 'LinkedIn Sponsor Block',
+        title: 'Linkedin Sponsor Block',
         enabled: 'Attivato',
         discreetMode: 'Modalità discreta',
         extensionEnabled: 'Estensione attivata',
@@ -241,7 +241,7 @@ export const TRANSLATIONS = {
         postsHidden: 'nascosti',
         promotedLabel: 'sponsorizzati',
         suggestedLabel: 'suggeriti',
-        notOnLinkedIn: 'Non sei su LinkedIn',
+        notOnLinkedin: 'Non sei su Linkedin',
         error: 'Errore',
         countersReset: 'I contatori sono stati azzerati',
         language: 'Lingua',
@@ -264,7 +264,7 @@ export const TRANSLATIONS = {
         madeBy: 'Creato da'
     },
     hi: {
-        title: 'LinkedIn Sponsor Block',
+        title: 'Linkedin Sponsor Block',
         enabled: 'सक्रिय',
         discreetMode: 'विवेकपूर्ण मोड',
         extensionEnabled: 'एक्सटेंशन सक्रिय',
@@ -285,7 +285,7 @@ export const TRANSLATIONS = {
         postsHidden: 'छिपाई गईं',
         promotedLabel: 'प्रचारित',
         suggestedLabel: 'सुझाई गई',
-        notOnLinkedIn: 'आप LinkedIn पर नहीं हैं',
+        notOnLinkedin: 'आप Linkedin पर नहीं हैं',
         error: 'त्रुटि',
         countersReset: 'काउंटर रीसेट कर दिए गए हैं',
         language: 'भाषा',
@@ -308,7 +308,7 @@ export const TRANSLATIONS = {
         madeBy: 'द्वारा निर्मित'
     },
     ar: {
-        title: 'LinkedIn Sponsor Block',
+        title: 'Linkedin Sponsor Block',
         enabled: 'مفعّل',
         discreetMode: 'الوضع الخفي',
         extensionEnabled: 'الإضافة مفعّلة',
@@ -329,7 +329,7 @@ export const TRANSLATIONS = {
         postsHidden: 'مخفية',
         promotedLabel: 'مروّجة',
         suggestedLabel: 'مقترحة',
-        notOnLinkedIn: 'أنت لست على LinkedIn',
+        notOnLinkedin: 'أنت لست على Linkedin',
         error: 'خطأ',
         countersReset: 'تم إعادة تعيين العدادات',
         language: 'اللغة',
@@ -352,7 +352,7 @@ export const TRANSLATIONS = {
         madeBy: 'صنع بواسطة'
     },
     zh: {
-        title: 'LinkedIn Sponsor Block',
+        title: 'Linkedin Sponsor Block',
         enabled: '已启用',
         discreetMode: '低调模式',
         extensionEnabled: '扩展已启用',
@@ -373,7 +373,7 @@ export const TRANSLATIONS = {
         postsHidden: '已隐藏',
         promotedLabel: '推广',
         suggestedLabel: '推荐',
-        notOnLinkedIn: '您不在 LinkedIn 上',
+        notOnLinkedin: '您不在 Linkedin 上',
         error: '错误',
         countersReset: '计数器已重置',
         language: '语言',
@@ -396,7 +396,7 @@ export const TRANSLATIONS = {
         madeBy: '由...制作'
     },
     ja: {
-        title: 'LinkedIn Sponsor Block',
+        title: 'Linkedin Sponsor Block',
         enabled: '有効',
         discreetMode: '控えめモード',
         extensionEnabled: '拡張機能が有効',
@@ -417,7 +417,7 @@ export const TRANSLATIONS = {
         postsHidden: '非表示',
         promotedLabel: 'プロモーション',
         suggestedLabel: 'おすすめ',
-        notOnLinkedIn: 'LinkedInにアクセスしていません',
+        notOnLinkedin: 'Linkedinにアクセスしていません',
         error: 'エラー',
         countersReset: 'カウンターがリセットされました',
         language: '言語',

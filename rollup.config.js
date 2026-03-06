@@ -46,6 +46,7 @@ function copySharedAssets(dest) {
             { src: 'static/shared/popup.html', dest },
             { src: 'static/shared/popup.css', dest },
             { src: 'static/shared/icons/*', dest },
+            { src: 'static/shared/_locales', dest },
             { src: 'LICENSE', dest },
         ],
         hook: 'writeBundle',

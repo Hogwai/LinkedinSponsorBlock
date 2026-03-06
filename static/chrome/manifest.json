@@ -1,7 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Linkedin Sponsor Block",
-  "description": "Clean up your LinkedIn feed and see only what matters.",
+  "name": "__MSG_extName__",
+  "description": "__MSG_extDescription__",
+  "default_locale": "en",
   "homepage_url": "https://github.com/Hogwai/LinkedinSponsorBlock",
   "version": "1.1.0",
   "icons": {
