@@ -1,8 +1,8 @@
 # LinkedinSponsorBlock
 
-**Clean up your LinkedIn feed and see only what matters.**
+**Clean up your Linkedin feed and see only what matters.**
 
-Tired of sponsored posts, suggested content, or partner promotions cluttering your feed? **LinkedinSponsorBlock** automatically removes these "promotion" posts, giving you a cleaner, more productive LinkedIn experience.
+Tired of sponsored posts, suggested content, or partner promotions cluttering your feed? **LinkedinSponsorBlock** automatically removes these "promotion" posts, giving you a cleaner, more productive Linkedin experience.
 
 These posts look like regular updates but are labeled **"Promotion."** Even standard ad blockers often miss them — this extension catches and hides them silently.
 
@@ -34,15 +34,15 @@ These posts look like regular updates but are labeled **"Promotion."** Even stan
 ## Features
 
 - 🚫 **Automatic removal** – Hides sponsored posts, suggested content, and partner promotions
-- 📱 **Desktop & mobile** – Works on both desktop and mobile versions of LinkedIn (Firefox & userscript)
-- 🌐 **Multilingual support** – Works with all languages available on LinkedIn
+- 📱 **Desktop & mobile** – Works on both desktop and mobile versions of Linkedin (Firefox & userscript)
+- 🌐 **Multilingual support** – Works with all languages available on Linkedin
 - 🌍 **Localized UI** – Extension interface available in English and French
 - ⚡ **Lightweight & discreet** – Runs in the background without slowing your browsing
 - 💼 **Focused feed** – Concentrate on the content that actually matters to you
 - 📊 **Counter tracking** – See how many posts have been blocked
 - ⚙️ **Customizable filters** – Choose what to block (promoted, suggested, or both)
 
-Perfect for professionals, recruiters, or regular LinkedIn users who want a more relevant and distraction-free feed.
+Perfect for professionals, recruiters, or regular Linkedin users who want a more relevant and distraction-free feed.
 
 ---
 
@@ -54,7 +54,7 @@ Choose your preferred installation method:
 
 Available on the [Chrome Web Store](https://chromewebstore.google.com/detail/linkedin-sponsor-block/dmgglmnbmokkdocpamjkcgjfjceoocbh) for Chrome and all Chromium-based browsers:
 
-<a href="https://chromewebstore.google.com/detail/linkedin-sponsor-block/dmgglmnbmokkdocpamjkcgjfjceoocbh" target="_blank"><img src="https://user-images.githubusercontent.com/585534/107280622-91a8ea80-6a26-11eb-8d07-77c548b28665.png" alt="Get LinkedIn Sponsor Block for Chrome" height="60"></a>
+<a href="https://chromewebstore.google.com/detail/linkedin-sponsor-block/dmgglmnbmokkdocpamjkcgjfjceoocbh" target="_blank"><img src="https://user-images.githubusercontent.com/585534/107280622-91a8ea80-6a26-11eb-8d07-77c548b28665.png" alt="Get Linkedin Sponsor Block for Chrome" height="60"></a>
 
 [![Microsoft Edge](https://custom-icon-badges.demolab.com/badge/Microsoft%20Edge-2771D8?logo=edge-white&logoColor=white)](https://chromewebstore.google.com/detail/linkedin-sponsor-block/dmgglmnbmokkdocpamjkcgjfjceoocbh)
 [![Brave](https://img.shields.io/badge/Brave-FB542B?logo=Brave&logoColor=white)](https://chromewebstore.google.com/detail/linkedin-sponsor-block/dmgglmnbmokkdocpamjkcgjfjceoocbh)
@@ -64,7 +64,7 @@ Available on the [Chrome Web Store](https://chromewebstore.google.com/detail/lin
 
 ### 🦊 Firefox Extension
 
-<a href="https://addons.mozilla.org/en-US/firefox/addon/linkedin-sponsor-block/" target="_blank"><img src="https://user-images.githubusercontent.com/585534/107280546-7b9b2a00-6a26-11eb-8f9f-f95932f4bfec.png" alt="Get LinkedIn Sponsor Block for Firefox" height="60"></a>
+<a href="https://addons.mozilla.org/en-US/firefox/addon/linkedin-sponsor-block/" target="_blank"><img src="https://user-images.githubusercontent.com/585534/107280546-7b9b2a00-6a26-11eb-8f9f-f95932f4bfec.png" alt="Get Linkedin Sponsor Block for Firefox" height="60"></a>
 
 ### 🔧 Userscript (Tampermonkey)
 

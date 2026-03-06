@@ -415,7 +415,7 @@ const STYLES = `
 // ==================== HTML ====================
 function createHTML() {
     return `
-        <button class="lsb-fab" id="lsb-fab" title="LinkedIn Sponsor Block">
+        <button class="lsb-fab" id="lsb-fab" title="Linkedin Sponsor Block">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
                 <path d="M19 13H5V11H19V13Z" fill="white"/>
                 <path d="M19 7H5V5H19V7Z" fill="white"/>
@@ -427,7 +427,7 @@ function createHTML() {
         </button>
         <div class="lsb-panel" id="lsb-panel">
             <div class="lsb-header">
-                <span class="lsb-title" data-t="title">LinkedIn Sponsor Block</span>
+                <span class="lsb-title" data-t="title">Linkedin Sponsor Block</span>
                 <button class="lsb-close" id="lsb-close">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                         <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
