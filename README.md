@@ -4,7 +4,24 @@
 
 Tired of sponsored posts, suggested content, or partner promotions cluttering your feed? **LinkedinSponsorBlock** automatically removes these "promotion" posts, giving you a cleaner, more productive Linkedin experience.
 
-These posts look like regular updates but are labeled **"Promotion."** Even standard ad blockers often miss them — this extension catches and hides them silently.
+These posts look like regular updates but are labeled **"Promotion."** Even standard ad blockers often miss them, this extension catches and hides them silently.
+
+## Table of Contents
+
+- [Preview](#preview)
+- [Features](#features)
+- [Installation](#-installation)
+  - [Google Chrome & Chromium-based browsers](#-google-chrome--chromium-based-browsers)
+  - [Firefox Extension](#-firefox-extension)
+  - [Userscript (Tampermonkey)](#-userscript-tampermonkey)
+- [Detailed Installation Guide](#-detailed-installation-guide)
+  - [Prerequisites](#prerequisites)
+  - [Installing Tampermonkey](#installing-tampermonkey)
+  - [Installing the script](#installing-the-linkedinsponsorblock-script)
+  - [Usage](#usage)
+  - [Troubleshooting](#troubleshooting)
+- [Support](#support)
+- [License](#license)
 
 ## Preview
 
@@ -122,7 +139,7 @@ Available on the [Chrome Web Store](https://chromewebstore.google.com/detail/lin
 
 **Persistent issues?**
 
-- Open an issue via [GitHub](https://github.com/Hogwai/LinkedinSponsorBlock/issues) or try to update the script
+- [Report an issue](https://tally.so/r/QKrO28) or open an issue via [GitHub](https://github.com/Hogwai/LinkedinSponsorBlock/issues), or try to update the script
 
 ---
 
@@ -135,6 +152,7 @@ Found this project useful? Consider supporting its development:
   - [Chrome Web Store](https://chromewebstore.google.com/detail/linkedin-sponsor-block/dmgglmnbmokkdocpamjkcgjfjceoocbh/reviews)
   - [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/linkedin-sponsor-block/reviews/)
   - [Greasyfork](https://greasyfork.org/fr/scripts/546877-linkedin-sponsor-block/feedback)
+- 🐛 [Report an issue](https://tally.so/r/QKrO28)
 
 ## License
 

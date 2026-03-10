@@ -81,5 +81,6 @@ export const CONFIG = {
         userscript: 'https://greasyfork.org/fr/scripts/546877-linkedin-sponsor-block/feedback'
     },
     GITHUB_URL: 'https://github.com/Hogwai/LinkedinSponsorBlock',
+    FEEDBACK_URL: 'https://tally.so/r/QKrO28',
     REVIEW_THRESHOLD_DAYS: 7
 };

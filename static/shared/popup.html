@@ -12,7 +12,7 @@
     <div class="container">
         <header class="header">
             <div class="logo">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M19 13H5V11H19V13Z" fill="#0A66C2"/>
                     <path d="M19 7H5V5H19V7Z" fill="#0A66C2"/>
                     <path d="M15 17H5V15H15V17Z" fill="#0A66C2"/>
@@ -37,13 +37,17 @@
         </div>
 
         <div id="reviewBanner" class="review-banner" style="display: none;">
-            <span>
-                <span data-translate="reviewBanner">Enjoying the extension?</span>
-                <a id="reviewBannerLink" href="#" target="_blank" data-translate="leaveReview">Leave a review</a>
-                ·
-                <a href="https://github.com/Hogwai/LinkedinSponsorBlock" target="_blank">⭐ GitHub</a>
-            </span>
-            <button id="dismissBanner" class="dismiss-banner-btn" data-translate="dismiss">Dismiss</button>
+            <button id="dismissBanner" class="banner-close-btn" aria-label="Dismiss">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            <span data-translate="reviewBanner">Enjoying the extension?</span>
+            <div class="review-banner-actions">
+                <a id="reviewBannerLink" href="#" target="_blank" class="review-banner-btn" data-translate="leaveReview">Leave a review</a>
+                <a href="https://github.com/Hogwai/LinkedinSponsorBlock" target="_blank" class="review-banner-btn">⭐ GitHub</a>
+                <a id="feedbackBannerLink" href="#" target="_blank" class="review-banner-btn" data-translate="reportIssue">Report an issue</a>
+            </div>
         </div>
 
         <div class="stats">
@@ -111,6 +115,19 @@
                         <span class="checkmark"></span>
                         <span class="checkbox-label" data-translate="enableExtension">Enable extension</span>
                     </label>
+                    <div id="resetCountersWrapper">
+                        <button id="resetCounters" class="danger-btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span data-translate="resetCounters">Reset Counters</span>
+                        </button>
+                        <div id="resetConfirm" class="confirm-actions hidden">
+                            <span data-translate="confirmReset">Reset counters?</span>
+                            <button id="confirmReset" class="confirm-btn" data-translate="yes">Yes</button>
+                            <button id="cancelReset" class="cancel-btn" data-translate="no">No</button>
+                        </div>
+                    </div>
                 </div>
                 <div class="settings-section">
                     <h4 data-translate="languageSettings">Language Settings</h4>
@@ -128,23 +145,6 @@
                             <option value="zh">中文</option>
                             <option value="ja">日本語</option>
                         </select>
-                    </div>
-                </div>
-                <div class="settings-section">
-                    <h4 data-translate="counterSettings">Counter Settings</h4>
-                    <p data-translate="resetCountersDescription">Reset all counters to zero. This action cannot be undone.</p>
-                    <div id="resetCountersWrapper">
-                        <button id="resetCounters" class="danger-btn">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            <span data-translate="resetCounters">Reset Counters</span>
-                        </button>
-                        <div id="resetConfirm" class="confirm-actions hidden">
-                            <span data-translate="confirmReset">Reset counters?</span>
-                            <button id="confirmReset" class="confirm-btn" data-translate="yes">Yes</button>
-                            <button id="cancelReset" class="cancel-btn" data-translate="no">No</button>
-                        </div>
                     </div>
                 </div>
                 <div id="supportSection" class="settings-section">
@@ -168,6 +168,12 @@
                                     <path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.009-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.607.069-.607 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.167 22 16.418 22 12c0-5.523-4.477-10-10-10z" fill="currentColor"/>
                                 </svg>
                                 <span data-translate="githubRepo">GitHub</span>
+                            </a>
+                            <a id="feedbackLink" href="#" target="_blank" class="support-link-btn">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-7v2h2v-2h-2zm0-8v6h2V7h-2z" fill="currentColor"/>
+                                </svg>
+                                <span data-translate="reportIssue">Report an issue</span>
                             </a>
                         </div>
                     </div>
