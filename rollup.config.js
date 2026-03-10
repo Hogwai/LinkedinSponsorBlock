@@ -95,7 +95,12 @@ const firefoxBundles = [
 const userscriptBundles = [
     {
         input: 'src/userscript/content.js',
-        output: { file: 'dist/LinkedinSponsorBlock.user.js', format: 'iife', banner: userscriptBanner },
+        output: {
+            file: 'dist/LinkedinSponsorBlock.user.js',
+            format: 'iife',
+            banner: userscriptBanner,
+            intro: `const __VERSION__ = '${version}';`,
+        },
     },
 ];
 

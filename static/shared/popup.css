@@ -13,10 +13,11 @@ body {
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     color: #212529;
     min-width: 320px;
+    max-width: 350px;
 }
 
 .container {
-    padding: 20px;
+    padding: 14px;
 }
 
 /* Header */
@@ -24,17 +25,17 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 12px;
 }
 
 .logo {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 }
 
 .logo h1 {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
     color: #212529;
 }
@@ -91,9 +92,9 @@ body {
     align-items: flex-start;
     justify-content: center;
     background: rgba(10, 102, 194, 0.1);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 20px;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 12px;
 }
 
 .stat-item {
@@ -104,7 +105,7 @@ body {
 }
 
 .stat-value {
-    font-size: 28px;
+    font-size: 22px;
     font-weight: 700;
     color: #0A66C2;
 }
@@ -121,26 +122,26 @@ body {
 
 .stat-divider {
     width: 1px;
-    height: 40px;
+    height: 32px;
     background: rgba(10, 102, 194, 0.3);
-    margin: 0 20px;
+    margin: 0 16px;
 }
 
 /* Settings */
 .settings {
     background: rgba(10, 102, 194, 0.05);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 20px;
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
 }
 
 .settings h2 {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
     color: #6c757d;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-bottom: 12px;
+    margin-bottom: 6px;
 }
 
 /* Custom Checkbox */
@@ -148,7 +149,7 @@ body {
     display: flex;
     align-items: center;
     cursor: pointer;
-    padding: 6px 0;
+    padding: 3px 0;
     position: relative;
 }
 
@@ -160,8 +161,8 @@ body {
 }
 
 .checkmark {
-    height: 20px;
-    width: 20px;
+    height: 16px;
+    width: 16px;
     background-color: #4a4a6a;
     border-radius: 4px;
     transition: all 0.2s;
@@ -190,8 +191,8 @@ body {
 }
 
 .checkbox-label {
-    margin-left: 10px;
-    font-size: 13px;
+    margin-left: 8px;
+    font-size: 12px;
     color: #495057;
 }
 
@@ -242,7 +243,7 @@ body {
     background: transparent;
     border: none;
     color: #6c757d;
-    padding: 8px;
+    padding: 4px;
     border-radius: 6px;
     cursor: pointer;
     display: flex;
@@ -369,6 +370,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    margin-top: 8px;
 }
 
 #resetCountersWrapper.hidden #resetCounters {
@@ -442,12 +444,12 @@ body {
 /* Scan Button */
 .scan-btn {
     width: 100%;
-    padding: 12px 20px;
+    padding: 8px 16px;
     background: linear-gradient(135deg, #0A66C2 0%, #0077B5 100%);
     color: white;
     border: none;
-    border-radius: 8px;
-    font-size: 14px;
+    border-radius: 6px;
+    font-size: 13px;
     font-weight: 600;
     cursor: pointer;
     display: flex;
@@ -478,10 +480,10 @@ body {
 
 /* Status */
 #status {
-    font-size: 13px;
+    font-size: 12px;
     text-align: center;
-    min-height: 20px;
-    margin-top: 12px;
+    min-height: 16px;
+    margin-top: 6px;
     transition: color 0.3s;
 }
 
@@ -500,43 +502,67 @@ body {
 /* Review banner */
 .review-banner {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 8px;
-    padding: 10px;
-    margin-bottom: 16px;
+    gap: 6px;
+    padding: 8px;
+    margin-bottom: 10px;
+    position: relative;
     background: rgba(10, 102, 194, 0.1);
     border: 1px solid rgba(10, 102, 194, 0.3);
     border-radius: 8px;
     font-size: 12px;
     color: #0A66C2;
     line-height: 1.4;
+    text-align: center;
 }
 
-.review-banner a {
-    color: #0A66C2;
-    text-decoration: underline;
-    font-weight: 500;
+.review-banner-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
 }
 
-.review-banner a:hover {
-    opacity: 0.8;
-}
-
-.dismiss-banner-btn {
-    background: none;
-    border: 1px solid rgba(10, 102, 194, 0.3);
-    color: #0A66C2;
+.review-banner-btn {
+    display: inline-flex;
+    align-items: center;
     padding: 4px 10px;
+    border: 1px solid rgba(10, 102, 194, 0.3);
     border-radius: 4px;
     font-size: 11px;
+    font-weight: 500;
+    color: #0A66C2;
+    text-decoration: none;
     cursor: pointer;
     white-space: nowrap;
     transition: all 0.2s;
-    flex-shrink: 0;
+    background: none;
 }
 
-.dismiss-banner-btn:hover {
+.review-banner-btn:hover {
     background: rgba(10, 102, 194, 0.1);
+}
+
+.banner-close-btn {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: none;
+    border: none;
+    color: #0A66C2;
+    cursor: pointer;
+    padding: 2px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.banner-close-btn:hover {
+    opacity: 1;
 }
 
 /* Collapsible sections */
@@ -608,10 +634,10 @@ body {
 /* Footer */
 .footer {
     text-align: center;
-    font-size: 11px;
+    font-size: 10px;
     color: #6c757d;
-    margin-top: 16px;
-    padding-top: 12px;
+    margin-top: 10px;
+    padding-top: 8px;
     border-top: 1px solid rgba(10, 102, 194, 0.1);
 }
 
@@ -673,9 +699,9 @@ body.lang-hi {
     display: none;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    padding: 10px;
-    margin-bottom: 16px;
+    gap: 6px;
+    padding: 8px;
+    margin-bottom: 10px;
     background: rgba(220, 53, 69, 0.1);
     border: 1px solid rgba(220, 53, 69, 0.3);
     border-radius: 8px;
@@ -684,7 +710,7 @@ body.lang-hi {
     font-weight: 500;
 }
 
-/* Mobile responsive — popup opens in a separate tab on Firefox Android */
+/* Mobile responsive, popup opens in a separate tab on Firefox Android */
 .tab-mode .container {
     padding: 24px 20px;
     max-width: 480px;

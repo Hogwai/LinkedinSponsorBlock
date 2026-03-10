@@ -26,6 +26,8 @@ const reviewLink = document.getElementById('reviewLink');
 const reviewBanner = document.getElementById('reviewBanner');
 const reviewBannerLink = document.getElementById('reviewBannerLink');
 const dismissBannerBtn = document.getElementById('dismissBanner');
+const feedbackLink = document.getElementById('feedbackLink');
+const feedbackBannerLink = document.getElementById('feedbackBannerLink');
 
 let t = createTranslator('en');
 
@@ -159,6 +161,7 @@ languageSelect.addEventListener('change', async () => {
     const language = languageSelect.value;
     await saveSettings({ language });
     updateUILanguage();
+    updateFeedbackLink();
 });
 
 // Open settings modal
@@ -289,6 +292,19 @@ const reviewUrl = isFirefox ? CONFIG.REVIEW_URLS.firefox : CONFIG.REVIEW_URLS.ch
 reviewLink.href = reviewUrl;
 reviewBannerLink.href = reviewUrl;
 
+// Build feedback URL with pre-filled params
+const manifest = api.runtime.getManifest();
+const feedbackBaseUrl = CONFIG.FEEDBACK_URL;
+function updateFeedbackLink() {
+    const lang = getCurrentLanguage();
+    const platform = isFirefox ? 'firefox' : 'chrome';
+    const params = new URLSearchParams({ version: manifest.version, platform, language: lang });
+    const url = `${feedbackBaseUrl}?${params}`;
+    feedbackLink.href = url;
+    feedbackBannerLink.href = url;
+}
+updateFeedbackLink();
+
 // Review banner (time-based, dismissable)
 async function checkReviewBanner() {
     const result = await api.storage.local.get({
@@ -318,7 +334,7 @@ async function detectMobile() {
         if (info.os === 'android') {
             document.body.classList.add('tab-mode');
         }
-    } catch { /* Chrome desktop — no Android */ }
+    } catch { /* Chrome desktop, no Android */ }
 }
 
 // Initialize

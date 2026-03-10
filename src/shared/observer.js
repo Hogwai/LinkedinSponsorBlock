@@ -60,7 +60,7 @@ export function createObserver(scanFn, state) {
             return;
         }
 
-        // Feed wrapper not found after retries — start anyway with document
+        // Feed wrapper not found after retries, start anyway with document
         connect(document);
     }
 
