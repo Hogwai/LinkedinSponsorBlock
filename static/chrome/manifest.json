@@ -22,7 +22,7 @@
     "open_in_tab": true
   },
   "permissions": ["webNavigation", "storage"],
-  "host_permissions": ["https://*.linkedin.com/*"],
+  "host_permissions": ["https://*.linkedin.com/*", "https://raw.githubusercontent.com/Hogwai/LinkedinSponsorBlock/*"],
   "background": {
     "service_worker": "background.js"
   },

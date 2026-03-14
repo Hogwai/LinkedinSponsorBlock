@@ -39,6 +39,9 @@
         "webNavigation",
         "storage"
     ],
+    "host_permissions": [
+        "https://raw.githubusercontent.com/Hogwai/LinkedinSponsorBlock/*"
+    ],
     "background": { 
         "scripts": ["background.js"] 
     },

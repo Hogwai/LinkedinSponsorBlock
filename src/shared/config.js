@@ -31,6 +31,7 @@ export const CONFIG = {
                 keywords: new Set([
                     'Post sponsorisé',       // FRENCH
                     'Sponsorisé',            // FRENCH
+                    'Sponsorisé par',        // FRENCH
                     'En partenariat avec',   // FRENCH
                     'Promu(e) par',          // FRENCH
                     'Promues',               // FRENCH

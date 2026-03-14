@@ -3,7 +3,11 @@ import { CONFIG } from './config.js';
 function matchesByKeyword(post, detection) {
     const { keywordMatch, childSelectors } = detection;
     const candidates = post.querySelectorAll(keywordMatch.selector);
-    if (Array.from(candidates).some(el => keywordMatch.keywords.has(el.textContent.trim().toLowerCase()))) {
+    const keywords = keywordMatch.keywords;
+    if (Array.from(candidates).some(el => {
+        const text = el.textContent.trim().toLowerCase();
+        return keywords.has(text) || Array.from(keywords).some(kw => text.includes(kw));
+    })) {
         return true;
     }
     return childSelectors.some(sel => post.querySelector(sel));
