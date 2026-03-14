@@ -39,6 +39,7 @@ export const CONFIG = {
                     'Anzeige',               // GERMAN
                     'Gesponsert',            // GERMAN
                     'Promocionado',          // SPANISH
+                    'Promovida',             // PORTUGUESE
                     'الترويج',               // ARABIC
                     'Post sponsorizzato',    // ITALIAN
                     'Promosso da',           // ITALIAN
