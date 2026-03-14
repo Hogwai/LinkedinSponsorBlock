@@ -436,127 +436,176 @@ const STYLES = `
     .lsb-panel.disabled .lsb-scan-btn { opacity: 0.4; pointer-events: none; }
 `;
 
-// ==================== HTML ====================
-function createHTML() {
-    return `
-        <button class="lsb-fab" id="lsb-fab" title="Linkedin Sponsor Block">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                <path d="M19 13H5V11H19V13Z" fill="white"/>
-                <path d="M19 7H5V5H19V7Z" fill="white"/>
-                <path d="M15 17H5V15H15V17Z" fill="white"/>
-                <circle cx="18" cy="16" r="5" fill="#E74C3C"/>
-                <path d="M15.5 14L20.5 18M20.5 14L15.5 18" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-            <span class="lsb-badge" id="lsb-badge"></span>
-        </button>
-        <div class="lsb-panel" id="lsb-panel">
-            <div class="lsb-header">
-                <span class="lsb-title" data-t="title">Linkedin Sponsor Block</span>
-                <button class="lsb-close" id="lsb-close">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                        <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-                    </svg>
-                </button>
-            </div>
-            <div class="lsb-review-banner" id="lsb-review-banner" style="display:none;">
-                <button class="lsb-banner-close-btn" id="lsb-dismiss-banner" aria-label="Dismiss">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
-                </button>
-                <span data-t="reviewBannerUserscript">Enjoying the userscript?</span>
-                <div class="lsb-review-banner-actions">
-                    <a id="lsb-review-banner-link" href="#" target="_blank" class="lsb-review-banner-btn" data-t="leaveReview">Leave a review</a>
-                    <a id="lsb-github-banner-link" href="#" target="_blank" class="lsb-review-banner-btn">⭐ GitHub</a>
-                    <a id="lsb-feedback-banner-link" href="#" target="_blank" class="lsb-review-banner-btn" data-t="reportIssue">Report an issue</a>
-                </div>
-            </div>
-            <div class="lsb-toggles">
-                <label class="lsb-toggle-row">
-                    <span data-t="enabled">Enabled</span>
-                    <span class="lsb-toggle-wrap">
-                        <input type="checkbox" id="lsb-enabled">
-                        <span class="lsb-switch"></span>
-                    </span>
-                </label>
-                <label class="lsb-toggle-row">
-                    <span data-t="discreetMode">Discreet mode</span>
-                    <span class="lsb-toggle-wrap">
-                        <input type="checkbox" id="lsb-discreet">
-                        <span class="lsb-switch"></span>
-                    </span>
-                </label>
-                <label class="lsb-toggle-row lsb-filter-toggle">
-                    <span data-t="blockPromotedPosts">Block promoted</span>
-                    <span class="lsb-toggle-wrap">
-                        <input type="checkbox" id="lsb-filter-promoted">
-                        <span class="lsb-switch"></span>
-                    </span>
-                </label>
-                <label class="lsb-toggle-row lsb-filter-toggle">
-                    <span data-t="blockSuggestedPosts">Block suggested</span>
-                    <span class="lsb-toggle-wrap">
-                        <input type="checkbox" id="lsb-filter-suggested">
-                        <span class="lsb-switch"></span>
-                    </span>
-                </label>
-                <label class="lsb-toggle-row lsb-filter-toggle">
-                    <span data-t="blockRecommendedPosts">Block "Recommended for you"</span>
-                    <span class="lsb-toggle-wrap">
-                        <input type="checkbox" id="lsb-filter-recommended">
-                        <span class="lsb-switch"></span>
-                    </span>
-                </label>
-            </div>
-            <button class="lsb-scan-btn" id="lsb-scan" data-t="scanNow">Scan now</button>
-            <div class="lsb-status" id="lsb-status"></div>
-            <div class="lsb-support-section" id="lsb-support-section">
-                <button class="lsb-support-header" id="lsb-support-toggle">
-                    <span data-t="supportTitle">Support</span>
-                    <svg class="lsb-support-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none">
-                        <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </button>
-                <div class="lsb-support-body" id="lsb-support-body">
-                    <p data-t="supportDescription">This project is free and open-source. A review or a star encourages me to keep improving it!</p>
-                    <div class="lsb-support-links">
-                        <a class="lsb-support-link" id="lsb-review-link" href="#" target="_blank">
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor"/></svg>
-                            <span data-t="leaveReview">Leave a review</span>
-                        </a>
-                        <a class="lsb-support-link" id="lsb-github-link" href="#" target="_blank">
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.009-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.607.069-.607 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.167 22 16.418 22 12c0-5.523-4.477-10-10-10z" fill="currentColor"/></svg>
-                            <span data-t="githubRepo">GitHub</span>
-                        </a>
-                        <a class="lsb-support-link" id="lsb-feedback-link" href="#" target="_blank">
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-7v2h2v-2h-2zm0-8v6h2V7h-2z" fill="currentColor"/></svg>
-                            <span data-t="reportIssue">Report an issue</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="lsb-footer">
-                <select id="lsb-language" class="lsb-lang-select">
-                    <option value="en">EN</option>
-                    <option value="fr">FR</option>
-                    <option value="es">ES</option>
-                    <option value="pt">PT</option>
-                    <option value="de">DE</option>
-                    <option value="it">IT</option>
-                    <option value="hi">HI</option>
-                    <option value="ar">AR</option>
-                    <option value="zh">ZH</option>
-                    <option value="ja">JA</option>
-                </select>
-                <select id="lsb-position" class="lsb-pos-select" title="Position">
-                    <option value="${POSITIONS.BOTTOM_RIGHT}">\u2198</option>
-                    <option value="${POSITIONS.BOTTOM_LEFT}">\u2199</option>
-                    <option value="${POSITIONS.TOP_RIGHT}">\u2197</option>
-                    <option value="${POSITIONS.TOP_LEFT}">\u2196</option>
-                </select>
-            </div>
-        </div>
-    `;
+// ==================== DOM BUILDER HELPERS ====================
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+function el(tag, attrs = {}, ...children) {
+    const element = document.createElement(tag);
+    for (const [key, value] of Object.entries(attrs)) {
+        if (key === 'dataset') {
+            for (const [dk, dv] of Object.entries(value)) element.dataset[dk] = dv;
+        } else if (key === 'style' && typeof value === 'object') {
+            Object.assign(element.style, value);
+        } else {
+            element.setAttribute(key, value);
+        }
+    }
+    for (const child of children) {
+        if (typeof child === 'string') {
+            element.appendChild(document.createTextNode(child));
+        } else if (child) {
+            element.appendChild(child);
+        }
+    }
+    return element;
+}
+
+function svg(tag, attrs = {}, ...children) {
+    const element = document.createElementNS(SVG_NS, tag);
+    for (const [key, value] of Object.entries(attrs)) {
+        element.setAttribute(key, value);
+    }
+    for (const child of children) {
+        if (typeof child === 'string') {
+            element.appendChild(document.createTextNode(child));
+        } else if (child) {
+            element.appendChild(child);
+        }
+    }
+    return element;
+}
+
+function svgIcon(w, h, paths) {
+    return svg('svg', { width: w, height: h, viewBox: '0 0 24 24', fill: 'none' },
+        ...paths.map(p => svg(p.tag || 'path', p))
+    );
+}
+
+function toggleRow(labelKey, labelText, inputId, extraClass) {
+    const attrs = extraClass ? { class: `lsb-toggle-row ${extraClass}` } : { class: 'lsb-toggle-row' };
+    return el('label', attrs,
+        el('span', { 'data-t': labelKey }, labelText),
+        el('span', { class: 'lsb-toggle-wrap' },
+            el('input', { type: 'checkbox', id: inputId }),
+            el('span', { class: 'lsb-switch' })
+        )
+    );
+}
+
+// ==================== DOM CONSTRUCTION ====================
+function createDOM() {
+    const fabIcon = svgIcon(22, 22, [
+        { d: 'M19 13H5V11H19V13Z', fill: 'white' },
+        { d: 'M19 7H5V5H19V7Z', fill: 'white' },
+        { d: 'M15 17H5V15H15V17Z', fill: 'white' },
+        { tag: 'circle', cx: '18', cy: '16', r: '5', fill: '#E74C3C' },
+        { d: 'M15.5 14L20.5 18M20.5 14L15.5 18', stroke: 'white', 'stroke-width': '1.5', 'stroke-linecap': 'round' },
+    ]);
+
+    const closeIcon = svgIcon(14, 14, [
+        { d: 'M18 6L6 18M6 6l12 12', stroke: 'currentColor', 'stroke-width': '2.5', 'stroke-linecap': 'round' },
+    ]);
+
+    const dismissIcon = svgIcon(12, 12, [
+        { d: 'M18 6L6 18M6 6l12 12', stroke: 'currentColor', 'stroke-width': '2', 'stroke-linecap': 'round' },
+    ]);
+
+    const chevronIcon = svg('svg', { class: 'lsb-support-chevron', width: '12', height: '12', viewBox: '0 0 24 24', fill: 'none' },
+        svg('path', { d: 'M6 9l6 6 6-6', stroke: 'currentColor', 'stroke-width': '2.5', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' })
+    );
+
+    const starIcon = svgIcon(11, 11, [
+        { d: 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z', fill: 'currentColor' },
+    ]);
+
+    const githubIcon = svgIcon(11, 11, [
+        { d: 'M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.009-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.607.069-.607 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.167 22 16.418 22 12c0-5.523-4.477-10-10-10z', fill: 'currentColor' },
+    ]);
+
+    const issueIcon = svgIcon(11, 11, [
+        { d: 'M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-7v2h2v-2h-2zm0-8v6h2V7h-2z', fill: 'currentColor' },
+    ]);
+
+    const fab = el('button', { class: 'lsb-fab', id: 'lsb-fab', title: 'Linkedin Sponsor Block' },
+        fabIcon,
+        el('span', { class: 'lsb-badge', id: 'lsb-badge' })
+    );
+
+    const langOptions = ['en', 'fr', 'es', 'pt', 'de', 'it', 'hi', 'ar', 'zh', 'ja'];
+    const posOptions = [
+        { value: POSITIONS.BOTTOM_RIGHT, label: '\u2198' },
+        { value: POSITIONS.BOTTOM_LEFT, label: '\u2199' },
+        { value: POSITIONS.TOP_RIGHT, label: '\u2197' },
+        { value: POSITIONS.TOP_LEFT, label: '\u2196' },
+    ];
+
+    const panel = el('div', { class: 'lsb-panel', id: 'lsb-panel' },
+        // Header
+        el('div', { class: 'lsb-header' },
+            el('span', { class: 'lsb-title', 'data-t': 'title' }, 'Linkedin Sponsor Block'),
+            el('button', { class: 'lsb-close', id: 'lsb-close' }, closeIcon)
+        ),
+        // Review banner
+        el('div', { class: 'lsb-review-banner', id: 'lsb-review-banner', style: 'display:none' },
+            el('button', { class: 'lsb-banner-close-btn', id: 'lsb-dismiss-banner', 'aria-label': 'Dismiss' }, dismissIcon),
+            el('span', { 'data-t': 'reviewBannerUserscript' }, 'Enjoying the userscript?'),
+            el('div', { class: 'lsb-review-banner-actions' },
+                el('a', { id: 'lsb-review-banner-link', href: '#', target: '_blank', class: 'lsb-review-banner-btn', 'data-t': 'leaveReview' }, 'Leave a review'),
+                el('a', { id: 'lsb-github-banner-link', href: '#', target: '_blank', class: 'lsb-review-banner-btn' }, '\u2B50 GitHub'),
+                el('a', { id: 'lsb-feedback-banner-link', href: '#', target: '_blank', class: 'lsb-review-banner-btn', 'data-t': 'reportIssue' }, 'Report an issue')
+            )
+        ),
+        // Toggles
+        el('div', { class: 'lsb-toggles' },
+            toggleRow('enabled', 'Enabled', 'lsb-enabled'),
+            toggleRow('discreetMode', 'Discreet mode', 'lsb-discreet'),
+            toggleRow('blockPromotedPosts', 'Block promoted', 'lsb-filter-promoted', 'lsb-filter-toggle'),
+            toggleRow('blockSuggestedPosts', 'Block suggested', 'lsb-filter-suggested', 'lsb-filter-toggle'),
+            toggleRow('blockRecommendedPosts', 'Block "Recommended for you"', 'lsb-filter-recommended', 'lsb-filter-toggle')
+        ),
+        // Scan button
+        el('button', { class: 'lsb-scan-btn', id: 'lsb-scan', 'data-t': 'scanNow' }, 'Scan now'),
+        // Status
+        el('div', { class: 'lsb-status', id: 'lsb-status' }),
+        // Support section
+        el('div', { class: 'lsb-support-section', id: 'lsb-support-section' },
+            el('button', { class: 'lsb-support-header', id: 'lsb-support-toggle' },
+                el('span', { 'data-t': 'supportTitle' }, 'Support'),
+                chevronIcon
+            ),
+            el('div', { class: 'lsb-support-body', id: 'lsb-support-body' },
+                el('p', { 'data-t': 'supportDescription' }, 'This project is free and open-source. A review or a star encourages me to keep improving it!'),
+                el('div', { class: 'lsb-support-links' },
+                    el('a', { class: 'lsb-support-link', id: 'lsb-review-link', href: '#', target: '_blank' },
+                        starIcon,
+                        el('span', { 'data-t': 'leaveReview' }, 'Leave a review')
+                    ),
+                    el('a', { class: 'lsb-support-link', id: 'lsb-github-link', href: '#', target: '_blank' },
+                        githubIcon,
+                        el('span', { 'data-t': 'githubRepo' }, 'GitHub')
+                    ),
+                    el('a', { class: 'lsb-support-link', id: 'lsb-feedback-link', href: '#', target: '_blank' },
+                        issueIcon,
+                        el('span', { 'data-t': 'reportIssue' }, 'Report an issue')
+                    )
+                )
+            )
+        ),
+        // Footer
+        el('div', { class: 'lsb-footer' },
+            el('select', { id: 'lsb-language', class: 'lsb-lang-select' },
+                ...langOptions.map(code => el('option', { value: code }, code.toUpperCase()))
+            ),
+            el('select', { id: 'lsb-position', class: 'lsb-pos-select', title: 'Position' },
+                ...posOptions.map(opt => el('option', { value: opt.value }, opt.label))
+            )
+        )
+    );
+
+    const fragment = document.createDocumentFragment();
+    fragment.appendChild(fab);
+    fragment.appendChild(panel);
+    return fragment;
 }
 
 // ==================== FLOATING UI ====================
@@ -577,7 +626,10 @@ export function createFloatingUI({
     host.id = 'linkedin-sponsor-block';
     host.classList.add('pos-' + (settings.position || 'br'));
     const shadow = host.attachShadow({ mode: 'closed' });
-    shadow.innerHTML = `<style>${STYLES}</style>${createHTML()}`;
+    const styleEl = document.createElement('style');
+    styleEl.textContent = STYLES;
+    shadow.appendChild(styleEl);
+    shadow.appendChild(createDOM());
 
     // Element references
     const $ = (id) => shadow.getElementById(id);
