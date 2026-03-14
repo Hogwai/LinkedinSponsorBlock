@@ -1,7 +1,7 @@
 import { CONFIG } from './config.js';
 
 //const REMOTE_CONFIG_URL = 'https://raw.githubusercontent.com/Hogwai/LinkedinSponsorBlock/main/remote-config.json';
-const REMOTE_CONFIG_URL = 'https://api.jsonbin.io/v3/b/69b4f290aa77b81da9e2bf69';
+const REMOTE_CONFIG_URL = 'https://raw.githubusercontent.com/Hogwai/LinkedinSponsorBlock/refs/heads/feature/remote_config/remote-config.json';
 const STORAGE_KEY = 'lsb_remote_config';
 const SUPPORTED_VERSION = 1;
 const CATEGORIES = ['sponsored', 'suggested', 'recommended'];
@@ -64,6 +64,7 @@ async function fetchRemoteConfig(storage, fetcher) {
         if (!remote || !isValid(remote)) return;
         mergeConfig(remote);
         await storage.set(STORAGE_KEY, remote);
+        console.log('[LinkedinSponsorBlock] Remote config applied');
     } catch {
         // Network error, parse error, or storage error — silent fallback
     }
