@@ -1,16 +1,7 @@
 import { CONFIG } from './config.js';
 
-function isSponsored(post) {
-    const { attributeMatch, childSelectors } = CONFIG.DETECTION.SPONSORED;
-    const attrValue = post.getAttribute(attributeMatch.attr)?.toLowerCase();
-    if (attrValue && attributeMatch.patterns.some(p => attrValue.includes(p.toLowerCase()))) {
-        return true;
-    }
-    return childSelectors.some(sel => post.querySelector(sel));
-}
-
-function isSuggested(post) {
-    const { keywordMatch, childSelectors } = CONFIG.DETECTION.SUGGESTED;
+function matchesByKeyword(post, detection) {
+    const { keywordMatch, childSelectors } = detection;
     const candidates = post.querySelectorAll(keywordMatch.selector);
     if (Array.from(candidates).some(el => keywordMatch.keywords.has(el.textContent.trim().toLowerCase()))) {
         return true;
@@ -18,14 +9,9 @@ function isSuggested(post) {
     return childSelectors.some(sel => post.querySelector(sel));
 }
 
-function isRecommended(post) {
-    const { keywordMatch, childSelectors } = CONFIG.DETECTION.RECOMMENDED;
-    const candidates = post.querySelectorAll(keywordMatch.selector);
-    if (Array.from(candidates).some(el => keywordMatch.keywords.has(el.textContent.trim().toLowerCase()))) {
-        return true;
-    }
-    return childSelectors.some(sel => post.querySelector(sel));
-}
+function isSponsored(post) { return matchesByKeyword(post, CONFIG.DETECTION.SPONSORED); }
+function isSuggested(post) { return matchesByKeyword(post, CONFIG.DETECTION.SUGGESTED); }
+function isRecommended(post) { return matchesByKeyword(post, CONFIG.DETECTION.RECOMMENDED); }
 
 export function getUnscannedPosts(root) {
     const selector = CONFIG.SELECTORS.POST_CONTAINERS

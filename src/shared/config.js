@@ -9,6 +9,7 @@ export const CONFIG = {
     },
     SELECTORS: {
         POST_CONTAINERS: [
+            'div[data-display-contents="true"]',
             '.ember-view.occludable-update',
             '[class*="ember-view"][class*="occludable-update"]',
             'div[class*="feed-shared-update-v2"][id*="ember"]',
@@ -25,12 +26,52 @@ export const CONFIG = {
     },
     DETECTION: {
         SPONSORED: {
-            // Desktop: patterns matched against data-view-tracking-scope attribute
-            attributeMatch: {
-                attr: 'data-view-tracking-scope',
-                patterns: ['sponsored', 'SponsoredUpdateServed', 'SPONSORED_UPDATE_SERVED', '["sponsored"]']
+            keywordMatch: {
+                selector: 'p[componentkey]',
+                keywords: new Set([
+                    'Post sponsorisé',       // FRENCH
+                    'Sponsorisé',            // FRENCH
+                    'En partenariat avec',   // FRENCH
+                    'Promu(e) par',          // FRENCH
+                    'Promues',               // FRENCH
+                    'Promoted',              // ENGLISH
+                    'Anzeige',               // GERMAN
+                    'Promocionado',          // SPANISH
+                    'الترويج',               // ARABIC
+                    'Post sponsorizzato',    // ITALIAN
+                    'Promosso da',           // ITALIAN
+                    'প্রমোটেড',              // BANGLA
+                    'Propagováno',           // CZECH
+                    'Promoveret',            // DANISH
+                    'Προωθημένη',            // GREEK
+                    'تبلیغ‌شده',             // PERSIAN
+                    'Mainostettu',           // FINNISH
+                    'प्रमोट किया गया',       // HINDI
+                    'Kiemelt',               // HUNGARIAN
+                    'Dipromosikan',          // INDONESIAN / MALAYSIAN
+                    'ממומן',                 // HEBREW
+                    'プロモーション',          // JAPANESE
+                    '광고',                  // KOREAN
+                    '주최:',                 // KOREAN
+                    'प्रमोट केले',           // MARATHI
+                    'Gepromoot',             // DUTCH
+                    'Promotert',             // NORWEGIAN
+                    'ਪ੍ਰੋਮੋਟ ਕੀਤਾ ਗਿਆ',     // PUNJABI
+                    'Treść promowana',       // POLISH
+                    'Promovido',             // PORTUGUESE
+                    'Promovat',              // ROMANIAN
+                    'Продвигается',          // RUSSIAN
+                    'Marknadsfört',          // SWEDISH
+                    'ప్రమోట్ చేయబడింది',     // TELUGU
+                    'ได้รับการโปรโมท',        // THAI
+                    'Nai-promote',           // TAGALOG
+                    'Öne çıkarılan içerik',  // TURKISH
+                    'Просувається',          // UKRAINIAN
+                    'Được quảng bá',         // VIETNAMESE
+                    '广告',                  // CHINESE (SIMPLIFIED)
+                    '促銷內容',              // CHINESE (TRADITIONAL)
+                ].map(t => t.toLowerCase()))
             },
-            // Mobile: child element selectors indicating sponsored content
             childSelectors: ['article[data-sponsored-tracking-url]']
         },
         SUGGESTED: {
@@ -67,6 +108,7 @@ export const CONFIG = {
                     'Рекомендуем для вас',      // RUSSIAN
                     'Polecane dla Ciebie',      // POLISH
                     '맞춤 추천',                 // KOREAN
+                    '추천됨',                   // KOREAN
                     'Рекомендовані для вас',    // UKRAINIAN
                     'Aanbevolen voor u',        // DUTCH
                     'Doporučeno pro vás',       // CZECH
