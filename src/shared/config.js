@@ -43,6 +43,7 @@ export const CONFIG = {
                     'الترويج',               // ARABIC
                     'Post sponsorizzato',    // ITALIAN
                     'Promosso da',           // ITALIAN
+                    'Promosso',              // ITALIAN
                     'প্রমোটেড',              // BANGLA
                     'Propagováno',           // CZECH
                     'Promoveret',            // DANISH
