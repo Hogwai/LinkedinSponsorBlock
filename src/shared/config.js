@@ -131,6 +131,7 @@ export const CONFIG = {
                     'Rekomendasi untuk Anda',    // INDONESIAN
                     'מומלצים עבורך',             // HEBREW
                     'तुमच्यासाठी शिफारस केलेले',    // MARATHI
+                    'Dicadangkan untuk anda',    // MALAY
                 ].map(t => t.toLowerCase()))
             },
             childSelectors: []
