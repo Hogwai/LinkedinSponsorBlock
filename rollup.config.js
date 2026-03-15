@@ -19,7 +19,10 @@ const userscriptBanner = `// ==UserScript==
 // @author          Hogwai
 // @include         *://*.linkedin.*
 // @include         *://*.linkedin.*/feed/*
-// @grant           none
+// @grant           GM_xmlhttpRequest
+// @grant           unsafeWindow
+// @connect         raw.githubusercontent.com
+// @noframes
 // @license         MIT
 // @description Remove sponsored posts, suggestions, and partner content on linkedin.com
 // @downloadURL https://update.greasyfork.org/scripts/546877/Linkedin%20Sponsor%20Block.user.js
