@@ -132,6 +132,7 @@ export const CONFIG = {
                     'מומלצים עבורך',             // HEBREW
                     'तुमच्यासाठी शिफारस केलेले',    // MARATHI
                     'Dicadangkan untuk anda',    // MALAY
+                    'Anbefalt for deg',          // NORWEGIAN
                 ].map(t => t.toLowerCase()))
             },
             childSelectors: []
