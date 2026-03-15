@@ -46,6 +46,7 @@ export const CONFIG = {
                     'Promosso',              // ITALIAN
                     'প্রমোটেড',              // BANGLA
                     'Propagováno',           // CZECH
+                    'Propagace',             // CZECH
                     'Promoveret',            // DANISH
                     'Προωθημένη',            // GREEK
                     'تبلیغ‌شده',             // PERSIAN
