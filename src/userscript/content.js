@@ -5,7 +5,7 @@ import { createObserver } from '../shared/observer.js';
 import { isFeedPage, createPageManager } from '../shared/page.js';
 import { SETTINGS_KEYS, DEFAULT_SETTINGS } from '../shared/settings.js';
 import { createFloatingUI } from './ui.js';
-import { applyRemoteConfig, fetchRemoteConfigJSON } from '../shared/remote-config.js';
+import { applyRemoteConfig } from '../shared/remote-config.js';
 
 // ==================== STORAGE ====================
 const STORAGE_PREFIX = 'lsb_';
@@ -244,20 +244,22 @@ function handleUrlChange() {
 }
 
 // Listen to history changes (SPA navigation)
-const originalPushState = history.pushState;
-const originalReplaceState = history.replaceState;
+// With @grant, Tampermonkey runs in a sandbox — use unsafeWindow to patch the page's real history
+const pageWindow = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window;
+const originalPushState = pageWindow.history.pushState;
+const originalReplaceState = pageWindow.history.replaceState;
 
-history.pushState = function(...args) {
+pageWindow.history.pushState = function(...args) {
     originalPushState.apply(this, args);
     handleUrlChange();
 };
 
-history.replaceState = function(...args) {
+pageWindow.history.replaceState = function(...args) {
     originalReplaceState.apply(this, args);
     handleUrlChange();
 };
 
-window.addEventListener('popstate', handleUrlChange);
+pageWindow.addEventListener('popstate', handleUrlChange);
 
 // Fallback polling for edge cases
 setInterval(handleUrlChange, 1000);
@@ -276,7 +278,20 @@ function start() {
             try { localStorage.setItem(key, JSON.stringify(value)); }
             catch { /* storage full */ }
         }
-    }, fetchRemoteConfigJSON);
+    }, () => new Promise((resolve, reject) => {
+        GM_xmlhttpRequest({
+            method: 'GET',
+            url: 'https://raw.githubusercontent.com/Hogwai/LinkedinSponsorBlock/main/remote-config.json',
+            timeout: 5000,
+            onload(res) {
+                try {
+                    resolve(res.status === 200 ? JSON.parse(res.responseText) : null);
+                } catch { resolve(null); }
+            },
+            onerror() { reject(new Error('GM_xmlhttpRequest failed')); },
+            ontimeout() { reject(new Error('GM_xmlhttpRequest timeout')); }
+        });
+    }));
     initUI();
     if (state.isCurrentlyFeedPage) {
         if (state.settings[SETTINGS_KEYS.ENABLED]) observer.start();
