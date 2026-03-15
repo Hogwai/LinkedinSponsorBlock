@@ -5,6 +5,7 @@ import { createObserver } from '../shared/observer.js';
 import { isFeedPage, createPageManager } from '../shared/page.js';
 import { SETTINGS_KEYS, DEFAULT_SETTINGS } from '../shared/settings.js';
 import { createFloatingUI } from './ui.js';
+import { applyRemoteConfig, fetchRemoteConfigJSON } from '../shared/remote-config.js';
 
 // ==================== STORAGE ====================
 const STORAGE_PREFIX = 'lsb_';
@@ -264,6 +265,18 @@ setInterval(handleUrlChange, 1000);
 state.isCurrentlyFeedPage = isFeedPage();
 
 function start() {
+    applyRemoteConfig({
+        async get(key) {
+            try {
+                const raw = localStorage.getItem(key);
+                return raw !== null ? JSON.parse(raw) : null;
+            } catch { return null; }
+        },
+        async set(key, value) {
+            try { localStorage.setItem(key, JSON.stringify(value)); }
+            catch { /* storage full */ }
+        }
+    }, fetchRemoteConfigJSON);
     initUI();
     if (state.isCurrentlyFeedPage) {
         if (state.settings[SETTINGS_KEYS.ENABLED]) observer.start();

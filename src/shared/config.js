@@ -31,17 +31,22 @@ export const CONFIG = {
                 keywords: new Set([
                     'Post sponsorisé',       // FRENCH
                     'Sponsorisé',            // FRENCH
+                    'Sponsorisé par',        // FRENCH
                     'En partenariat avec',   // FRENCH
                     'Promu(e) par',          // FRENCH
                     'Promues',               // FRENCH
                     'Promoted',              // ENGLISH
                     'Anzeige',               // GERMAN
+                    'Gesponsert',            // GERMAN
                     'Promocionado',          // SPANISH
+                    'Promovida',             // PORTUGUESE
                     'الترويج',               // ARABIC
                     'Post sponsorizzato',    // ITALIAN
                     'Promosso da',           // ITALIAN
+                    'Promosso',              // ITALIAN
                     'প্রমোটেড',              // BANGLA
                     'Propagováno',           // CZECH
+                    'Propagace',             // CZECH
                     'Promoveret',            // DANISH
                     'Προωθημένη',            // GREEK
                     'تبلیغ‌شده',             // PERSIAN
@@ -57,7 +62,9 @@ export const CONFIG = {
                     'Gepromoot',             // DUTCH
                     'Promotert',             // NORWEGIAN
                     'ਪ੍ਰੋਮੋਟ ਕੀਤਾ ਗਿਆ',     // PUNJABI
+                    'ਪ੍ਰੋਮੋਟ ਕੀਤਾ',          // PUNJABI
                     'Treść promowana',       // POLISH
+                    'Promowane',             // POLISH
                     'Promovido',             // PORTUGUESE
                     'Promovat',              // ROMANIAN
                     'Продвигается',          // RUSSIAN
@@ -66,10 +73,13 @@ export const CONFIG = {
                     'ได้รับการโปรโมท',        // THAI
                     'Nai-promote',           // TAGALOG
                     'Öne çıkarılan içerik',  // TURKISH
+                    'Tanıtılan içerik',      // TURKISH
                     'Просувається',          // UKRAINIAN
                     'Được quảng bá',         // VIETNAMESE
                     '广告',                  // CHINESE (SIMPLIFIED)
+                    '推广',                  // CHINESE (SIMPLIFIED)
                     '促銷內容',              // CHINESE (TRADITIONAL)
+                    '贊助',                  // CHINESE (TRADITIONAL)
                 ].map(t => t.toLowerCase()))
             },
             childSelectors: ['article[data-sponsored-tracking-url]']
@@ -112,6 +122,25 @@ export const CONFIG = {
                     'Рекомендовані для вас',    // UKRAINIAN
                     'Aanbevolen voor u',        // DUTCH
                     'Doporučeno pro vás',       // CZECH
+                    'Sizin için önerilenler',    // TURKISH
+                    'আপনার জন্য সুপারিশকৃত',       // BENGALI
+                    'Anbefalet til dig',         // DANISH
+                    'Προτεινόμενα για εσάς',     // GREEK
+                    'توصیه‌شده برای شما',        // PERSIAN
+                    'Suositellut sinulle',       // FINNISH
+                    'Önnek javasolt',            // HUNGARIAN
+                    'Rekomendasi untuk Anda',    // INDONESIAN
+                    'מומלצים עבורך',             // HEBREW
+                    'तुमच्यासाठी शिफारस केलेले',    // MARATHI
+                    'Dicadangkan untuk anda',    // MALAY
+                    'Anbefalt for deg',          // NORWEGIAN
+                    'ਤੁਹਾਡੇ ਲਈ ਸਿਫ਼ਾਰਸ਼ੀ',        // PUNJABI
+                    'Recomandat pentru dvs.',     // ROMANIAN
+                    'Rekommenderat för dig',      // SWEDISH
+                    'మీ కోసం సిఫార్సు చేయబడినవి',  // TELUGU
+                    'แนะนำสำหรับคุณ',              // THAI
+                    'Inirerekomenda para sa iyo', // TAGALOG
+                    'Đề xuất cho bạn',           // VIETNAMESE
                 ].map(t => t.toLowerCase()))
             },
             childSelectors: []

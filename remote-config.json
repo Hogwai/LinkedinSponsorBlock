@@ -1,0 +1,139 @@
+{
+  "version": 1,
+  "selectors": {
+    "postContainers": [
+      "div[data-display-contents=\"true\"]",
+      ".ember-view.occludable-update",
+      "[class*=\"ember-view\"][class*=\"occludable-update\"]",
+      "div[class*=\"feed-shared-update-v2\"][id*=\"ember\"]",
+      "article[data-id=\"main-feed-card\"]",
+      "div[data-view-tracking-scope*='transporterKeys\":[\"sponsored\"]']",
+      "div[data-view-tracking-scope*='transporterKeys\":[\"default\"]']",
+      "li.feed-item"
+    ],
+    "feedWrapper": {
+      "mobile": "ol.feed-container",
+      "desktop": "[class*=\"scaffold-finite-scroll\"][class*=\"scaffold-finite-scroll--infinite\"]",
+      "newFeed": "[data-testid=\"mainFeed\"]"
+    }
+  },
+  "detection": {
+    "sponsored": {
+      "keywordMatch": {
+        "selector": "p[componentkey]",
+        "keywords": [
+          "post sponsorisé",
+          "sponsorisé",
+          "sponsorisé par",
+          "en partenariat avec",
+          "promu(e) par",
+          "promues",
+          "promoted",
+          "anzeige",
+          "gesponsert",
+          "promocionado",
+          "promovida",
+          "الترويج",
+          "post sponsorizzato",
+          "promosso da",
+          "promosso",
+          "প্রমোটেড",
+          "propagováno",
+          "propagace",
+          "promoveret",
+          "προωθημένη",
+          "تبلیغ‌شده",
+          "mainostettu",
+          "प्रमोट किया गया",
+          "kiemelt",
+          "dipromosikan",
+          "ממומן",
+          "プロモーション",
+          "광고",
+          "주최:",
+          "प्रमोट केले",
+          "gepromoot",
+          "promotert",
+          "ਪ੍ਰੋਮੋਟ ਕੀਤਾ ਗਿਆ",
+          "ਪ੍ਰੋਮੋਟ ਕੀਤਾ",
+          "treść promowana",
+          "promowane",
+          "promovido",
+          "promovat",
+          "продвигается",
+          "marknadsfört",
+          "ప్రమోట్ చేయబడింది",
+          "ได้รับการโปรโมท",
+          "nai-promote",
+          "öne çıkarılan içerik",
+          "tanıtılan içerik",
+          "просувається",
+          "được quảng bá",
+          "广告",
+          "推广",
+          "促銷內容",
+          "贊助"
+        ]
+      },
+      "childSelectors": ["article[data-sponsored-tracking-url]"]
+    },
+    "suggested": {
+      "keywordMatch": {
+        "selector": "p[componentkey]",
+        "keywords": [
+          "suggestions",
+          "suggested",
+          "vorgeschlagen",
+          "sugerencias",
+          "sugestões"
+        ]
+      },
+      "childSelectors": ["p[data-test-id=\"main-feed-card__header\"]"]
+    },
+    "recommended": {
+      "keywordMatch": {
+        "selector": "p[componentkey]",
+        "keywords": [
+          "recommended for you",
+          "recommandé pour vous",
+          "te recomendamos",
+          "recomendações para você",
+          "für sie empfohlen",
+          "consigliato per te",
+          "आपके लिए सुझाव",
+          "مقترح لك",
+          "为您推荐",
+          "精選內容",
+          "おすすめのコース",
+          "рекомендуем для вас",
+          "polecane dla ciebie",
+          "맞춤 추천",
+          "추천됨",
+          "рекомендовані для вас",
+          "aanbevolen voor u",
+          "doporučeno pro vás",
+          "sizin için önerilenler",
+          "আপনার জন্য সুপারিশকৃত",
+          "anbefalet til dig",
+          "προτεινόμενα για εσάς",
+          "توصیه‌شده برای شما",
+          "suositellut sinulle",
+          "önnek javasolt",
+          "rekomendasi untuk anda",
+          "מומלצים עבורך",
+          "तुमच्यासाठी शिफारस केलेले",
+          "dicadangkan untuk anda",
+          "anbefalt for deg",
+          "ਤੁਹਾਡੇ ਲਈ ਸਿਫ਼ਾਰਸ਼ੀ",
+          "recomandat pentru dvs.",
+          "rekommenderat för dig",
+          "మీ కోసం సిఫార్సు చేయబడినవి",
+          "แนะนำสำหรับคุณ",
+          "inirerekomenda para sa iyo",
+          "đề xuất cho bạn"
+        ]
+      },
+      "childSelectors": []
+    }
+  }
+}

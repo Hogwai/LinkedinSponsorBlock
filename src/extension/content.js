@@ -5,6 +5,7 @@ import { createObserver } from '../shared/observer.js';
 import { isFeedPage, createPageManager } from '../shared/page.js';
 import { SETTINGS_KEYS } from '../shared/settings.js';
 import api from './browser-api.js';
+import { applyRemoteConfig } from '../shared/remote-config.js';
 
 // ==================== STATE ====================
 const state = {
@@ -199,6 +200,15 @@ api.runtime.onMessage.addListener((message, _sender, sendResponse) => {
 
 async function init() {
     await loadSettings();
+    await applyRemoteConfig({
+        async get(key) {
+            const result = await api.storage.local.get({ [key]: null });
+            return result[key];
+        },
+        async set(key, value) {
+            await api.storage.local.set({ [key]: value });
+        }
+    }, () => api.runtime.sendMessage({ type: 'FETCH_REMOTE_CONFIG' }));
     state.isCurrentlyFeedPage = isFeedPage();
 
     if (document.body) {

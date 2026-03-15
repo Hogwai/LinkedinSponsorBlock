@@ -1,5 +1,6 @@
 import api from './browser-api.js';
 import { SETTINGS_KEYS } from '../shared/settings.js';
+import { fetchRemoteConfigJSON } from '../shared/remote-config.js';
 
 // Global counters
 let totalPromotedBlocked = 0;
@@ -90,6 +91,16 @@ api.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 suggested: 0
             }).catch(() => { });
         })();
+        return true;
+    }
+
+    // Handle remote config fetch request from content script
+    if (message.type === 'FETCH_REMOTE_CONFIG') {
+        fetchRemoteConfigJSON().then(config => {
+            sendResponse(config);
+        }).catch(() => {
+            sendResponse(null);
+        });
         return true;
     }
 
