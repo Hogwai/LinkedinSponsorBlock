@@ -138,6 +138,7 @@ export const CONFIG = {
                     'Recomandat pentru dvs.',     // ROMANIAN
                     'Rekommenderat för dig',      // SWEDISH
                     'మీ కోసం సిఫార్సు చేయబడినవి',  // TELUGU
+                    'แนะนำสำหรับคุณ',              // THAI
                 ].map(t => t.toLowerCase()))
             },
             childSelectors: []
