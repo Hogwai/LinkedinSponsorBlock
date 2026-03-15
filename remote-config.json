@@ -67,7 +67,8 @@
           "được quảng bá",
           "广告",
           "推广",
-          "促銷內容"
+          "促銷內容",
+          "贊助"
         ]
       },
       "childSelectors": ["article[data-sponsored-tracking-url]"]

@@ -75,6 +75,7 @@ export const CONFIG = {
                     '广告',                  // CHINESE (SIMPLIFIED)
                     '推广',                  // CHINESE (SIMPLIFIED)
                     '促銷內容',              // CHINESE (TRADITIONAL)
+                    '贊助',                  // CHINESE (TRADITIONAL)
                 ].map(t => t.toLowerCase()))
             },
             childSelectors: ['article[data-sponsored-tracking-url]']
