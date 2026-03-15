@@ -73,6 +73,7 @@ export const CONFIG = {
                     'Просувається',          // UKRAINIAN
                     'Được quảng bá',         // VIETNAMESE
                     '广告',                  // CHINESE (SIMPLIFIED)
+                    '推广',                  // CHINESE (SIMPLIFIED)
                     '促銷內容',              // CHINESE (TRADITIONAL)
                 ].map(t => t.toLowerCase()))
             },
