@@ -140,6 +140,7 @@ export const CONFIG = {
                     'మీ కోసం సిఫార్సు చేయబడినవి',  // TELUGU
                     'แนะนำสำหรับคุณ',              // THAI
                     'Inirerekomenda para sa iyo', // TAGALOG
+                    'Đề xuất cho bạn',           // VIETNAMESE
                 ].map(t => t.toLowerCase()))
             },
             childSelectors: []
