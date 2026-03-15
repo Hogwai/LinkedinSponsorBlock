@@ -62,6 +62,7 @@ export const CONFIG = {
                     'Promotert',             // NORWEGIAN
                     'ਪ੍ਰੋਮੋਟ ਕੀਤਾ ਗਿਆ',     // PUNJABI
                     'Treść promowana',       // POLISH
+                    'Promowane',             // POLISH
                     'Promovido',             // PORTUGUESE
                     'Promovat',              // ROMANIAN
                     'Продвигается',          // RUSSIAN
