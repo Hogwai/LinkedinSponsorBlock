@@ -62,6 +62,7 @@ export const CONFIG = {
                     'Gepromoot',             // DUTCH
                     'Promotert',             // NORWEGIAN
                     'ਪ੍ਰੋਮੋਟ ਕੀਤਾ ਗਿਆ',     // PUNJABI
+                    'ਪ੍ਰੋਮੋਟ ਕੀਤਾ',          // PUNJABI
                     'Treść promowana',       // POLISH
                     'Promowane',             // POLISH
                     'Promovido',             // PORTUGUESE
@@ -133,6 +134,7 @@ export const CONFIG = {
                     'तुमच्यासाठी शिफारस केलेले',    // MARATHI
                     'Dicadangkan untuk anda',    // MALAY
                     'Anbefalt for deg',          // NORWEGIAN
+                    'ਤੁਹਾਡੇ ਲਈ ਸਿਫ਼ਾਰਸ਼ੀ',        // PUNJABI
                 ].map(t => t.toLowerCase()))
             },
             childSelectors: []

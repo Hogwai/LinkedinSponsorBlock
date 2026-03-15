@@ -55,6 +55,7 @@
           "gepromoot",
           "promotert",
           "ਪ੍ਰੋਮੋਟ ਕੀਤਾ ਗਿਆ",
+          "ਪ੍ਰੋਮੋਟ ਕੀਤਾ",
           "treść promowana",
           "promowane",
           "promovido",
@@ -122,7 +123,8 @@
           "מומלצים עבורך",
           "तुमच्यासाठी शिफारस केलेले",
           "dicadangkan untuk anda",
-          "anbefalt for deg"
+          "anbefalt for deg",
+          "ਤੁਹਾਡੇ ਲਈ ਸਿਫ਼ਾਰਸ਼ੀ"
         ]
       },
       "childSelectors": []
