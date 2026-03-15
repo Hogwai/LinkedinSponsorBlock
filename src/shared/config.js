@@ -70,6 +70,7 @@ export const CONFIG = {
                     'ได้รับการโปรโมท',        // THAI
                     'Nai-promote',           // TAGALOG
                     'Öne çıkarılan içerik',  // TURKISH
+                    'Tanıtılan içerik',      // TURKISH
                     'Просувається',          // UKRAINIAN
                     'Được quảng bá',         // VIETNAMESE
                     '广告',                  // CHINESE (SIMPLIFIED)
