@@ -129,6 +129,7 @@ export const CONFIG = {
                     'Suositellut sinulle',       // FINNISH
                     'Önnek javasolt',            // HUNGARIAN
                     'Rekomendasi untuk Anda',    // INDONESIAN
+                    'מומלצים עבורך',             // HEBREW
                 ].map(t => t.toLowerCase()))
             },
             childSelectors: []
