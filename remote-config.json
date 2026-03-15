@@ -75,7 +75,9 @@
           "贊助"
         ]
       },
-      "childSelectors": ["article[data-sponsored-tracking-url]"]
+      "childSelectors": [
+        "article[data-sponsored-tracking-url]"
+      ]
     },
     "suggested": {
       "keywordMatch": {
@@ -88,7 +90,9 @@
           "sugestões"
         ]
       },
-      "childSelectors": ["p[data-test-id=\"main-feed-card__header\"]"]
+      "childSelectors": [
+        "p[data-test-id=\"main-feed-card__header\"]"
+      ]
     },
     "recommended": {
       "keywordMatch": {

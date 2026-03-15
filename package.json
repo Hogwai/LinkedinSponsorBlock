@@ -9,7 +9,8 @@
     "build:userscript": "node build.js --target=userscript",
     "build:all": "node build.js --target=all --no-version",
     "clean": "rm -rf dist",
-    "debug:android": "node scripts/debug-android.js"
+    "debug:android": "node scripts/debug-android.js",
+    "config": "node scripts/config-manager.js"
   },
   "devDependencies": {
     "rollup": "^4.59.0",
