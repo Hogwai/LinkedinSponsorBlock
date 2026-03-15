@@ -119,6 +119,7 @@ export const CONFIG = {
                     'Рекомендовані для вас',    // UKRAINIAN
                     'Aanbevolen voor u',        // DUTCH
                     'Doporučeno pro vás',       // CZECH
+                    'Sizin için önerilenler',    // TURKISH
                 ].map(t => t.toLowerCase()))
             },
             childSelectors: []
