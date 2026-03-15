@@ -137,6 +137,7 @@ export const CONFIG = {
                     'ਤੁਹਾਡੇ ਲਈ ਸਿਫ਼ਾਰਸ਼ੀ',        // PUNJABI
                     'Recomandat pentru dvs.',     // ROMANIAN
                     'Rekommenderat för dig',      // SWEDISH
+                    'మీ కోసం సిఫార్సు చేయబడినవి',  // TELUGU
                 ].map(t => t.toLowerCase()))
             },
             childSelectors: []
