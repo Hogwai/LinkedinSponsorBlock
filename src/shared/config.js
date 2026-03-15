@@ -136,6 +136,7 @@ export const CONFIG = {
                     'Anbefalt for deg',          // NORWEGIAN
                     'ਤੁਹਾਡੇ ਲਈ ਸਿਫ਼ਾਰਸ਼ੀ',        // PUNJABI
                     'Recomandat pentru dvs.',     // ROMANIAN
+                    'Rekommenderat för dig',      // SWEDISH
                 ].map(t => t.toLowerCase()))
             },
             childSelectors: []
