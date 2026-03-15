@@ -119,7 +119,8 @@
           "suositellut sinulle",
           "önnek javasolt",
           "rekomendasi untuk anda",
-          "מומלצים עבורך"
+          "מומלצים עבורך",
+          "तुमच्यासाठी शिफारस केलेले"
         ]
       },
       "childSelectors": []
