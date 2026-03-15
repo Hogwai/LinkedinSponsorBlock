@@ -126,6 +126,7 @@ export const CONFIG = {
                     'Anbefalet til dig',         // DANISH
                     'Προτεινόμενα για εσάς',     // GREEK
                     'توصیه‌شده برای شما',        // PERSIAN
+                    'Suositellut sinulle',       // FINNISH
                 ].map(t => t.toLowerCase()))
             },
             childSelectors: []
