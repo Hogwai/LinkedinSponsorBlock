@@ -6,7 +6,7 @@ function matchesByKeyword(post, detection) {
     const keywords = keywordMatch.keywords;
     if (Array.from(candidates).some(el => {
         const text = el.textContent.trim().toLowerCase();
-        return keywords.has(text) || Array.from(keywords).some(kw => text.includes(kw));
+        return keywords.has(text);
     })) {
         return true;
     }
