@@ -2,11 +2,18 @@ import { CONFIG } from './config.js';
 
 function matchesByKeyword(post, detection) {
     const { keywordMatch, childSelectors } = detection;
-    const candidates = post.querySelectorAll(keywordMatch.selector);
-    const keywords = keywordMatch.keywords;
-    if (Array.from(candidates).some(el => {
+    const candidates = keywordMatch.selectors.flatMap(sel =>
+        Array.from(post.querySelectorAll(sel))
+    );
+    if (candidates.some(el => {
         const text = el.textContent.trim().toLowerCase();
-        return keywords.has(text);
+        if (keywordMatch.keywords.has(text)) return true;
+        // Fallback: check direct text nodes (handles "Sponsorisé par <a>Company</a>")
+        const directText = Array.from(el.childNodes)
+            .filter(n => n.nodeType === Node.TEXT_NODE)
+            .map(n => n.textContent.trim().toLowerCase())
+            .filter(t => t.length > 0);
+        return directText.some(t => keywordMatch.keywords.has(t));
     })) {
         return true;
     }

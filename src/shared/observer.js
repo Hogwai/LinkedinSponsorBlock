@@ -1,13 +1,48 @@
-import { CONFIG } from './config.js';
+import { CONFIG, applyLayout } from './config.js';
+import { applyRemoteOverrides } from './remote-config.js';
+
+const LAYOUT_MARKERS = [
+    { name: 'modern', selectors: ['body[data-rehydrated]'] },
+    { name: 'legacy', selectors: ['body.ember-application'] }
+];
+
+function detectLayout() {
+    for (const { name, selectors } of LAYOUT_MARKERS) {
+        if (selectors.some(s => document.querySelector(s))) {
+            return name;
+        }
+    }
+    return null;
+}
+
+function findFeedWrapper(profile) {
+    const wrappers = profile.feedWrapper;
+    for (const key of ['newFeed', 'mobile', 'desktop']) {
+        if (wrappers[key]) {
+            const el = document.querySelector(wrappers[key]);
+            if (el) return el;
+        }
+    }
+    return null;
+}
 
 export function createObserver(scanFn, state) {
     let retryCount = 0;
+    let layoutApplied = false;
 
     function findFeed() {
+        if (!layoutApplied) {
+            const layoutName = detectLayout();
+            if (layoutName) {
+                if (applyLayout(layoutName)) {
+                    applyRemoteOverrides(layoutName);
+                    layoutApplied = true;
+                }
+            }
+        }
+
         const { FEED_WRAPPER } = CONFIG.SELECTORS;
-        return document.querySelector(FEED_WRAPPER.newFeed) ||
-            document.querySelector(FEED_WRAPPER.mobile) ||
-            document.querySelector(FEED_WRAPPER.desktop);
+        return findFeedWrapper({ feedWrapper: FEED_WRAPPER });
     }
 
     function connect(root) {
