@@ -2,8 +2,12 @@ import { CONFIG } from './config.js';
 
 const REMOTE_CONFIG_URL = 'https://raw.githubusercontent.com/Hogwai/LinkedinSponsorBlock/main/remote-config.json';
 const STORAGE_KEY = 'lsb_remote_config';
-const SUPPORTED_VERSION = 1;
+const SUPPORTED_VERSION = 2;
 const CATEGORIES = ['sponsored', 'suggested', 'recommended'];
+
+// Module-level state for deferred merge
+let storedRemoteConfig = null;
+let activeProfileName = null;
 
 function isNonEmptyString(v) {
     return typeof v === 'string' && v.length > 0;
@@ -17,26 +21,31 @@ function isValidSelector(s) {
     try { document.querySelector(s); return true; } catch { return false; }
 }
 
-function isValid(config) {
-    if (!config || config.version !== SUPPORTED_VERSION) return false;
+function isValidFeedWrapperValue(v) {
+    return v === null || (isNonEmptyString(v) && isValidSelector(v));
+}
 
-    const sel = config.selectors;
-    if (!sel) return false;
-    if (!isArrayOfStrings(sel.postContainers)) return false;
-    if (!sel.postContainers.every(isValidSelector)) return false;
+function isValidProfile(profile) {
+    if (!profile) return false;
 
-    const fw = sel.feedWrapper;
-    if (!fw || !isNonEmptyString(fw.mobile) || !isNonEmptyString(fw.desktop) || !isNonEmptyString(fw.newFeed)) return false;
-    if (!isValidSelector(fw.mobile) || !isValidSelector(fw.desktop) || !isValidSelector(fw.newFeed)) return false;
+    const fw = profile.feedWrapper;
+    if (!fw) return false;
+    if (!isValidFeedWrapperValue(fw.mobile)) return false;
+    if (!isValidFeedWrapperValue(fw.desktop)) return false;
+    if (!isValidFeedWrapperValue(fw.newFeed)) return false;
 
-    const det = config.detection;
+    if (!isArrayOfStrings(profile.postContainers)) return false;
+    if (!profile.postContainers.every(isValidSelector)) return false;
+
+    const det = profile.detection;
     if (!det) return false;
 
     for (const cat of CATEGORIES) {
         const entry = det[cat];
         if (!entry) return false;
-        if (!entry.keywordMatch || !isNonEmptyString(entry.keywordMatch.selector) || !isValidSelector(entry.keywordMatch.selector)) return false;
-        if (!isArrayOfStrings(entry.keywordMatch.keywords)) return false;
+        if (!isArrayOfStrings(entry.keywordSelectors)) return false;
+        if (!entry.keywordSelectors.every(isValidSelector)) return false;
+        if (!isArrayOfStrings(entry.keywords)) return false;
         if (!isArrayOfStrings(entry.childSelectors, true)) return false;
         if (!entry.childSelectors.every(isValidSelector)) return false;
     }
@@ -44,16 +53,42 @@ function isValid(config) {
     return true;
 }
 
-function mergeConfig(remote) {
-    CONFIG.SELECTORS.POST_CONTAINERS = remote.selectors.postContainers;
-    CONFIG.SELECTORS.FEED_WRAPPER = remote.selectors.feedWrapper;
+function isValid(config) {
+    if (!config || config.version !== SUPPORTED_VERSION) return false;
+    if (!config.profiles || typeof config.profiles !== 'object') return false;
+
+    for (const key of Object.keys(config.profiles)) {
+        if (!isValidProfile(config.profiles[key])) return false;
+    }
+
+    return Object.keys(config.profiles).length > 0;
+}
+
+function mergeProfile(remote, profileName) {
+    const profile = remote.profiles[profileName];
+    if (!profile) return;
+
+    CONFIG.SELECTORS.POST_CONTAINERS = profile.postContainers;
+    CONFIG.SELECTORS.FEED_WRAPPER = {
+        mobile: profile.feedWrapper.mobile,
+        desktop: profile.feedWrapper.desktop,
+        newFeed: profile.feedWrapper.newFeed
+    };
 
     for (const cat of CATEGORIES) {
-        const src = remote.detection[cat];
+        const src = profile.detection[cat];
         const dest = CONFIG.DETECTION[cat.toUpperCase()];
-        dest.keywordMatch.selector = src.keywordMatch.selector;
-        dest.keywordMatch.keywords = new Set(src.keywordMatch.keywords);
+        dest.keywordMatch.selectors = src.keywordSelectors;
+        dest.keywordMatch.keywords = new Set(src.keywords);
         dest.childSelectors = src.childSelectors;
+    }
+}
+
+export function applyRemoteOverrides(profileName) {
+    activeProfileName = profileName;
+    if (storedRemoteConfig && isValid(storedRemoteConfig)) {
+        mergeProfile(storedRemoteConfig, profileName);
+        console.log(`[LinkedinSponsorBlock] Remote config applied for profile: ${profileName}`);
     }
 }
 
@@ -61,34 +96,29 @@ async function fetchRemoteConfig(storage, fetcher) {
     try {
         const remote = await fetcher();
         if (!remote || !isValid(remote)) return;
-        mergeConfig(remote);
+        storedRemoteConfig = remote;
+        if (activeProfileName) {
+            mergeProfile(remote, activeProfileName);
+        }
         await storage.set(STORAGE_KEY, remote);
-        console.log('[LinkedinSponsorBlock] Remote config applied');
+        console.log('[LinkedinSponsorBlock] Remote config fetched and applied');
     } catch {
         // Network error, parse error, or storage error — silent fallback
     }
 }
 
-/**
- * Fetch remote config JSON. Used by background script (extension) or directly (userscript).
- */
 export async function fetchRemoteConfigJSON() {
     const response = await fetch(REMOTE_CONFIG_URL, { signal: AbortSignal.timeout(5000) });
     if (!response.ok) return null;
     return await response.json();
 }
 
-/**
- * Apply remote config: reads cached config (awaited), then fetches fresh config in background.
- * @param {object} storage - { get(key): Promise<object|null>, set(key, value): Promise<void> }
- * @param {function} fetcher - async function that returns the remote config object or null
- */
 export async function applyRemoteConfig(storage, fetcher) {
-    // Phase 1: apply cached config
+    // Phase 1: load cached config into memory (do NOT merge — layout not detected yet)
     try {
         const cached = await storage.get(STORAGE_KEY);
         if (isValid(cached)) {
-            mergeConfig(cached);
+            storedRemoteConfig = cached;
         }
     } catch {
         // Cache read failed — continue with embedded config
