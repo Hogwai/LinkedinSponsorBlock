@@ -3,6 +3,7 @@ const SHARED_KEYWORDS = {
         'Post sponsorisé',       // FRENCH
         'Sponsorisé',            // FRENCH
         'Sponsorisé par',        // FRENCH
+        'Sponsorisé • Partenariat avec', // FRENCH
         'En partenariat avec',   // FRENCH
         'Promu(e) par',          // FRENCH
         'Promues',               // FRENCH
