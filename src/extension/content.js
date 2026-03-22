@@ -19,7 +19,8 @@ const state = {
         [SETTINGS_KEYS.ENABLED]: true,
         [SETTINGS_KEYS.FILTER_PROMOTED]: true,
         [SETTINGS_KEYS.FILTER_SUGGESTED]: true,
-        [SETTINGS_KEYS.FILTER_RECOMMENDED]: true
+        [SETTINGS_KEYS.FILTER_RECOMMENDED]: true,
+        [SETTINGS_KEYS.LOGGING]: false
     }
 };
 
@@ -152,9 +153,11 @@ async function loadSettings() {
         [SETTINGS_KEYS.ENABLED]: true,
         [SETTINGS_KEYS.FILTER_PROMOTED]: true,
         [SETTINGS_KEYS.FILTER_SUGGESTED]: true,
-        [SETTINGS_KEYS.FILTER_RECOMMENDED]: true
+        [SETTINGS_KEYS.FILTER_RECOMMENDED]: true,
+        [SETTINGS_KEYS.LOGGING]: false
     });
     state.settings = result;
+    logger.setEnabled(result[SETTINGS_KEYS.LOGGING] || false);
 }
 
 function updateSettings(newSettings) {
@@ -174,6 +177,10 @@ function updateSettings(newSettings) {
     }
     if (newSettings[SETTINGS_KEYS.FILTER_RECOMMENDED] !== undefined) {
         state.settings[SETTINGS_KEYS.FILTER_RECOMMENDED] = newSettings[SETTINGS_KEYS.FILTER_RECOMMENDED];
+    }
+    if (newSettings[SETTINGS_KEYS.LOGGING] !== undefined) {
+        state.settings[SETTINGS_KEYS.LOGGING] = newSettings[SETTINGS_KEYS.LOGGING];
+        logger.setEnabled(newSettings[SETTINGS_KEYS.LOGGING]);
     }
 }
 

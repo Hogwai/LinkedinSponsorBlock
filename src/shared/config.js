@@ -1,3 +1,5 @@
+import { logger } from './logger.js';
+
 const SHARED_KEYWORDS = {
     sponsored: new Set([
         'Post sponsorisé',       // FRENCH
@@ -106,7 +108,7 @@ export const CONFIG = {
         SCANNED: 'data-sponsor-scanned'
     },
     DELAYS: {
-        OBSERVER_RETRY: 200,
+        OBSERVER_RETRY: 32,
         MAX_OBSERVER_RETRIES: 15,
         NOTIFICATION: 300
     },
@@ -249,6 +251,6 @@ export function applyLayout(profileName) {
         dest.childSelectors = src.childSelectors;
     }
 
-    console.log(`[LinkedinSponsorBlock] Layout profile applied: ${profileName}`);
+    logger.info(`Layout profile applied: ${profileName}`);
     return true;
 }

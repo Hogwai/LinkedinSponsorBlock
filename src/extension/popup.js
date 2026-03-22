@@ -9,6 +9,7 @@ const extensionToggle = document.getElementById('extensionToggle');
 const filterPromoted = document.getElementById('filterPromoted');
 const filterSuggested = document.getElementById('filterSuggested');
 const filterRecommended = document.getElementById('filterRecommended');
+const loggingToggle = document.getElementById('loggingToggle');
 const languageSelect = document.getElementById('languageSelect');
 const promotedCountEl = document.getElementById('promotedCount');
 const suggestedCountEl = document.getElementById('suggestedCount');
@@ -89,6 +90,7 @@ async function loadSettings() {
     filterPromoted.checked = result.filterPromoted;
     filterSuggested.checked = result.filterSuggested;
     filterRecommended.checked = result.filterRecommended;
+    loggingToggle.checked = result.logging || false;
     promotedCountEl.textContent = result.totalPromotedBlocked;
     suggestedCountEl.textContent = result.totalSuggestedBlocked;
 
@@ -154,6 +156,12 @@ filterSuggested.addEventListener('change', async () => {
 filterRecommended.addEventListener('change', async () => {
     await saveSettings({ filterRecommended: filterRecommended.checked });
     notifyContentScript({ type: 'SETTINGS_CHANGED', filterRecommended: filterRecommended.checked });
+});
+
+// Logging toggle
+loggingToggle.addEventListener('change', async () => {
+    await saveSettings({ logging: loggingToggle.checked });
+    notifyContentScript({ type: 'SETTINGS_CHANGED', logging: loggingToggle.checked });
 });
 
 // Language selector change

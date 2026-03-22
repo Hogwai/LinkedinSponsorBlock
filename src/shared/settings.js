@@ -13,7 +13,8 @@ export const SETTINGS_KEYS = {
     TOTAL_PROMOTED_BLOCKED: 'totalPromotedBlocked',
     TOTAL_SUGGESTED_BLOCKED: 'totalSuggestedBlocked',
     INSTALL_DATE: 'installDate',
-    REVIEW_BANNER_DISMISSED: 'reviewBannerDismissed'
+    REVIEW_BANNER_DISMISSED: 'reviewBannerDismissed',
+    LOGGING: 'logging'
 };
 
 export const DEFAULT_SETTINGS = {
@@ -27,7 +28,8 @@ export const DEFAULT_SETTINGS = {
     [SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED]: 0,
     [SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED]: 0,
     [SETTINGS_KEYS.INSTALL_DATE]: 0,
-    [SETTINGS_KEYS.REVIEW_BANNER_DISMISSED]: false
+    [SETTINGS_KEYS.REVIEW_BANNER_DISMISSED]: false,
+    [SETTINGS_KEYS.LOGGING]: false
 };
 
 export const LANGUAGES = ['en', 'fr', 'es', 'pt', 'de', 'it', 'hi', 'ar', 'zh', 'ja'];
