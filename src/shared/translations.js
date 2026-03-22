@@ -42,7 +42,8 @@ export const TRANSLATIONS = {
         reviewBanner: 'Enjoying the extension?',
         reviewBannerUserscript: 'Enjoying the userscript?',
         dismiss: 'Dismiss',
-        madeBy: 'Made by'
+        madeBy: 'Made by',
+        logging: 'Enable logging'
     },
     fr: {
         title: 'Linkedin Sponsor Block',
@@ -87,7 +88,8 @@ export const TRANSLATIONS = {
         reviewBanner: 'Vous aimez l\'extension ?',
         reviewBannerUserscript: 'Vous aimez le userscript ?',
         dismiss: 'Masquer',
-        madeBy: 'Créé par'
+        madeBy: 'Créé par',
+        logging: 'Activer les logs'
     },
     es: {
         title: 'Linkedin Sponsor Block',
@@ -132,7 +134,8 @@ export const TRANSLATIONS = {
         reviewBanner: '¿Te gusta la extensión?',
         reviewBannerUserscript: '¿Te gusta el userscript?',
         dismiss: 'Cerrar',
-        madeBy: 'Hecho por'
+        madeBy: 'Hecho por',
+        logging: 'Activar registros'
     },
     pt: {
         title: 'Linkedin Sponsor Block',
@@ -177,7 +180,8 @@ export const TRANSLATIONS = {
         reviewBanner: 'Gostou da extensão?',
         reviewBannerUserscript: 'Gostou do userscript?',
         dismiss: 'Fechar',
-        madeBy: 'Feito por'
+        madeBy: 'Feito por',
+        logging: 'Ativar registros'
     },
     de: {
         title: 'Linkedin Sponsor Block',
@@ -222,7 +226,8 @@ export const TRANSLATIONS = {
         reviewBanner: 'Gefällt Ihnen die Erweiterung?',
         reviewBannerUserscript: 'Gefällt Ihnen das Userscript?',
         dismiss: 'Schließen',
-        madeBy: 'Erstellt von'
+        madeBy: 'Erstellt von',
+        logging: 'Protokollierung aktivieren'
     },
     it: {
         title: 'Linkedin Sponsor Block',
@@ -267,7 +272,8 @@ export const TRANSLATIONS = {
         reviewBanner: 'Ti piace l\'estensione?',
         reviewBannerUserscript: 'Ti piace il userscript?',
         dismiss: 'Chiudi',
-        madeBy: 'Creato da'
+        madeBy: 'Creato da',
+        logging: 'Attiva registrazione'
     },
     hi: {
         title: 'Linkedin Sponsor Block',
@@ -312,7 +318,8 @@ export const TRANSLATIONS = {
         reviewBanner: 'एक्सटेंशन पसंद आया?',
         reviewBannerUserscript: 'यूज़रस्क्रिप्ट पसंद आया?',
         dismiss: 'बंद करें',
-        madeBy: 'द्वारा निर्मित'
+        madeBy: 'द्वारा निर्मित',
+        logging: 'लॉगिंग सक्रिय करें'
     },
     ar: {
         title: 'Linkedin Sponsor Block',
@@ -357,7 +364,8 @@ export const TRANSLATIONS = {
         reviewBanner: 'أعجبتك الإضافة؟',
         reviewBannerUserscript: 'أعجبك السكربت؟',
         dismiss: 'إغلاق',
-        madeBy: 'صنع بواسطة'
+        madeBy: 'صنع بواسطة',
+        logging: 'تفعيل السجلات'
     },
     zh: {
         title: 'Linkedin Sponsor Block',
@@ -402,7 +410,8 @@ export const TRANSLATIONS = {
         reviewBanner: '喜欢这个扩展吗？',
         reviewBannerUserscript: '喜欢这个用户脚本吗？',
         dismiss: '关闭',
-        madeBy: '由...制作'
+        madeBy: '由...制作',
+        logging: '启用日志'
     },
     ja: {
         title: 'Linkedin Sponsor Block',
@@ -447,7 +456,8 @@ export const TRANSLATIONS = {
         reviewBanner: 'この拡張機能は気に入りましたか？',
         reviewBannerUserscript: 'このユーザースクリプトは気に入りましたか？',
         dismiss: '閉じる',
-        madeBy: '作成者'
+        madeBy: '作成者',
+        logging: 'ログを有効にする'
     }
 };
 

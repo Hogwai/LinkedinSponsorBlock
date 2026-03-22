@@ -1,5 +1,5 @@
 import { createTranslator } from '../shared/translations.js';
-import { POSITIONS, detectLanguage } from '../shared/settings.js';
+import { POSITIONS, SETTINGS_KEYS, detectLanguage } from '../shared/settings.js';
 import { CONFIG } from '../shared/config.js';
 
 // ==================== STYLES ====================
@@ -561,7 +561,8 @@ function createDOM() {
             toggleRow('discreetMode', 'Discreet mode', 'lsb-discreet'),
             toggleRow('blockPromotedPosts', 'Block promoted', 'lsb-filter-promoted', 'lsb-filter-toggle'),
             toggleRow('blockSuggestedPosts', 'Block suggested', 'lsb-filter-suggested', 'lsb-filter-toggle'),
-            toggleRow('blockRecommendedPosts', 'Block "Recommended for you"', 'lsb-filter-recommended', 'lsb-filter-toggle')
+            toggleRow('blockRecommendedPosts', 'Block "Recommended for you"', 'lsb-filter-recommended', 'lsb-filter-toggle'),
+            toggleRow('logging', 'Enable logging', 'lsb-logging')
         ),
         // Scan button
         el('button', { class: 'lsb-scan-btn', id: 'lsb-scan', 'data-t': 'scanNow' }, 'Scan now'),
@@ -617,6 +618,7 @@ export function createFloatingUI({
     onTogglePromoted,
     onToggleSuggested,
     onToggleRecommended,
+    onToggleLogging,
     onScan,
     onLanguageChange,
     onPositionChange,
@@ -642,6 +644,7 @@ export function createFloatingUI({
     const promotedInput = $('lsb-filter-promoted');
     const suggestedInput = $('lsb-filter-suggested');
     const recommendedInput = $('lsb-filter-recommended');
+    const loggingInput = $('lsb-logging');
     const scanBtn = $('lsb-scan');
     const langSelect = $('lsb-language');
     const posSelect = $('lsb-position');
@@ -699,6 +702,7 @@ export function createFloatingUI({
     promotedInput.checked = settings.filterPromoted;
     suggestedInput.checked = settings.filterSuggested;
     recommendedInput.checked = settings.filterRecommended;
+    loggingInput.checked = settings[SETTINGS_KEYS.LOGGING] || false;
     langSelect.value = currentLang;
     posSelect.value = settings.position || 'br';
     updateDisabledState(settings.enabled);
@@ -787,6 +791,10 @@ export function createFloatingUI({
         onToggleRecommended(recommendedInput.checked);
     });
 
+    loggingInput.addEventListener('change', () => {
+        onToggleLogging(loggingInput.checked);
+    });
+
     scanBtn.addEventListener('click', () => {
         const result = onScan();
         const promoted = result?.promoted || 0;
@@ -838,6 +846,9 @@ export function createFloatingUI({
             }
             if (newSettings.filterRecommended !== undefined) {
                 recommendedInput.checked = newSettings.filterRecommended;
+            }
+            if (newSettings.logging !== undefined) {
+                loggingInput.checked = newSettings.logging;
             }
         },
         show() {

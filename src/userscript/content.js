@@ -63,7 +63,8 @@ const state = {
         [SETTINGS_KEYS.FILTER_SUGGESTED]: getStored(SETTINGS_KEYS.FILTER_SUGGESTED, DEFAULT_SETTINGS[SETTINGS_KEYS.FILTER_SUGGESTED]),
         [SETTINGS_KEYS.FILTER_RECOMMENDED]: getStored(SETTINGS_KEYS.FILTER_RECOMMENDED, DEFAULT_SETTINGS[SETTINGS_KEYS.FILTER_RECOMMENDED]),
         [SETTINGS_KEYS.LANGUAGE]: getStored(SETTINGS_KEYS.LANGUAGE, DEFAULT_SETTINGS[SETTINGS_KEYS.LANGUAGE]),
-        [SETTINGS_KEYS.POSITION]: getStored(SETTINGS_KEYS.POSITION, DEFAULT_SETTINGS[SETTINGS_KEYS.POSITION])
+        [SETTINGS_KEYS.POSITION]: getStored(SETTINGS_KEYS.POSITION, DEFAULT_SETTINGS[SETTINGS_KEYS.POSITION]),
+        [SETTINGS_KEYS.LOGGING]: getStored(SETTINGS_KEYS.LOGGING, DEFAULT_SETTINGS[SETTINGS_KEYS.LOGGING])
     },
     ui: null
 };
@@ -218,6 +219,11 @@ function initUI() {
         onPositionChange(pos) {
             state.settings[SETTINGS_KEYS.POSITION] = pos;
             setStored(SETTINGS_KEYS.POSITION, pos);
+        },
+        onToggleLogging(enabled) {
+            state.settings[SETTINGS_KEYS.LOGGING] = enabled;
+            setStored(SETTINGS_KEYS.LOGGING, enabled);
+            logger.setEnabled(enabled);
         }
     });
 }
@@ -292,6 +298,7 @@ function start() {
             ontimeout() { reject(new Error('GM_xmlhttpRequest timeout')); }
         });
     }));
+    logger.setEnabled(state.settings[SETTINGS_KEYS.LOGGING]);
     initUI();
     if (state.isCurrentlyFeedPage) {
         if (state.settings[SETTINGS_KEYS.ENABLED]) observer.start();

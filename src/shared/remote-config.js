@@ -1,4 +1,5 @@
 import { CONFIG } from './config.js';
+import { logger } from './logger.js';
 
 const REMOTE_CONFIG_URL = 'https://raw.githubusercontent.com/Hogwai/LinkedinSponsorBlock/main/remote-config.json';
 const STORAGE_KEY = 'lsb_remote_config';
@@ -88,7 +89,7 @@ export function applyRemoteOverrides(profileName) {
     activeProfileName = profileName;
     if (storedRemoteConfig && isValid(storedRemoteConfig)) {
         mergeProfile(storedRemoteConfig, profileName);
-        console.log(`[LinkedinSponsorBlock] Remote config applied for profile: ${profileName}`);
+        logger.info(`Remote config applied for profile: ${profileName}`);
     }
 }
 
@@ -101,7 +102,7 @@ async function fetchRemoteConfig(storage, fetcher) {
             mergeProfile(remote, activeProfileName);
         }
         await storage.set(STORAGE_KEY, remote);
-        console.log('[LinkedinSponsorBlock] Remote config fetched and applied');
+        logger.info('Remote config fetched and applied');
     } catch {
         // Network error, parse error, or storage error — silent fallback
     }
