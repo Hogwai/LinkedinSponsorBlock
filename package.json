@@ -9,7 +9,10 @@
     "build:userscript": "node build.js --target=userscript",
     "build:all": "node build.js --target=all --no-version",
     "clean": "rm -rf dist",
-    "debug:android": "node scripts/debug-android.js"
+    "debug:android": "node scripts/debug-android.js",
+    "publish": "node scripts/publish/publish.js",
+    "publish:chrome": "node scripts/publish/publish.js --chrome-only",
+    "publish:firefox": "node scripts/publish/publish.js --firefox-only"
   },
   "devDependencies": {
     "rollup": "^4.59.1",

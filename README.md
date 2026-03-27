@@ -157,3 +157,7 @@ Found this project useful? Consider supporting its development:
 ## License
 
 This project is licensed under the MIT License.
+
+### Acknowledgments
+
+The store publishing scripts were inspired by Raymond Hill's publishing automation from the [uBlock Origin](https://github.com/gorhill/uBlock) project.

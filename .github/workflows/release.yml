@@ -149,6 +149,14 @@ jobs:
           draft: false
           prerelease: false
 
+      - name: Publish to Chrome Web Store
+        run: node scripts/publish/chrome.js --ci --zip ${{ github.workspace }}/LinkedinSponsorBlock-chrome-${{ needs.detect-changes.outputs.chrome-version }}.zip
+        env:
+          CWS_CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
+          CWS_CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
+          CWS_REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
+          CWS_EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID }}
+
   release-firefox:
     needs: detect-changes
     if: needs.detect-changes.outputs.firefox-changed == 'true'
@@ -198,6 +206,13 @@ jobs:
             LinkedinSponsorBlock-firefox-${{ needs.detect-changes.outputs.firefox-version }}.zip
           draft: false
           prerelease: false
+
+      - name: Publish to Firefox AMO
+        run: node scripts/publish/firefox.js --ci --zip ${{ github.workspace }}/LinkedinSponsorBlock-firefox-${{ needs.detect-changes.outputs.firefox-version }}.zip
+        env:
+          AMO_API_KEY: ${{ secrets.AMO_API_KEY }}
+          AMO_API_SECRET: ${{ secrets.AMO_API_SECRET }}
+          AMO_ADDON_ID: ${{ secrets.AMO_ADDON_ID }}
 
   release-userscript:
     needs: detect-changes
