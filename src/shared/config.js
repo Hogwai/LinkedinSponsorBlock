@@ -129,7 +129,7 @@ export const CONFIG = {
     DETECTION: {
         SPONSORED: {
             keywordMatch: {
-                selectors: ['p[componentkey]', 'p'],
+                selectors: ['p[componentkey]'],
                 keywords: SHARED_KEYWORDS.sponsored
             },
             childSelectors: ['article[data-sponsored-tracking-url]']
@@ -137,7 +137,7 @@ export const CONFIG = {
         SUGGESTED: {
             // Desktop: keywords matched against text content of child elements
             keywordMatch: {
-                selectors: ['p[componentkey]', 'p'],
+                selectors: ['p[componentkey]'],
                 keywords: SHARED_KEYWORDS.suggested
             },
             // Mobile: child element selectors indicating suggested content
@@ -146,7 +146,7 @@ export const CONFIG = {
         RECOMMENDED: {
             // Desktop: keywords matched against text content of child elements
             keywordMatch: {
-                selectors: ['p[componentkey]', 'p'],
+                selectors: ['p[componentkey]'],
                 keywords: SHARED_KEYWORDS.recommended
             },
             childSelectors: []
@@ -181,15 +181,15 @@ export const PROFILES = {
         ],
         detection: {
             sponsored: {
-                keywordSelectors: ['p[componentkey]', 'p'],
+                keywordSelectors: ['p[componentkey]'],
                 childSelectors: ['article[data-sponsored-tracking-url]']
             },
             suggested: {
-                keywordSelectors: ['p[componentkey]', 'p'],
+                keywordSelectors: ['p[componentkey]'],
                 childSelectors: ['p[data-test-id="main-feed-card__header"]']
             },
             recommended: {
-                keywordSelectors: ['p[componentkey]', 'p'],
+                keywordSelectors: ['p[componentkey]'],
                 childSelectors: []
             }
         }
