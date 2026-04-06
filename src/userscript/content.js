@@ -1,6 +1,6 @@
 import { CONFIG } from '../shared/config.js';
 import { logger } from '../shared/logger.js';
-import { getUnscannedPosts } from '../shared/detection.js';
+import { getUnscannedPosts, scannedPosts } from '../shared/detection.js';
 import { createObserver } from '../shared/observer.js';
 import { isFeedPage, createPageManager } from '../shared/page.js';
 import { SETTINGS_KEYS, DEFAULT_SETTINGS } from '../shared/settings.js';
@@ -77,7 +77,7 @@ if (!getStored(SETTINGS_KEYS.INSTALL_DATE, 0)) {
 // ==================== HIDE FUNCTIONS ====================
 function hidePromotedPost(post) {
     post.style.display = 'none';
-    post.setAttribute(CONFIG.ATTRIBUTES.SCANNED, 'true');
+    scannedPosts.add(post);
     state.sessionPromotedRemoved++;
     logger.log(`Promoted post hidden: "${post?.textContent?.replace(/\s+/g, ' ').trim().slice(0, 100)}"`);
     return true;
@@ -85,7 +85,7 @@ function hidePromotedPost(post) {
 
 function hideSuggestedPost(post) {
     post.style.display = 'none';
-    post.setAttribute(CONFIG.ATTRIBUTES.SCANNED, 'true');
+    scannedPosts.add(post);
     state.sessionSuggestedRemoved++;
     logger.log(`Suggested post hidden: "${post?.textContent?.replace(/\s+/g, ' ').trim().slice(0, 100)}"`);
     return true;
@@ -93,7 +93,7 @@ function hideSuggestedPost(post) {
 
 function hideRecommendedPost(post) {
     post.style.display = 'none';
-    post.setAttribute(CONFIG.ATTRIBUTES.SCANNED, 'true');
+    scannedPosts.add(post);
     state.sessionSuggestedRemoved++;
     logger.log(`Recommended post hidden: "${post?.textContent?.replace(/\s+/g, ' ').trim().slice(0, 100)}"`);
     return true;
@@ -112,7 +112,7 @@ function scanFeed(root = document) {
             if (hidePromotedPost(post)) {
                 promotedCount++;
             } else {
-                post.setAttribute(CONFIG.ATTRIBUTES.SCANNED, 'false');
+                scannedPosts.add(post);
             }
         }
     }
@@ -122,7 +122,7 @@ function scanFeed(root = document) {
             if (hideSuggestedPost(post)) {
                 suggestedCount++;
             } else {
-                post.setAttribute(CONFIG.ATTRIBUTES.SCANNED, 'false');
+                scannedPosts.add(post);
             }
         }
     }
@@ -132,7 +132,7 @@ function scanFeed(root = document) {
             if (hideRecommendedPost(post)) {
                 suggestedCount++;
             } else {
-                post.setAttribute(CONFIG.ATTRIBUTES.SCANNED, 'false');
+                scannedPosts.add(post);
             }
         }
     }

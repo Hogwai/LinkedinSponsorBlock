@@ -1,5 +1,7 @@
 import { CONFIG } from './config.js';
 
+export const scannedPosts = new WeakSet();
+
 function matchesByKeyword(post, detection) {
     const { keywordMatch, childSelectors } = detection;
     const candidates = keywordMatch.selectors.flatMap(sel =>
@@ -25,14 +27,13 @@ function isSuggested(post) { return matchesByKeyword(post, CONFIG.DETECTION.SUGG
 function isRecommended(post) { return matchesByKeyword(post, CONFIG.DETECTION.RECOMMENDED); }
 
 export function getUnscannedPosts(root) {
-    const selector = CONFIG.SELECTORS.POST_CONTAINERS
-        .map(s => `${s}:not([${CONFIG.ATTRIBUTES.SCANNED}])`)
-        .join(',');
+    const selector = CONFIG.SELECTORS.POST_CONTAINERS.join(',');
     let posts = [];
     if (root.matches?.(selector)) {
         posts.push(root);
     }
     posts.push(...root.querySelectorAll(selector));
+    posts = posts.filter(post => !scannedPosts.has(post));
 
     // Only first level elements (posts)
     posts = posts.filter(post => !post.parentElement?.closest(CONFIG.SELECTORS.POST_CONTAINERS.join(',')));

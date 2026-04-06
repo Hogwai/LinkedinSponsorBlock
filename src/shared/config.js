@@ -104,9 +104,6 @@ const SHARED_KEYWORDS = {
 };
 
 export const CONFIG = {
-    ATTRIBUTES: {
-        SCANNED: 'data-sponsor-scanned'
-    },
     DELAYS: {
         OBSERVER_RETRY: 32,
         MAX_OBSERVER_RETRIES: 15,
@@ -132,7 +129,7 @@ export const CONFIG = {
     DETECTION: {
         SPONSORED: {
             keywordMatch: {
-                selectors: ['p[componentkey]'],
+                selectors: ['p[componentkey]', 'p'],
                 keywords: SHARED_KEYWORDS.sponsored
             },
             childSelectors: ['article[data-sponsored-tracking-url]']
@@ -140,7 +137,7 @@ export const CONFIG = {
         SUGGESTED: {
             // Desktop: keywords matched against text content of child elements
             keywordMatch: {
-                selectors: ['p[componentkey]'],
+                selectors: ['p[componentkey]', 'p'],
                 keywords: SHARED_KEYWORDS.suggested
             },
             // Mobile: child element selectors indicating suggested content
@@ -149,7 +146,7 @@ export const CONFIG = {
         RECOMMENDED: {
             // Desktop: keywords matched against text content of child elements
             keywordMatch: {
-                selectors: ['p[componentkey]'],
+                selectors: ['p[componentkey]', 'p'],
                 keywords: SHARED_KEYWORDS.recommended
             },
             childSelectors: []
@@ -184,15 +181,15 @@ export const PROFILES = {
         ],
         detection: {
             sponsored: {
-                keywordSelectors: ['p[componentkey]'],
+                keywordSelectors: ['p[componentkey]', 'p'],
                 childSelectors: ['article[data-sponsored-tracking-url]']
             },
             suggested: {
-                keywordSelectors: ['p[componentkey]'],
+                keywordSelectors: ['p[componentkey]', 'p'],
                 childSelectors: ['p[data-test-id="main-feed-card__header"]']
             },
             recommended: {
-                keywordSelectors: ['p[componentkey]'],
+                keywordSelectors: ['p[componentkey]', 'p'],
                 childSelectors: []
             }
         }
