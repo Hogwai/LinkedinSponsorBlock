@@ -104,9 +104,6 @@ const SHARED_KEYWORDS = {
 };
 
 export const CONFIG = {
-    ATTRIBUTES: {
-        SCANNED: 'data-sponsor-scanned'
-    },
     DELAYS: {
         OBSERVER_RETRY: 32,
         MAX_OBSERVER_RETRIES: 15,
