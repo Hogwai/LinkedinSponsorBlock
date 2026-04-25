@@ -9,6 +9,7 @@ const SHARED_KEYWORDS = {
         'En partenariat avec',   // FRENCH
         'Promu(e) par',          // FRENCH
         'Promu',                 // FRENCH
+        'Promu • Partenariat avec', // FRENCH
         'Promu par',             // FRENCH
         'Promues',               // FRENCH
         'Promoted',              // ENGLISH
