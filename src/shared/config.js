@@ -8,8 +8,11 @@ const SHARED_KEYWORDS = {
         'Sponsorisé • Partenariat avec', // FRENCH
         'En partenariat avec',   // FRENCH
         'Promu(e) par',          // FRENCH
+        'Promu',                 // FRENCH
+        'Promu par',             // FRENCH
         'Promues',               // FRENCH
         'Promoted',              // ENGLISH
+        'Promoted by',           // ENGLISH
         'Anzeige',               // GERMAN
         'Gesponsert',            // GERMAN
         'Promocionado',          // SPANISH
