@@ -67,50 +67,68 @@ function isValid(config) {
 
 function mergeProfile(remote, profileName) {
     const profile = remote.profiles[profileName];
-    if (!profile) return;
+    if (!profile) return false;
 
-    CONFIG.SELECTORS.POST_CONTAINERS = profile.postContainers;
-    CONFIG.SELECTORS.FEED_WRAPPER = {
-        mobile: profile.feedWrapper.mobile,
-        desktop: profile.feedWrapper.desktop,
-        newFeed: profile.feedWrapper.newFeed
+    CONFIG.profiles[profileName] = {
+        feedWrapper: {
+            mobile: profile.feedWrapper.mobile,
+            desktop: profile.feedWrapper.desktop,
+            newFeed: profile.feedWrapper.newFeed
+        },
+        postContainers: profile.postContainers,
+        detection: Object.fromEntries(CATEGORIES.map(cat => {
+            const src = profile.detection[cat];
+            return [cat, {
+                keywordSelectors: src.keywordSelectors,
+                keywords: new Set(src.keywords),
+                childSelectors: src.childSelectors
+            }];
+        }))
     };
-
-    for (const cat of CATEGORIES) {
-        const src = profile.detection[cat];
-        const dest = CONFIG.DETECTION[cat.toUpperCase()];
-        dest.keywordMatch.selectors = src.keywordSelectors;
-        dest.keywordMatch.keywords = new Set(src.keywords);
-        dest.childSelectors = src.childSelectors;
-    }
+    return true;
 }
 
 export function applyRemoteOverrides(profileName) {
     activeProfileName = profileName;
     if (storedRemoteConfig && isValid(storedRemoteConfig)) {
-        mergeProfile(storedRemoteConfig, profileName);
-        logger.info(`Remote config applied for profile: ${profileName}`);
+        if (mergeProfile(storedRemoteConfig, profileName)) {
+            logger.info(`Remote config applied for profile: ${profileName}`);
+        } else {
+            logger.warn(`Remote config has no profile named: ${profileName}`);
+        }
     }
 }
 
 async function fetchRemoteConfig(storage, fetcher) {
     try {
         const remote = await fetcher();
-        if (!remote || !isValid(remote)) return;
+        if (!remote) {
+            logger.warn('Remote config fetch returned no config');
+            return;
+        }
+        if (!isValid(remote)) {
+            logger.warn('Remote config fetch returned invalid config');
+            return;
+        }
         storedRemoteConfig = remote;
         if (activeProfileName) {
-            mergeProfile(remote, activeProfileName);
+            if (!mergeProfile(remote, activeProfileName)) {
+                logger.warn(`Remote config has no profile named: ${activeProfileName}`);
+            }
         }
         await storage.set(STORAGE_KEY, remote);
         logger.info('Remote config fetched and applied');
-    } catch {
-        // Network error, parse error, or storage error — silent fallback
+    } catch (err) {
+        logger.warn('Remote config fetch failed; using embedded config', err);
     }
 }
 
 export async function fetchRemoteConfigJSON() {
     const response = await fetch(REMOTE_CONFIG_URL, { signal: AbortSignal.timeout(5000) });
-    if (!response.ok) return null;
+    if (!response.ok) {
+        logger.warn(`Remote config request failed with status ${response.status}`);
+        return null;
+    }
     return await response.json();
 }
 
@@ -120,9 +138,16 @@ export async function applyRemoteConfig(storage, fetcher) {
         const cached = await storage.get(STORAGE_KEY);
         if (isValid(cached)) {
             storedRemoteConfig = cached;
+            if (activeProfileName) {
+                if (!mergeProfile(cached, activeProfileName)) {
+                    logger.warn(`Cached remote config has no profile named: ${activeProfileName}`);
+                }
+            }
+        } else if (cached) {
+            logger.warn('Cached remote config is invalid; using embedded config');
         }
-    } catch {
-        // Cache read failed — continue with embedded config
+    } catch (err) {
+        logger.warn('Remote config cache read failed; using embedded config', err);
     }
 
     // Phase 2: fetch fresh config in background (fire-and-forget)

@@ -1,11 +1,11 @@
 import { CONFIG } from '../shared/config.js';
 import { logger } from '../shared/logger.js';
-import { getUnscannedPosts, scannedPosts } from '../shared/detection.js';
 import { createObserver } from '../shared/observer.js';
 import { isFeedPage, createPageManager } from '../shared/page.js';
 import { SETTINGS_KEYS, DEFAULT_SETTINGS } from '../shared/settings.js';
 import { createFloatingUI } from './ui.js';
 import { applyRemoteConfig } from '../shared/remote-config.js';
+import { createBlocker } from '../shared/blocker.js';
 
 // ==================== STORAGE ====================
 const STORAGE_PREFIX = 'lsb_';
@@ -74,86 +74,24 @@ if (!getStored(SETTINGS_KEYS.INSTALL_DATE, 0)) {
     setStored(SETTINGS_KEYS.INSTALL_DATE, Date.now());
 }
 
-// ==================== HIDE FUNCTIONS ====================
-function hidePromotedPost(post) {
-    post.style.display = 'none';
-    scannedPosts.add(post);
-    state.sessionPromotedRemoved++;
-    logger.log(`Promoted post hidden: "${post?.textContent?.replace(/\s+/g, ' ').trim().slice(0, 100)}"`);
-    return true;
-}
-
-function hideSuggestedPost(post) {
-    post.style.display = 'none';
-    scannedPosts.add(post);
-    state.sessionSuggestedRemoved++;
-    logger.log(`Suggested post hidden: "${post?.textContent?.replace(/\s+/g, ' ').trim().slice(0, 100)}"`);
-    return true;
-}
-
-function hideRecommendedPost(post) {
-    post.style.display = 'none';
-    scannedPosts.add(post);
-    state.sessionSuggestedRemoved++;
-    logger.log(`Recommended post hidden: "${post?.textContent?.replace(/\s+/g, ' ').trim().slice(0, 100)}"`);
-    return true;
-}
-
-// ==================== SCAN ====================
-function scanFeed(root = document) {
-    if (!state.settings[SETTINGS_KEYS.ENABLED]) return { promoted: 0, suggested: 0 };
-
-    const groupedPosts = getUnscannedPosts(root);
-    let promotedCount = 0;
-    let suggestedCount = 0;
-
-    if (state.settings[SETTINGS_KEYS.FILTER_PROMOTED]) {
-        for (const post of groupedPosts.sponsored) {
-            if (hidePromotedPost(post)) {
-                promotedCount++;
-            } else {
-                scannedPosts.add(post);
-            }
-        }
-    }
-
-    if (state.settings[SETTINGS_KEYS.FILTER_SUGGESTED]) {
-        for (const post of groupedPosts.suggested) {
-            if (hideSuggestedPost(post)) {
-                suggestedCount++;
-            } else {
-                scannedPosts.add(post);
-            }
-        }
-    }
-
-    if (state.settings[SETTINGS_KEYS.FILTER_RECOMMENDED]) {
-        for (const post of groupedPosts.recommended) {
-            if (hideRecommendedPost(post)) {
-                suggestedCount++;
-            } else {
-                scannedPosts.add(post);
-            }
-        }
-    }
-
-    if (promotedCount > 0 || suggestedCount > 0) {
-        const totals = addToTotalCounters(promotedCount, suggestedCount);
+// ==================== BLOCKER ====================
+const blocker = createBlocker({
+    state,
+    onBlocked({ promoted, suggested }) {
+        const totals = addToTotalCounters(promoted, suggested);
         const sessionTotal = state.sessionPromotedRemoved + state.sessionSuggestedRemoved;
         if (state.ui) {
             state.ui.updateCounters(sessionTotal, totals.promoted, totals.suggested);
         }
     }
-
-    return { promoted: promotedCount, suggested: suggestedCount };
-}
+});
+const { scanFeed } = blocker;
 
 // ==================== OBSERVER & PAGE ====================
 const observer = createObserver(scanFeed, state);
 
 const pageManager = createPageManager(state, observer, () => {
-    state.sessionPromotedRemoved = 0;
-    state.sessionSuggestedRemoved = 0;
+    blocker.resetSessionCounters();
     if (state.ui) {
         const totals = getTotalCounters();
         state.ui.updateCounters(0, totals.promoted, totals.suggested);

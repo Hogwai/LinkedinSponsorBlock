@@ -43,5 +43,14 @@ export const logger = {
     info(message) {
         if (!this.enabled) return;
         console.log(`[LinkedinSponsorBlock] ${message}`);
+    },
+
+    warn(message, error) {
+        if (!this.enabled) return;
+        if (error) {
+            console.warn(`[LinkedinSponsorBlock] ${message}`, error);
+        } else {
+            console.warn(`[LinkedinSponsorBlock] ${message}`);
+        }
     }
 };

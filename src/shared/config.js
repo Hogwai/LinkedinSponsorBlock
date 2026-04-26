@@ -107,54 +107,68 @@ const SHARED_KEYWORDS = {
     ].map(t => t.toLowerCase()))
 };
 
+function createDetection(keywordCategory, keywordSelectors, childSelectors = []) {
+    return {
+        keywordSelectors,
+        keywords: SHARED_KEYWORDS[keywordCategory],
+        childSelectors
+    };
+}
+
+function createProfile({ feedWrapper, postContainers, detection }) {
+    return {
+        feedWrapper: { ...feedWrapper },
+        postContainers: [...postContainers],
+        detection
+    };
+}
+
+const DEFAULT_FEED_WRAPPER = {
+    newFeed: '[data-testid="mainFeed"]',
+    desktop: '[class*="scaffold-finite-scroll"][class*="scaffold-finite-scroll--infinite"]',
+    mobile: 'ol.feed-container'
+};
+
+const DEFAULT_POST_CONTAINERS = [
+    'div[data-display-contents="true"]',
+    '.ember-view.occludable-update',
+    '[class*="ember-view"][class*="occludable-update"]',
+    'div[class*="feed-shared-update-v2"][id*="ember"]',
+    'article[data-id="main-feed-card"]',
+    'div[data-view-tracking-scope*=\'transporterKeys":["sponsored"]\']',
+    'div[data-view-tracking-scope*=\'transporterKeys":["default"]\']',
+    'li.feed-item'
+];
+
 export const CONFIG = {
+    activeProfile: 'modern',
+    profiles: {
+        modern: createProfile({
+            feedWrapper: DEFAULT_FEED_WRAPPER,
+            postContainers: DEFAULT_POST_CONTAINERS,
+            detection: {
+                sponsored: createDetection('sponsored', ['p[componentkey]'], ['article[data-sponsored-tracking-url]']),
+                suggested: createDetection('suggested', ['p[componentkey]'], ['p[data-test-id="main-feed-card__header"]']),
+                recommended: createDetection('recommended', ['p[componentkey]'])
+            }
+        }),
+        legacy: createProfile({
+            feedWrapper: DEFAULT_FEED_WRAPPER,
+            postContainers: DEFAULT_POST_CONTAINERS,
+            detection: {
+                sponsored: createDetection('sponsored', [
+                    'span[aria-hidden="true"]:not([class]):not([id])',
+                    'span.text-color-text-low-emphasis'
+                ]),
+                suggested: createDetection('suggested', ['span.update-components-header__text-view']),
+                recommended: createDetection('recommended', ['span.update-components-header__text-view'])
+            }
+        })
+    },
     DELAYS: {
         OBSERVER_RETRY: 32,
         MAX_OBSERVER_RETRIES: 15,
         NOTIFICATION: 300
-    },
-    SELECTORS: {
-        POST_CONTAINERS: [
-            'div[data-display-contents="true"]',
-            '.ember-view.occludable-update',
-            '[class*="ember-view"][class*="occludable-update"]',
-            'div[class*="feed-shared-update-v2"][id*="ember"]',
-            'article[data-id="main-feed-card"]',
-            'div[data-view-tracking-scope*=\'transporterKeys":["sponsored"]\']',
-            'div[data-view-tracking-scope*=\'transporterKeys":["default"]\']',
-            'li.feed-item'
-        ],
-        FEED_WRAPPER: {
-            mobile: 'ol.feed-container',
-            desktop: '[class*="scaffold-finite-scroll"][class*="scaffold-finite-scroll--infinite"]',
-            newFeed: '[data-testid="mainFeed"]'
-        }
-    },
-    DETECTION: {
-        SPONSORED: {
-            keywordMatch: {
-                selectors: ['p[componentkey]'],
-                keywords: SHARED_KEYWORDS.sponsored
-            },
-            childSelectors: ['article[data-sponsored-tracking-url]']
-        },
-        SUGGESTED: {
-            // Desktop: keywords matched against text content of child elements
-            keywordMatch: {
-                selectors: ['p[componentkey]'],
-                keywords: SHARED_KEYWORDS.suggested
-            },
-            // Mobile: child element selectors indicating suggested content
-            childSelectors: ['p[data-test-id="main-feed-card__header"]']
-        },
-        RECOMMENDED: {
-            // Desktop: keywords matched against text content of child elements
-            keywordMatch: {
-                selectors: ['p[componentkey]'],
-                keywords: SHARED_KEYWORDS.recommended
-            },
-            childSelectors: []
-        }
     },
     REVIEW_URLS: {
         chrome: 'https://chromewebstore.google.com/detail/linkedin-sponsor-block/dmgglmnbmokkdocpamjkcgjfjceoocbh/reviews',
@@ -166,92 +180,18 @@ export const CONFIG = {
     REVIEW_THRESHOLD_DAYS: 7
 };
 
-export const PROFILES = {
-    modern: {
-        feedWrapper: {
-            newFeed: '[data-testid="mainFeed"]',
-            desktop: '[class*="scaffold-finite-scroll"][class*="scaffold-finite-scroll--infinite"]',
-            mobile: 'ol.feed-container'
-        },
-        postContainers: [
-            'div[data-display-contents="true"]',
-            '.ember-view.occludable-update',
-            '[class*="ember-view"][class*="occludable-update"]',
-            'div[class*="feed-shared-update-v2"][id*="ember"]',
-            'article[data-id="main-feed-card"]',
-            'div[data-view-tracking-scope*=\'transporterKeys":["sponsored"]\']',
-            'div[data-view-tracking-scope*=\'transporterKeys":["default"]\']',
-            'li.feed-item'
-        ],
-        detection: {
-            sponsored: {
-                keywordSelectors: ['p[componentkey]'],
-                childSelectors: ['article[data-sponsored-tracking-url]']
-            },
-            suggested: {
-                keywordSelectors: ['p[componentkey]'],
-                childSelectors: ['p[data-test-id="main-feed-card__header"]']
-            },
-            recommended: {
-                keywordSelectors: ['p[componentkey]'],
-                childSelectors: []
-            }
-        }
-    },
-    legacy: {
-        feedWrapper: {
-            newFeed: '[data-testid="mainFeed"]',
-            desktop: '[class*="scaffold-finite-scroll"][class*="scaffold-finite-scroll--infinite"]',
-            mobile: 'ol.feed-container'
-        },
-        postContainers: [
-            'div[data-display-contents="true"]',
-            '.ember-view.occludable-update',
-            '[class*="ember-view"][class*="occludable-update"]',
-            'div[class*="feed-shared-update-v2"][id*="ember"]',
-            'article[data-id="main-feed-card"]',
-            'div[data-view-tracking-scope*=\'transporterKeys":["sponsored"]\']',
-            'div[data-view-tracking-scope*=\'transporterKeys":["default"]\']',
-            'li.feed-item'
-        ],
-        detection: {
-            sponsored: {
-                keywordSelectors: [
-                    'span[aria-hidden="true"]:not([class]):not([id])',
-                    'span.text-color-text-low-emphasis'
-                ],
-                childSelectors: []
-            },
-            suggested: {
-                keywordSelectors: ['span.update-components-header__text-view'],
-                childSelectors: []
-            },
-            recommended: {
-                keywordSelectors: ['span.update-components-header__text-view'],
-                childSelectors: []
-            }
-        }
-    }
-};
+export function getActiveProfile() {
+    return CONFIG.profiles[CONFIG.activeProfile] || CONFIG.profiles.modern;
+}
 
 export function applyLayout(profileName) {
-    const profile = PROFILES[profileName];
+    const profile = CONFIG.profiles[profileName];
     if (!profile) {
         console.warn(`[LinkedinSponsorBlock] Unknown layout profile: ${profileName}`);
         return false;
     }
 
-    CONFIG.SELECTORS.POST_CONTAINERS = profile.postContainers;
-    CONFIG.SELECTORS.FEED_WRAPPER = profile.feedWrapper;
-
-    for (const cat of ['sponsored', 'suggested', 'recommended']) {
-        const src = profile.detection[cat];
-        const dest = CONFIG.DETECTION[cat.toUpperCase()];
-        dest.keywordMatch.selectors = src.keywordSelectors;
-        dest.keywordMatch.keywords = SHARED_KEYWORDS[cat];
-        dest.childSelectors = src.childSelectors;
-    }
-
+    CONFIG.activeProfile = profileName;
     logger.info(`Layout profile applied: ${profileName}`);
     return true;
 }
