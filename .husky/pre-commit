@@ -1,0 +1,4 @@
+. "$(dirname "$0")/npm.sh"
+
+"$NPM_CMD" run validate:remote-config
+git diff --check
