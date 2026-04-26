@@ -4,7 +4,7 @@ import { createObserver } from '../shared/observer.js';
 import { isFeedPage, createPageManager } from '../shared/page.js';
 import { SETTINGS_KEYS, DEFAULT_SETTINGS } from '../shared/settings.js';
 import { createFloatingUI } from './ui.js';
-import { applyRemoteConfig } from '../shared/remote-config.js';
+import { REMOTE_CONFIG_URL, applyRemoteConfig } from '../shared/remote-config.js';
 import { createBlocker } from '../shared/blocker.js';
 
 // ==================== STORAGE ====================
@@ -225,7 +225,7 @@ function start() {
     }, () => new Promise((resolve, reject) => {
         GM_xmlhttpRequest({
             method: 'GET',
-            url: 'https://raw.githubusercontent.com/Hogwai/LinkedinSponsorBlock/main/remote-config.json',
+            url: REMOTE_CONFIG_URL,
             timeout: 5000,
             onload(res) {
                 try {

@@ -1,7 +1,7 @@
 import { CONFIG } from './config.js';
 import { logger } from './logger.js';
 
-const REMOTE_CONFIG_URL = 'https://raw.githubusercontent.com/Hogwai/LinkedinSponsorBlock/main/remote-config.json';
+export const REMOTE_CONFIG_URL = 'https://raw.githubusercontent.com/Hogwai/LinkedinSponsorBlock/main/remote-config.json';
 const STORAGE_KEY = 'lsb_remote_config';
 const SUPPORTED_VERSION = 2;
 const CATEGORIES = ['sponsored', 'suggested', 'recommended'];
