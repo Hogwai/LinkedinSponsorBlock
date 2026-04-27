@@ -323,6 +323,16 @@ body {
     min-height: 0;
 }
 
+.settings-version {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    text-align: center;
+    font-size: 11px;
+    color: #6c757d;
+    line-height: 1.3;
+}
+
 .settings-section {
     margin-bottom: 14px;
 }

@@ -43,6 +43,7 @@ export const TRANSLATIONS = {
         reviewBannerUserscript: 'Enjoying the userscript?',
         dismiss: 'Dismiss',
         madeBy: 'Made by',
+        versionLabel: 'Version',
         logging: 'Enable logging'
     },
     fr: {
@@ -89,6 +90,7 @@ export const TRANSLATIONS = {
         reviewBannerUserscript: 'Vous aimez le userscript ?',
         dismiss: 'Masquer',
         madeBy: 'Créé par',
+        versionLabel: 'Version',
         logging: 'Activer les logs'
     },
     es: {
@@ -135,6 +137,7 @@ export const TRANSLATIONS = {
         reviewBannerUserscript: '¿Te gusta el userscript?',
         dismiss: 'Cerrar',
         madeBy: 'Hecho por',
+        versionLabel: 'Versión',
         logging: 'Activar registros'
     },
     pt: {
@@ -181,6 +184,7 @@ export const TRANSLATIONS = {
         reviewBannerUserscript: 'Gostou do userscript?',
         dismiss: 'Fechar',
         madeBy: 'Feito por',
+        versionLabel: 'Versão',
         logging: 'Ativar registros'
     },
     de: {
@@ -227,6 +231,7 @@ export const TRANSLATIONS = {
         reviewBannerUserscript: 'Gefällt Ihnen das Userscript?',
         dismiss: 'Schließen',
         madeBy: 'Erstellt von',
+        versionLabel: 'Version',
         logging: 'Protokollierung aktivieren'
     },
     it: {
@@ -273,6 +278,7 @@ export const TRANSLATIONS = {
         reviewBannerUserscript: 'Ti piace il userscript?',
         dismiss: 'Chiudi',
         madeBy: 'Creato da',
+        versionLabel: 'Versione',
         logging: 'Attiva registrazione'
     },
     hi: {
@@ -319,6 +325,7 @@ export const TRANSLATIONS = {
         reviewBannerUserscript: 'यूज़रस्क्रिप्ट पसंद आया?',
         dismiss: 'बंद करें',
         madeBy: 'द्वारा निर्मित',
+        versionLabel: 'संस्करण',
         logging: 'लॉगिंग सक्रिय करें'
     },
     ar: {
@@ -365,6 +372,7 @@ export const TRANSLATIONS = {
         reviewBannerUserscript: 'أعجبك السكربت؟',
         dismiss: 'إغلاق',
         madeBy: 'صنع بواسطة',
+        versionLabel: 'الإصدار',
         logging: 'تفعيل السجلات'
     },
     zh: {
@@ -411,6 +419,7 @@ export const TRANSLATIONS = {
         reviewBannerUserscript: '喜欢这个用户脚本吗？',
         dismiss: '关闭',
         madeBy: '由...制作',
+        versionLabel: '版本',
         logging: '启用日志'
     },
     ja: {
@@ -457,6 +466,7 @@ export const TRANSLATIONS = {
         reviewBannerUserscript: 'このユーザースクリプトは気に入りましたか？',
         dismiss: '閉じる',
         madeBy: '作成者',
+        versionLabel: 'バージョン',
         logging: 'ログを有効にする'
     }
 };

@@ -30,6 +30,7 @@ const reviewBannerLink = document.getElementById('reviewBannerLink');
 const dismissBannerBtn = document.getElementById('dismissBanner');
 const feedbackLink = document.getElementById('feedbackLink');
 const feedbackBannerLink = document.getElementById('feedbackBannerLink');
+const settingsVersionEl = document.getElementById('settingsVersion');
 
 let t = createTranslator('en');
 
@@ -38,12 +39,19 @@ function getCurrentLanguage() {
     return languageSelect.value || 'en';
 }
 
+function updateVersionLabel() {
+    if (!settingsVersionEl) return;
+    const version = manifest.version || 'unknown';
+    settingsVersionEl.textContent = `${t('versionLabel')} ${version}`;
+}
+
 // Update UI with current language
 let isFirstLoad = true;
 
 function updateUILanguage() {
     const lang = getCurrentLanguage();
     t = createTranslator(lang);
+    updateVersionLabel();
 
     // Set lang class on body for per-language font overrides (prevents FOIT)
     document.body.className = document.body.className.replace(/\blang-\w+\b/g, '').trim();

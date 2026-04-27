@@ -409,6 +409,14 @@ const STYLES = `
         gap: 6px;
     }
 
+    .lsb-version {
+        padding: 0 16px 10px;
+        font-size: 11px;
+        color: #999;
+        text-align: center;
+        line-height: 1.3;
+    }
+
     .lsb-support-link {
         display: inline-flex;
         align-items: center;
@@ -592,6 +600,7 @@ function createDOM() {
                 )
             )
         ),
+        el('div', { class: 'lsb-version', id: 'lsb-version' }),
         // Footer
         el('div', { class: 'lsb-footer' },
             el('select', { id: 'lsb-language', class: 'lsb-lang-select' },
@@ -671,6 +680,19 @@ export function createFloatingUI({
         shadow.querySelectorAll('[data-t]').forEach(el => {
             el.textContent = t(el.getAttribute('data-t'));
         });
+
+        updateVersionLabel(panel);
+    }
+
+    function getUserscriptVersion() {
+        return typeof __VERSION__ !== 'undefined' ? __VERSION__ : 'unknown';
+    }
+
+    function updateVersionLabel(panelEl) {
+        const versionEl = panelEl && panelEl.querySelector('#lsb-version');
+        if (versionEl) {
+            versionEl.textContent = `${t('versionLabel')} ${getUserscriptVersion()}`;
+        }
     }
 
     function updateDisabledState(enabled) {
@@ -715,7 +737,7 @@ export function createFloatingUI({
 
     function updateFeedbackLink() {
         const params = new URLSearchParams({
-            version: typeof __VERSION__ !== 'undefined' ? __VERSION__ : 'unknown',
+            version: getUserscriptVersion(),
             platform: 'userscript',
             language: currentLang
         });

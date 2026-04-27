@@ -147,7 +147,7 @@ export const CONFIG = {
             feedWrapper: DEFAULT_FEED_WRAPPER,
             postContainers: DEFAULT_POST_CONTAINERS,
             detection: {
-                sponsored: createDetection('sponsored', ['p[componentkey]'], ['article[data-sponsored-tracking-url]']),
+                sponsored: createDetection('sponsored', ['p[componentkey]', 'p[class]'], ['article[data-sponsored-tracking-url]']),
                 suggested: createDetection('suggested', ['p[componentkey]'], ['p[data-test-id="main-feed-card__header"]']),
                 recommended: createDetection('recommended', ['p[componentkey]'])
             }
