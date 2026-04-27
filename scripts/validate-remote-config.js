@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
+import { CONFIG } from '../src/shared/config.js';
 
 const CONFIG_PATH = path.resolve('remote-config.json');
 const SUPPORTED_VERSION = 2;
@@ -167,6 +168,70 @@ function validateConfig(config) {
             continue;
         }
         validateProfile(config.profiles[profileName], ['profiles', profileName]);
+    }
+
+    validateRemoteCoversEmbeddedConfig(config);
+}
+
+function normalizeCollection(value) {
+    return value instanceof Set ? [...value] : value;
+}
+
+function validateRemoteIncludesEmbedded(remoteValue, embeddedValue, pathParts) {
+    const remoteItems = normalizeCollection(remoteValue);
+    const embeddedItems = normalizeCollection(embeddedValue);
+
+    if (!Array.isArray(remoteItems) || !Array.isArray(embeddedItems)) return;
+
+    const remoteSet = new Set(remoteItems);
+    for (const item of embeddedItems) {
+        if (!remoteSet.has(item)) {
+            addError(`${label(pathParts)} is missing embedded config value: ${item}`);
+        }
+    }
+}
+
+function validateRemoteCoversEmbeddedConfig(config) {
+    for (const profileName of REQUIRED_PROFILES) {
+        const remoteProfile = config.profiles?.[profileName];
+        const embeddedProfile = CONFIG.profiles?.[profileName];
+        if (!remoteProfile || !embeddedProfile) continue;
+
+        for (const key of REQUIRED_FEED_WRAPPERS) {
+            const remoteValue = remoteProfile.feedWrapper?.[key];
+            const embeddedValue = embeddedProfile.feedWrapper?.[key];
+            if (embeddedValue !== null && remoteValue !== embeddedValue) {
+                addError(`profiles.${profileName}.feedWrapper.${key} must match embedded config value: ${embeddedValue}`);
+            }
+        }
+
+        validateRemoteIncludesEmbedded(
+            remoteProfile.postContainers,
+            embeddedProfile.postContainers,
+            ['profiles', profileName, 'postContainers']
+        );
+
+        for (const category of REQUIRED_CATEGORIES) {
+            const remoteDetection = remoteProfile.detection?.[category];
+            const embeddedDetection = embeddedProfile.detection?.[category];
+            if (!remoteDetection || !embeddedDetection) continue;
+
+            validateRemoteIncludesEmbedded(
+                remoteDetection.keywordSelectors,
+                embeddedDetection.keywordSelectors,
+                ['profiles', profileName, 'detection', category, 'keywordSelectors']
+            );
+            validateRemoteIncludesEmbedded(
+                remoteDetection.childSelectors,
+                embeddedDetection.childSelectors,
+                ['profiles', profileName, 'detection', category, 'childSelectors']
+            );
+            validateRemoteIncludesEmbedded(
+                remoteDetection.keywords,
+                embeddedDetection.keywords,
+                ['profiles', profileName, 'detection', category, 'keywords']
+            );
+        }
     }
 }
 
