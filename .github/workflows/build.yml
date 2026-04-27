@@ -21,6 +21,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Validate remote config
+        run: npm run validate:remote-config
+
       - name: Read versions
         id: versions
         run: |

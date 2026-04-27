@@ -1,4 +1,4 @@
-import { CONFIG, applyLayout } from './config.js';
+import { CONFIG, applyLayout, getActiveProfile } from './config.js';
 import { applyRemoteOverrides } from './remote-config.js';
 
 const LAYOUT_MARKERS = [
@@ -41,8 +41,7 @@ export function createObserver(scanFn, state) {
             }
         }
 
-        const { FEED_WRAPPER } = CONFIG.SELECTORS;
-        return findFeedWrapper({ feedWrapper: FEED_WRAPPER });
+        return findFeedWrapper(getActiveProfile());
     }
 
     function connect(root) {

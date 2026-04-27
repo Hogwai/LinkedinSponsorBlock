@@ -1,6 +1,7 @@
 import api from './browser-api.js';
 import { SETTINGS_KEYS } from '../shared/settings.js';
 import { fetchRemoteConfigJSON } from '../shared/remote-config.js';
+import { MESSAGE_TYPES, createCounterUpdateMessage, createUrlChangedMessage } from '../shared/messages.js';
 
 // Global counters
 let totalPromotedBlocked = 0;
@@ -42,33 +43,32 @@ async function saveCounters() {
 
 // Emit on URL change
 api.webNavigation.onHistoryStateUpdated.addListener((details) => {
-    api.tabs.sendMessage(details.tabId, { type: 'URL_CHANGED', url: details.url });
+    api.tabs.sendMessage(details.tabId, createUrlChangedMessage(details.url));
 });
 
 api.webNavigation.onReferenceFragmentUpdated.addListener((details) => {
-    api.tabs.sendMessage(details.tabId, { type: 'URL_CHANGED', url: details.url });
+    api.tabs.sendMessage(details.tabId, createUrlChangedMessage(details.url));
 });
 
 // Handle messages from content script and popup
 api.runtime.onMessage.addListener((message, sender, sendResponse) => {
     // Handle blocked posts from content script
-    if (message.type === 'BLOCKED' && sender.tab?.id) {
+    if (message.type === MESSAGE_TYPES.BLOCKED && sender.tab?.id) {
         (async () => {
             await countersReady;
             totalPromotedBlocked += message.promoted || 0;
             totalSuggestedBlocked += message.suggested || 0;
             await saveCounters();
-            api.runtime.sendMessage({
-                type: 'COUNTER_UPDATE',
+            api.runtime.sendMessage(createCounterUpdateMessage({
                 promoted: totalPromotedBlocked,
                 suggested: totalSuggestedBlocked
-            }).catch(() => { });
+            })).catch(() => { });
         })();
         return true;
     }
 
     // Handle request for current counters from popup
-    if (message.type === 'GET_COUNTERS') {
+    if (message.type === MESSAGE_TYPES.GET_COUNTERS) {
         countersReady.then(() => {
             sendResponse({
                 promoted: totalPromotedBlocked,
@@ -79,23 +79,22 @@ api.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 
     // Handle reset counters
-    if (message.type === 'RESET_COUNTERS') {
+    if (message.type === MESSAGE_TYPES.RESET_COUNTERS) {
         (async () => {
             await countersReady;
             totalPromotedBlocked = 0;
             totalSuggestedBlocked = 0;
             await saveCounters();
-            api.runtime.sendMessage({
-                type: 'COUNTER_UPDATE',
+            api.runtime.sendMessage(createCounterUpdateMessage({
                 promoted: 0,
                 suggested: 0
-            }).catch(() => { });
+            })).catch(() => { });
         })();
         return true;
     }
 
     // Handle remote config fetch request from content script
-    if (message.type === 'FETCH_REMOTE_CONFIG') {
+    if (message.type === MESSAGE_TYPES.FETCH_REMOTE_CONFIG) {
         fetchRemoteConfigJSON().then(config => {
             sendResponse(config);
         }).catch(() => {
@@ -105,7 +104,7 @@ api.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 
     // Handle settings change (enable/disable extension)
-    if (message.type === 'SETTINGS_CHANGED' && message.enabled !== undefined) {
+    if (message.type === MESSAGE_TYPES.SETTINGS_CHANGED && message.enabled !== undefined) {
         isEnabled = message.enabled;
         updateBadge(isEnabled);
     }

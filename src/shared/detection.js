@@ -1,33 +1,34 @@
-import { CONFIG } from './config.js';
+import { getActiveProfile } from './config.js';
 
 export const scannedPosts = new WeakSet();
 
 function matchesByKeyword(post, detection) {
-    const { keywordMatch, childSelectors } = detection;
-    const candidates = keywordMatch.selectors.flatMap(sel =>
+    const { keywordSelectors, keywords, childSelectors } = detection;
+    const candidates = keywordSelectors.flatMap(sel =>
         Array.from(post.querySelectorAll(sel))
     );
     if (candidates.some(el => {
         const text = el.textContent.trim().toLowerCase();
-        if (keywordMatch.keywords.has(text)) return true;
+        if (keywords.has(text)) return true;
         // Fallback: check direct text nodes (handles "Sponsorisé par <a>Company</a>")
         const directText = Array.from(el.childNodes)
             .filter(n => n.nodeType === Node.TEXT_NODE)
             .map(n => n.textContent.trim().toLowerCase())
             .filter(t => t.length > 0);
-        return directText.some(t => keywordMatch.keywords.has(t));
+        return directText.some(t => keywords.has(t));
     })) {
         return true;
     }
     return childSelectors.some(sel => post.querySelector(sel));
 }
 
-function isSponsored(post) { return matchesByKeyword(post, CONFIG.DETECTION.SPONSORED); }
-function isSuggested(post) { return matchesByKeyword(post, CONFIG.DETECTION.SUGGESTED); }
-function isRecommended(post) { return matchesByKeyword(post, CONFIG.DETECTION.RECOMMENDED); }
+function isSponsored(post, profile) { return matchesByKeyword(post, profile.detection.sponsored); }
+function isSuggested(post, profile) { return matchesByKeyword(post, profile.detection.suggested); }
+function isRecommended(post, profile) { return matchesByKeyword(post, profile.detection.recommended); }
 
 export function getUnscannedPosts(root) {
-    const selector = CONFIG.SELECTORS.POST_CONTAINERS.join(',');
+    const profile = getActiveProfile();
+    const selector = profile.postContainers.join(',');
     let posts = [];
     if (root.matches?.(selector)) {
         posts.push(root);
@@ -36,7 +37,7 @@ export function getUnscannedPosts(root) {
     posts = posts.filter(post => !scannedPosts.has(post));
 
     // Only first level elements (posts)
-    posts = posts.filter(post => !post.parentElement?.closest(CONFIG.SELECTORS.POST_CONTAINERS.join(',')));
+    posts = posts.filter(post => !post.parentElement?.closest(selector));
 
     const groups = {
         sponsored: [],
@@ -46,11 +47,11 @@ export function getUnscannedPosts(root) {
     };
 
     posts.forEach(post => {
-        if (isSponsored(post)) {
+        if (isSponsored(post, profile)) {
             groups.sponsored.push(post);
-        } else if (isSuggested(post)) {
+        } else if (isSuggested(post, profile)) {
             groups.suggested.push(post);
-        } else if (isRecommended(post)) {
+        } else if (isRecommended(post, profile)) {
             groups.recommended.push(post);
         }
     });

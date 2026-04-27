@@ -2,6 +2,7 @@ import api from './browser-api.js';
 import { createTranslator } from '../shared/translations.js';
 import { SETTINGS_KEYS, DEFAULT_SETTINGS, detectLanguage } from '../shared/settings.js';
 import { CONFIG } from '../shared/config.js';
+import { MESSAGE_TYPES, createManualScanMessage, createResetCountersMessage, createSettingsChangedMessage } from '../shared/messages.js';
 
 const statusEl = document.getElementById('status');
 const scanBtn = document.getElementById('manualScan');
@@ -29,6 +30,7 @@ const reviewBannerLink = document.getElementById('reviewBannerLink');
 const dismissBannerBtn = document.getElementById('dismissBanner');
 const feedbackLink = document.getElementById('feedbackLink');
 const feedbackBannerLink = document.getElementById('feedbackBannerLink');
+const settingsVersionEl = document.getElementById('settingsVersion');
 
 let t = createTranslator('en');
 
@@ -37,12 +39,19 @@ function getCurrentLanguage() {
     return languageSelect.value || 'en';
 }
 
+function updateVersionLabel() {
+    if (!settingsVersionEl) return;
+    const version = manifest.version || 'unknown';
+    settingsVersionEl.textContent = `${t('versionLabel')} ${version}`;
+}
+
 // Update UI with current language
 let isFirstLoad = true;
 
 function updateUILanguage() {
     const lang = getCurrentLanguage();
     t = createTranslator(lang);
+    updateVersionLabel();
 
     // Set lang class on body for per-language font overrides (prevents FOIT)
     document.body.className = document.body.className.replace(/\blang-\w+\b/g, '').trim();
@@ -132,9 +141,9 @@ extensionToggle.addEventListener('change', async () => {
 
     const [tab] = await api.tabs.query({ active: true, currentWindow: true });
     if (tab?.url?.includes('linkedin.com')) {
-        api.tabs.sendMessage(tab.id, { type: 'SETTINGS_CHANGED', enabled });
+        api.tabs.sendMessage(tab.id, createSettingsChangedMessage({ enabled }));
     }
-    api.runtime.sendMessage({ type: 'SETTINGS_CHANGED', enabled });
+    api.runtime.sendMessage(createSettingsChangedMessage({ enabled }));
 
     setStatus(enabled ? t('extensionEnabled') : t('extensionDisabled'), 'success');
     setTimeout(() => setStatus(''), 2000);
@@ -143,25 +152,25 @@ extensionToggle.addEventListener('change', async () => {
 // Filter promoted toggle
 filterPromoted.addEventListener('change', async () => {
     await saveSettings({ filterPromoted: filterPromoted.checked });
-    notifyContentScript({ type: 'SETTINGS_CHANGED', filterPromoted: filterPromoted.checked });
+    notifyContentScript(createSettingsChangedMessage({ filterPromoted: filterPromoted.checked }));
 });
 
 // Filter suggested toggle
 filterSuggested.addEventListener('change', async () => {
     await saveSettings({ filterSuggested: filterSuggested.checked });
-    notifyContentScript({ type: 'SETTINGS_CHANGED', filterSuggested: filterSuggested.checked });
+    notifyContentScript(createSettingsChangedMessage({ filterSuggested: filterSuggested.checked }));
 });
 
 // Filter recommended toggle
 filterRecommended.addEventListener('change', async () => {
     await saveSettings({ filterRecommended: filterRecommended.checked });
-    notifyContentScript({ type: 'SETTINGS_CHANGED', filterRecommended: filterRecommended.checked });
+    notifyContentScript(createSettingsChangedMessage({ filterRecommended: filterRecommended.checked }));
 });
 
 // Logging toggle
 loggingToggle.addEventListener('change', async () => {
     await saveSettings({ logging: loggingToggle.checked });
-    notifyContentScript({ type: 'SETTINGS_CHANGED', logging: loggingToggle.checked });
+    notifyContentScript(createSettingsChangedMessage({ logging: loggingToggle.checked }));
 });
 
 // Language selector change
@@ -212,7 +221,7 @@ confirmResetBtn.addEventListener('click', async () => {
     promotedCountEl.textContent = '0';
     suggestedCountEl.textContent = '0';
 
-    api.runtime.sendMessage({ type: 'RESET_COUNTERS' });
+    api.runtime.sendMessage(createResetCountersMessage());
 
     resetConfirm.classList.add('hidden');
     resetCountersBtn.classList.remove('hidden');
@@ -243,7 +252,7 @@ scanBtn.addEventListener('click', async () => {
     setStatus(t('scanning'), 'pending');
     scanBtn.disabled = true;
 
-    api.tabs.sendMessage(tab.id, { type: 'MANUAL_SCAN' }, (response) => {
+    api.tabs.sendMessage(tab.id, createManualScanMessage(), (response) => {
         if (api.runtime.lastError) {
             setStatus(t('error'), 'error');
         } else if (response) {
@@ -265,7 +274,7 @@ scanBtn.addEventListener('click', async () => {
 
 // Listen for counter updates from background
 api.runtime.onMessage.addListener((message) => {
-    if (message.type === 'COUNTER_UPDATE') {
+    if (message.type === MESSAGE_TYPES.COUNTER_UPDATE) {
         promotedCountEl.textContent = message.promoted;
         suggestedCountEl.textContent = message.suggested;
     }
@@ -275,7 +284,7 @@ api.runtime.onMessage.addListener((message) => {
 api.runtime.onConnect.addListener((port) => {
     if (port.name === 'counterUpdate') {
         port.onMessage.addListener((msg) => {
-            if (msg.type === 'COUNTER_UPDATE') {
+            if (msg.type === MESSAGE_TYPES.COUNTER_UPDATE) {
                 promotedCountEl.textContent = msg.promoted;
                 suggestedCountEl.textContent = msg.suggested;
             }
