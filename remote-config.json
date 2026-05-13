@@ -19,7 +19,7 @@
       ],
       "detection": {
         "sponsored": {
-          "keywordSelectors": ["p[componentkey]", "p[class]"],
+          "keywordSelectors": ["p[componentkey]", "p[componentkey] > span", "p[class]", "p[class] > span"],
           "childSelectors": ["article[data-sponsored-tracking-url]"],
           "keywords": [
             "post sponsorisé",
