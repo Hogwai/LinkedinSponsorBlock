@@ -6,6 +6,7 @@ import { SETTINGS_KEYS, DEFAULT_SETTINGS } from '../shared/settings.js';
 import { createFloatingUI } from './ui.js';
 import { REMOTE_CONFIG_URL, applyRemoteConfig } from '../shared/remote-config.js';
 import { createBlocker } from '../shared/blocker.js';
+import { createInactivityRefreshPreventer } from '../shared/inactivity-refresh-preventer.js';
 
 // ==================== STORAGE ====================
 const STORAGE_PREFIX = 'lsb_';
@@ -64,6 +65,7 @@ const state = {
         [SETTINGS_KEYS.FILTER_RECOMMENDED]: getStored(SETTINGS_KEYS.FILTER_RECOMMENDED, DEFAULT_SETTINGS[SETTINGS_KEYS.FILTER_RECOMMENDED]),
         [SETTINGS_KEYS.LANGUAGE]: getStored(SETTINGS_KEYS.LANGUAGE, DEFAULT_SETTINGS[SETTINGS_KEYS.LANGUAGE]),
         [SETTINGS_KEYS.POSITION]: getStored(SETTINGS_KEYS.POSITION, DEFAULT_SETTINGS[SETTINGS_KEYS.POSITION]),
+        [SETTINGS_KEYS.PREVENT_INACTIVITY_REFRESH]: getStored(SETTINGS_KEYS.PREVENT_INACTIVITY_REFRESH, DEFAULT_SETTINGS[SETTINGS_KEYS.PREVENT_INACTIVITY_REFRESH]),
         [SETTINGS_KEYS.LOGGING]: getStored(SETTINGS_KEYS.LOGGING, DEFAULT_SETTINGS[SETTINGS_KEYS.LOGGING])
     },
     ui: null
@@ -98,6 +100,17 @@ const pageManager = createPageManager(state, observer, () => {
     }
 });
 
+const inactivityRefreshPreventer = createInactivityRefreshPreventer({
+    isActivePage: () => state.isCurrentlyFeedPage
+});
+
+function syncInactivityRefreshPreventer() {
+    inactivityRefreshPreventer.setEnabled(
+        state.settings[SETTINGS_KEYS.ENABLED] &&
+        state.settings[SETTINGS_KEYS.PREVENT_INACTIVITY_REFRESH]
+    );
+}
+
 // ==================== UI ====================
 function initUI() {
     const totals = getTotalCounters();
@@ -122,6 +135,7 @@ function initUI() {
             } else if (state.isCurrentlyFeedPage) {
                 observer.start();
             }
+            syncInactivityRefreshPreventer();
         },
         onToggleDiscreet(discreet) {
             state.settings[SETTINGS_KEYS.DISCREET] = discreet;
@@ -138,6 +152,11 @@ function initUI() {
         onToggleRecommended(enabled) {
             state.settings[SETTINGS_KEYS.FILTER_RECOMMENDED] = enabled;
             setStored(SETTINGS_KEYS.FILTER_RECOMMENDED, enabled);
+        },
+        onTogglePreventInactivityRefresh(enabled) {
+            state.settings[SETTINGS_KEYS.PREVENT_INACTIVITY_REFRESH] = enabled;
+            setStored(SETTINGS_KEYS.PREVENT_INACTIVITY_REFRESH, enabled);
+            syncInactivityRefreshPreventer();
         },
         onScan() {
             return scanFeed();
@@ -237,6 +256,7 @@ function start() {
         });
     }));
     logger.setEnabled(state.settings[SETTINGS_KEYS.LOGGING]);
+    syncInactivityRefreshPreventer();
     initUI();
     if (state.isCurrentlyFeedPage) {
         if (state.settings[SETTINGS_KEYS.ENABLED]) observer.start();

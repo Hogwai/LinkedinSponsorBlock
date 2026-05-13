@@ -44,6 +44,7 @@ export const TRANSLATIONS = {
         dismiss: 'Dismiss',
         madeBy: 'Made by',
         versionLabel: 'Version',
+        preventInactivityRefresh: 'Prevent inactivity refresh',
         logging: 'Enable logging'
     },
     fr: {
@@ -91,6 +92,7 @@ export const TRANSLATIONS = {
         dismiss: 'Masquer',
         madeBy: 'Créé par',
         versionLabel: 'Version',
+        preventInactivityRefresh: 'Empêcher l’actualisation après inactivité',
         logging: 'Activer les logs'
     },
     es: {
@@ -138,6 +140,7 @@ export const TRANSLATIONS = {
         dismiss: 'Cerrar',
         madeBy: 'Hecho por',
         versionLabel: 'Versión',
+        preventInactivityRefresh: 'Evitar actualización tras inactividad',
         logging: 'Activar registros'
     },
     pt: {
@@ -185,6 +188,7 @@ export const TRANSLATIONS = {
         dismiss: 'Fechar',
         madeBy: 'Feito por',
         versionLabel: 'Versão',
+        preventInactivityRefresh: 'Evitar atualização após inatividade',
         logging: 'Ativar registros'
     },
     de: {
@@ -232,6 +236,7 @@ export const TRANSLATIONS = {
         dismiss: 'Schließen',
         madeBy: 'Erstellt von',
         versionLabel: 'Version',
+        preventInactivityRefresh: 'Aktualisierung nach Inaktivität verhindern',
         logging: 'Protokollierung aktivieren'
     },
     it: {
@@ -279,6 +284,7 @@ export const TRANSLATIONS = {
         dismiss: 'Chiudi',
         madeBy: 'Creato da',
         versionLabel: 'Versione',
+        preventInactivityRefresh: 'Evita aggiornamento dopo inattività',
         logging: 'Attiva registrazione'
     },
     hi: {
@@ -326,6 +332,7 @@ export const TRANSLATIONS = {
         dismiss: 'बंद करें',
         madeBy: 'द्वारा निर्मित',
         versionLabel: 'संस्करण',
+        preventInactivityRefresh: 'निष्क्रियता के बाद रीफ़्रेश रोकें',
         logging: 'लॉगिंग सक्रिय करें'
     },
     ar: {
@@ -373,6 +380,7 @@ export const TRANSLATIONS = {
         dismiss: 'إغلاق',
         madeBy: 'صنع بواسطة',
         versionLabel: 'الإصدار',
+        preventInactivityRefresh: 'منع التحديث بعد الخمول',
         logging: 'تفعيل السجلات'
     },
     zh: {
@@ -420,6 +428,7 @@ export const TRANSLATIONS = {
         dismiss: '关闭',
         madeBy: '由...制作',
         versionLabel: '版本',
+        preventInactivityRefresh: '防止空闲后刷新',
         logging: '启用日志'
     },
     ja: {
@@ -467,6 +476,7 @@ export const TRANSLATIONS = {
         dismiss: '閉じる',
         madeBy: '作成者',
         versionLabel: 'バージョン',
+        preventInactivityRefresh: '非アクティブ後の更新を防止',
         logging: 'ログを有効にする'
     }
 };

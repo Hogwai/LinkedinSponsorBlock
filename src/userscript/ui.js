@@ -570,6 +570,7 @@ function createDOM() {
             toggleRow('blockPromotedPosts', 'Block promoted', 'lsb-filter-promoted', 'lsb-filter-toggle'),
             toggleRow('blockSuggestedPosts', 'Block suggested', 'lsb-filter-suggested', 'lsb-filter-toggle'),
             toggleRow('blockRecommendedPosts', 'Block "Recommended for you"', 'lsb-filter-recommended', 'lsb-filter-toggle'),
+            toggleRow('preventInactivityRefresh', 'Prevent inactivity refresh', 'lsb-prevent-inactivity-refresh', 'lsb-filter-toggle'),
             toggleRow('logging', 'Enable logging', 'lsb-logging')
         ),
         // Scan button
@@ -627,6 +628,7 @@ export function createFloatingUI({
     onTogglePromoted,
     onToggleSuggested,
     onToggleRecommended,
+    onTogglePreventInactivityRefresh,
     onToggleLogging,
     onScan,
     onLanguageChange,
@@ -653,6 +655,7 @@ export function createFloatingUI({
     const promotedInput = $('lsb-filter-promoted');
     const suggestedInput = $('lsb-filter-suggested');
     const recommendedInput = $('lsb-filter-recommended');
+    const preventInactivityRefreshInput = $('lsb-prevent-inactivity-refresh');
     const loggingInput = $('lsb-logging');
     const scanBtn = $('lsb-scan');
     const langSelect = $('lsb-language');
@@ -724,6 +727,7 @@ export function createFloatingUI({
     promotedInput.checked = settings.filterPromoted;
     suggestedInput.checked = settings.filterSuggested;
     recommendedInput.checked = settings.filterRecommended;
+    preventInactivityRefreshInput.checked = settings[SETTINGS_KEYS.PREVENT_INACTIVITY_REFRESH];
     loggingInput.checked = settings[SETTINGS_KEYS.LOGGING] || false;
     langSelect.value = currentLang;
     posSelect.value = settings.position || 'br';
@@ -811,6 +815,10 @@ export function createFloatingUI({
 
     recommendedInput.addEventListener('change', () => {
         onToggleRecommended(recommendedInput.checked);
+    });
+
+    preventInactivityRefreshInput.addEventListener('change', () => {
+        onTogglePreventInactivityRefresh(preventInactivityRefreshInput.checked);
     });
 
     loggingInput.addEventListener('change', () => {

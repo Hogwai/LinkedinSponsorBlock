@@ -3,6 +3,7 @@ import { logger } from '../shared/logger.js';
 import { createObserver } from '../shared/observer.js';
 import { isFeedPage, createPageManager } from '../shared/page.js';
 import { SETTINGS_KEYS } from '../shared/settings.js';
+import { createInactivityRefreshPreventer } from '../shared/inactivity-refresh-preventer.js';
 import api from './browser-api.js';
 import { applyRemoteConfig } from '../shared/remote-config.js';
 import { createBlocker } from '../shared/blocker.js';
@@ -21,6 +22,7 @@ const state = {
         [SETTINGS_KEYS.FILTER_PROMOTED]: true,
         [SETTINGS_KEYS.FILTER_SUGGESTED]: true,
         [SETTINGS_KEYS.FILTER_RECOMMENDED]: true,
+        [SETTINGS_KEYS.PREVENT_INACTIVITY_REFRESH]: true,
         [SETTINGS_KEYS.LOGGING]: false
     }
 };
@@ -80,6 +82,15 @@ const pageManager = createPageManager(state, observer, () => {
     notifier.reset();
 });
 
+const inactivityRefreshPreventer = createInactivityRefreshPreventer({ isActivePage: () => state.isCurrentlyFeedPage });
+
+function syncInactivityRefreshPreventer() {
+    inactivityRefreshPreventer.setEnabled(
+        state.settings[SETTINGS_KEYS.ENABLED] &&
+        state.settings[SETTINGS_KEYS.PREVENT_INACTIVITY_REFRESH]
+    );
+}
+
 // ==================== SETTINGS ====================
 async function loadSettings() {
     const result = await api.storage.local.get({
@@ -87,6 +98,7 @@ async function loadSettings() {
         [SETTINGS_KEYS.FILTER_PROMOTED]: true,
         [SETTINGS_KEYS.FILTER_SUGGESTED]: true,
         [SETTINGS_KEYS.FILTER_RECOMMENDED]: true,
+        [SETTINGS_KEYS.PREVENT_INACTIVITY_REFRESH]: true,
         [SETTINGS_KEYS.LOGGING]: false
     });
     state.settings = result;
@@ -101,6 +113,7 @@ function updateSettings(newSettings) {
         } else if (state.isCurrentlyFeedPage) {
             observer.start();
         }
+        syncInactivityRefreshPreventer();
     }
     if (newSettings[SETTINGS_KEYS.FILTER_PROMOTED] !== undefined) {
         state.settings[SETTINGS_KEYS.FILTER_PROMOTED] = newSettings[SETTINGS_KEYS.FILTER_PROMOTED];
@@ -114,6 +127,10 @@ function updateSettings(newSettings) {
     if (newSettings[SETTINGS_KEYS.LOGGING] !== undefined) {
         state.settings[SETTINGS_KEYS.LOGGING] = newSettings[SETTINGS_KEYS.LOGGING];
         logger.setEnabled(newSettings[SETTINGS_KEYS.LOGGING]);
+    }
+    if (newSettings[SETTINGS_KEYS.PREVENT_INACTIVITY_REFRESH] !== undefined) {
+        state.settings[SETTINGS_KEYS.PREVENT_INACTIVITY_REFRESH] = newSettings[SETTINGS_KEYS.PREVENT_INACTIVITY_REFRESH];
+        syncInactivityRefreshPreventer();
     }
 }
 
@@ -150,6 +167,7 @@ async function init() {
         }
     }, () => api.runtime.sendMessage(createFetchRemoteConfigMessage()));
     state.isCurrentlyFeedPage = isFeedPage();
+    syncInactivityRefreshPreventer();
 
     if (document.body) {
         if (state.isCurrentlyFeedPage && state.settings[SETTINGS_KEYS.ENABLED]) observer.start();

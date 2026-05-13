@@ -10,6 +10,7 @@ const extensionToggle = document.getElementById('extensionToggle');
 const filterPromoted = document.getElementById('filterPromoted');
 const filterSuggested = document.getElementById('filterSuggested');
 const filterRecommended = document.getElementById('filterRecommended');
+const preventInactivityRefresh = document.getElementById('preventInactivityRefresh');
 const loggingToggle = document.getElementById('loggingToggle');
 const languageSelect = document.getElementById('languageSelect');
 const promotedCountEl = document.getElementById('promotedCount');
@@ -99,6 +100,7 @@ async function loadSettings() {
     filterPromoted.checked = result.filterPromoted;
     filterSuggested.checked = result.filterSuggested;
     filterRecommended.checked = result.filterRecommended;
+    preventInactivityRefresh.checked = result[SETTINGS_KEYS.PREVENT_INACTIVITY_REFRESH];
     loggingToggle.checked = result.logging || false;
     promotedCountEl.textContent = result.totalPromotedBlocked;
     suggestedCountEl.textContent = result.totalSuggestedBlocked;
@@ -165,6 +167,15 @@ filterSuggested.addEventListener('change', async () => {
 filterRecommended.addEventListener('change', async () => {
     await saveSettings({ filterRecommended: filterRecommended.checked });
     notifyContentScript(createSettingsChangedMessage({ filterRecommended: filterRecommended.checked }));
+});
+
+// Prevent inactivity refresh toggle
+preventInactivityRefresh.addEventListener('change', async () => {
+    const enabled = preventInactivityRefresh.checked;
+    await saveSettings({ [SETTINGS_KEYS.PREVENT_INACTIVITY_REFRESH]: enabled });
+    notifyContentScript(createSettingsChangedMessage({
+        [SETTINGS_KEYS.PREVENT_INACTIVITY_REFRESH]: enabled
+    }));
 });
 
 // Logging toggle
