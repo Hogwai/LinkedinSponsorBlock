@@ -130,6 +130,7 @@ const DEFAULT_FEED_WRAPPER = {
 };
 
 const DEFAULT_POST_CONTAINERS = [
+    'div[data-lazy-mount-id]',
     'div[data-display-contents="true"]',
     '.ember-view.occludable-update',
     '[class*="ember-view"][class*="occludable-update"]',
