@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "husky": "^9.1.7",
-    "rollup": "^4.61.1",
+    "rollup": "^4.62.0",
     "rollup-plugin-copy": "^3.5.0"
   }
 }
