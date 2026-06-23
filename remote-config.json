@@ -82,14 +82,34 @@
           ]
         },
         "suggested": {
-          "keywordSelectors": ["p[componentkey]"],
+          "keywordSelectors": ["p[componentkey]", "p[componentkey] > span"],
           "childSelectors": ["p[data-test-id=\"main-feed-card__header\"]"],
           "keywords": [
             "suggestions",
             "suggested",
             "vorgeschlagen",
             "sugerencias",
-            "sugestões"
+            "sugestões",
+            "followed by",
+            "suivi par",
+            "gefolgt von",
+            "seguido por",
+            "seguito da",
+            "gevolgd door",
+            "følges av",
+            "följs av",
+            "diikuti oleh",
+            "urmărit de",
+            "следят",
+            "takip edilen",
+            "ติดตามโดย",
+            "được theo dõi bởi",
+            "ακολουθείται από",
+            "によってフォロー",
+            "से अनुसरण",
+            "팔로우한 사람",
+            "متابعة من",
+            "ถูกติดตามโดย"
           ]
         },
         "recommended": {
@@ -229,7 +249,27 @@
             "suggested",
             "vorgeschlagen",
             "sugerencias",
-            "sugestões"
+            "sugestões",
+            "followed by",
+            "suivi par",
+            "gefolgt von",
+            "seguido por",
+            "seguito da",
+            "gevolgd door",
+            "følges av",
+            "följs av",
+            "diikuti oleh",
+            "urmărit de",
+            "следят",
+            "takip edilen",
+            "ติดตามโดย",
+            "được theo dõi bởi",
+            "ακολουθείται από",
+            "によってフォロー",
+            "से अनुसरण",
+            "팔로우한 사람",
+            "متابعة من",
+            "ถูกติดตามโดย"
           ]
         },
         "recommended": {

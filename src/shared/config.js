@@ -64,7 +64,27 @@ const SHARED_KEYWORDS = {
         'Suggested',  // ENGLISH
         'Vorgeschlagen',  // GERMAN
         'Sugerencias', // SPANISH
-        'Sugestões' // PORTUGUESE
+        'Sugestões', // PORTUGUESE
+        'Followed by', // ENGLISH
+        'Suivi par', // FRENCH
+        'Gefolgt von', // GERMAN
+        'Seguido por', // SPANISH / PORTUGUESE
+        'Seguito da', // ITALIAN
+        'Gevolgd door', // DUTCH
+        'Følges av', // NORWEGIAN
+        'Följs av', // SWEDISH
+        'Diikuti oleh', // INDONESIAN / MALAY
+        'Urmărit de', // ROMANIAN
+        'Следят', // BULGARIAN
+        'Takip edilen', // TURKISH
+        'ติดตามโดย', // THAI
+        'Được theo dõi bởi', // VIETNAMESE
+        'ακολουθείται από', // GREEK
+        'によってフォロー', // JAPANESE
+        'से अनुसरण', // HINDI
+        '팔로우한 사람', // KOREAN
+        'متابعة من', // ARABIC
+        'ถูกติดตามโดย', // THAI alternative
     ].map(t => t.toLowerCase())),
     recommended: new Set([
         'Recommended for you',      // ENGLISH
@@ -149,7 +169,7 @@ export const CONFIG = {
             postContainers: DEFAULT_POST_CONTAINERS,
             detection: {
                 sponsored: createDetection('sponsored', ['p[componentkey]', 'p[componentkey] > span', 'p[class]', 'p[class] > span'], ['article[data-sponsored-tracking-url]']),
-                suggested: createDetection('suggested', ['p[componentkey]'], ['p[data-test-id="main-feed-card__header"]']),
+                suggested: createDetection('suggested', ['p[componentkey]', 'p[componentkey] > span'], ['p[data-test-id="main-feed-card__header"]']),
                 recommended: createDetection('recommended', ['p[componentkey]'])
             }
         }),

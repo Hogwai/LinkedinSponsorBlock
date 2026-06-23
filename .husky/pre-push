@@ -1,3 +1,0 @@
-. "$(dirname "$0")/npm.sh"
-
-"$NPM_CMD" run build:all
