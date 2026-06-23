@@ -6,6 +6,9 @@ Tired of sponsored posts, suggested content, or partner promotions cluttering yo
 
 These posts look like regular updates but are labeled **"Promotion."** Even standard ad blockers often miss them, this extension catches and hides them silently.
 
+> **Note:** LinkedIn frequently updates its layout and DOM structure, which can temporarily affect the extension's ability to detect and hide sponsored and suggested posts. If the extension stops working suddenly, it may be due to a LinkedIn update.
+Please check for extension updates or report the issue on [GitHub](https://github.com/Hogwai/LinkedinSponsorBlock/issues) or [here](https://tally.so/r/QKrO28).
+
 ## Table of Contents
 
 - [Preview](#preview)

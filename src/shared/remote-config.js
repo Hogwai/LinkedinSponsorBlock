@@ -1,6 +1,10 @@
 import { CONFIG } from './config.js';
 import { logger } from './logger.js';
 
+// Set NO_REMOTE_CONFIG build env to bypass and use the embedded config only.
+// The build injects `var __NO_REMOTE_CONFIG__ = true;` into the bundle.
+const remoteConfigDisabled = typeof __NO_REMOTE_CONFIG__ !== 'undefined' && __NO_REMOTE_CONFIG__;
+
 export const REMOTE_CONFIG_URL = 'https://raw.githubusercontent.com/Hogwai/LinkedinSponsorBlock/main/remote-config.json';
 const STORAGE_KEY = 'lsb_remote_config';
 const SUPPORTED_VERSION = 2;
@@ -89,6 +93,7 @@ function mergeProfile(remote, profileName) {
 }
 
 export function applyRemoteOverrides(profileName) {
+    if (remoteConfigDisabled) return;
     activeProfileName = profileName;
     if (storedRemoteConfig && isValid(storedRemoteConfig)) {
         if (mergeProfile(storedRemoteConfig, profileName)) {
@@ -133,6 +138,7 @@ export async function fetchRemoteConfigJSON() {
 }
 
 export async function applyRemoteConfig(storage, fetcher) {
+    if (remoteConfigDisabled) return;
     // Phase 1: load cached config into memory (do NOT merge — layout not detected yet)
     try {
         const cached = await storage.get(STORAGE_KEY);

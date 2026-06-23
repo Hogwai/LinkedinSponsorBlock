@@ -3,11 +3,19 @@ import copy from 'rollup-plugin-copy';
 
 const target = process.env.BUILD_TARGET; // 'chrome', 'firefox', 'userscript', or undefined (all)
 const version = process.env.VERSION;
+const noRemoteConfig = !!process.env.NO_REMOTE_CONFIG;
 
 if (!version) {
     console.error('VERSION is required. Use build.js or set VERSION env var.');
     process.exit(1);
 }
+
+/**
+ * Shared intro for content-script bundles.
+ * Injects build-time flags exposed to module code via `var` (hoisted to IIFE scope).
+ */
+const contentIntro = (noRemoteConfig ? 'var __NO_REMOTE_CONFIG__ = true;' : '')
+    + (noRemoteConfig ? '\n' : '');
 
 // ==================== Userscript banner ====================
 const userscriptBanner = `// ==UserScript==
@@ -60,7 +68,7 @@ function copySharedAssets(dest) {
 const chromeBundles = [
     {
         input: 'src/extension/content.js',
-        output: { file: 'dist/chrome/LinkedinSponsorBlock.user.js', format: 'iife' },
+        output: { file: 'dist/chrome/LinkedinSponsorBlock.user.js', format: 'iife', intro: contentIntro },
     },
     {
         input: 'src/extension/background.js',
@@ -79,7 +87,7 @@ const chromeBundles = [
 const firefoxBundles = [
     {
         input: 'src/extension/content.js',
-        output: { file: 'dist/firefox/LinkedinSponsorBlock.user.js', format: 'iife' },
+        output: { file: 'dist/firefox/LinkedinSponsorBlock.user.js', format: 'iife', intro: contentIntro },
     },
     {
         input: 'src/extension/background.js',
@@ -102,7 +110,7 @@ const userscriptBundles = [
             file: 'dist/LinkedinSponsorBlock.user.js',
             format: 'iife',
             banner: userscriptBanner,
-            intro: `const __VERSION__ = '${version}';`,
+            intro: `${contentIntro}const __VERSION__ = '${version}';`,
         },
     },
 ];

@@ -9,6 +9,7 @@
     "build:firefox": "node build.js --target=firefox",
     "build:userscript": "node build.js --target=userscript",
     "build:all": "node build.js --target=all --no-version",
+    "build:test": "NO_REMOTE_CONFIG=true node build.js --target=all --no-version",
     "clean": "rm -rf dist",
     "validate:remote-config": "node scripts/validate-remote-config.js",
     "debug:android": "node scripts/debug-android.js",
