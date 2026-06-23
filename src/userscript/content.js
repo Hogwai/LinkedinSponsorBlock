@@ -210,8 +210,8 @@ setInterval(handleUrlChange, 1000);
 
 state.isCurrentlyFeedPage = isFeedPage();
 
-function start() {
-    applyRemoteConfig({
+async function start() {
+    await applyRemoteConfig({
         async get(key) {
             try {
                 const raw = localStorage.getItem(key);
