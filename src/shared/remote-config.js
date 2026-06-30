@@ -5,7 +5,8 @@ import { logger } from './logger.js';
 // The build injects `var __NO_REMOTE_CONFIG__ = true;` into the bundle.
 const remoteConfigDisabled = typeof __NO_REMOTE_CONFIG__ !== 'undefined' && __NO_REMOTE_CONFIG__;
 
-export const REMOTE_CONFIG_URL = 'https://raw.githubusercontent.com/Hogwai/LinkedinSponsorBlock/main/remote-config.json';
+export const REMOTE_CONFIG_URL =
+    'https://raw.githubusercontent.com/Hogwai/LinkedinSponsorBlock/main/remote-config.json';
 const STORAGE_KEY = 'lsb_remote_config';
 const SUPPORTED_VERSION = 2;
 const CATEGORIES = ['sponsored', 'suggested', 'recommended'];
@@ -19,11 +20,20 @@ function isNonEmptyString(v) {
 }
 
 function isArrayOfStrings(v, allowEmpty = false) {
-    return Array.isArray(v) && (allowEmpty || v.length > 0) && v.every(item => typeof item === 'string');
+    return (
+        Array.isArray(v) &&
+        (allowEmpty || v.length > 0) &&
+        v.every((item) => typeof item === 'string')
+    );
 }
 
 function isValidSelector(s) {
-    try { document.querySelector(s); return true; } catch { return false; }
+    try {
+        document.querySelector(s);
+        return true;
+    } catch {
+        return false;
+    }
 }
 
 function isValidFeedWrapperValue(v) {
@@ -77,17 +87,22 @@ function mergeProfile(remote, profileName) {
         feedWrapper: {
             mobile: profile.feedWrapper.mobile,
             desktop: profile.feedWrapper.desktop,
-            newFeed: profile.feedWrapper.newFeed
+            newFeed: profile.feedWrapper.newFeed,
         },
         postContainers: profile.postContainers,
-        detection: Object.fromEntries(CATEGORIES.map(cat => {
-            const src = profile.detection[cat];
-            return [cat, {
-                keywordSelectors: src.keywordSelectors,
-                keywords: new Set(src.keywords),
-                childSelectors: src.childSelectors
-            }];
-        }))
+        detection: Object.fromEntries(
+            CATEGORIES.map((cat) => {
+                const src = profile.detection[cat];
+                return [
+                    cat,
+                    {
+                        keywordSelectors: src.keywordSelectors,
+                        keywords: new Set(src.keywords),
+                        childSelectors: src.childSelectors,
+                    },
+                ];
+            }),
+        ),
     };
     return true;
 }

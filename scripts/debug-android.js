@@ -32,7 +32,7 @@ function getDevices() {
     return output
         .split('\n')
         .slice(1) // skip header
-        .map(line => line.split('\t'))
+        .map((line) => line.split('\t'))
         .filter(([id, status]) => id && status?.trim() === 'device')
         .map(([id]) => id);
 }
@@ -83,7 +83,7 @@ function buildFirefox(version) {
 
 function prefixStream(stream, tag) {
     let buffer = '';
-    stream.on('data', chunk => {
+    stream.on('data', (chunk) => {
         buffer += chunk.toString();
         const lines = buffer.split('\n');
         buffer = lines.pop(); // keep incomplete line
@@ -102,11 +102,19 @@ function startWatchAndDeploy(version, deviceId) {
             if (cleaning) return;
             cleaning = true;
             for (const child of children) {
-                try { child.kill('SIGTERM'); } catch { /* already dead */ }
+                try {
+                    child.kill('SIGTERM');
+                } catch {
+                    /* already dead */
+                }
             }
             setTimeout(() => {
                 for (const child of children) {
-                    try { child.kill('SIGKILL'); } catch { /* already dead */ }
+                    try {
+                        child.kill('SIGKILL');
+                    } catch {
+                        /* already dead */
+                    }
                 }
                 process.exit(0);
             }, 3000);
@@ -130,27 +138,38 @@ function startWatchAndDeploy(version, deviceId) {
 
         // Wait for first build, then start web-ext
         let webextStarted = false;
-        rollup.stdout.on('data', chunk => {
+        rollup.stdout.on('data', (chunk) => {
             const text = chunk.toString();
-            if (!webextStarted && (text.includes('created') || text.includes('waiting for changes'))) {
+            if (
+                !webextStarted &&
+                (text.includes('created') || text.includes('waiting for changes'))
+            ) {
                 webextStarted = true;
                 console.log(`\n${webextTag} Starting web-ext on device ${deviceId}...\n`);
 
-                const webext = spawn('npx', [
-                    'web-ext', 'run',
-                    '-t', 'firefox-android',
-                    '--adb-device', deviceId,
-                    '--firefox-apk', FIREFOX_APK,
-                ], {
-                    cwd: DIST_FIREFOX,
-                    stdio: ['ignore', 'pipe', 'pipe'],
-                });
+                const webext = spawn(
+                    'npx',
+                    [
+                        'web-ext',
+                        'run',
+                        '-t',
+                        'firefox-android',
+                        '--adb-device',
+                        deviceId,
+                        '--firefox-apk',
+                        FIREFOX_APK,
+                    ],
+                    {
+                        cwd: DIST_FIREFOX,
+                        stdio: ['ignore', 'pipe', 'pipe'],
+                    },
+                );
                 children.push(webext);
 
                 prefixStream(webext.stdout, webextTag);
                 prefixStream(webext.stderr, webextTag);
 
-                webext.on('close', code => {
+                webext.on('close', (code) => {
                     if (!cleaning) {
                         console.log(`\n${webextTag} exited (code ${code})`);
                         cleanup();
@@ -159,7 +178,7 @@ function startWatchAndDeploy(version, deviceId) {
             }
         });
 
-        rollup.on('close', code => {
+        rollup.on('close', (code) => {
             if (!cleaning) {
                 console.log(`\n${rollupTag} exited (code ${code})`);
                 cleanup();
@@ -203,7 +222,7 @@ async function main() {
         console.log('\nStarting web-ext (one-shot mode)...\n');
         execSync(
             `npx web-ext run -t firefox-android --adb-device ${deviceId} --firefox-apk ${FIREFOX_APK}`,
-            { stdio: 'inherit', cwd: DIST_FIREFOX }
+            { stdio: 'inherit', cwd: DIST_FIREFOX },
         );
     } else {
         console.log('\nStarting watch mode (rollup + web-ext)...\n');
@@ -213,4 +232,7 @@ async function main() {
     }
 }
 
-main().catch(err => { console.error(err); process.exit(1); });
+main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+});

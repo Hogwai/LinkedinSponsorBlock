@@ -1,23 +1,26 @@
 {
-  "name": "linkedin-sponsor-block",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "prepare": "husky",
-    "build": "node build.js",
-    "build:chrome": "node build.js --target=chrome",
-    "build:firefox": "node build.js --target=firefox",
-    "build:userscript": "node build.js --target=userscript",
-    "build:all": "node build.js --target=all --no-version",
-    "build:test": "NO_REMOTE_CONFIG=true node build.js --target=all --no-version",
-    "clean": "rm -rf dist",
-    "validate:remote-config": "node scripts/validate-remote-config.js",
-    "debug:android": "node scripts/debug-android.js",
-    "debug:android:once": "node scripts/debug-android.js --no-watch"
-  },
-  "devDependencies": {
-    "husky": "^9.1.7",
-    "rollup": "^4.62.2",
-    "rollup-plugin-copy": "^3.5.0"
-  }
+    "name": "linkedin-sponsor-block",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "prepare": "husky",
+        "build": "node build.js",
+        "build:chrome": "node build.js --target=chrome",
+        "build:firefox": "node build.js --target=firefox",
+        "build:userscript": "node build.js --target=userscript",
+        "build:all": "node build.js --target=all --no-version",
+        "build:test": "NO_REMOTE_CONFIG=true node build.js --target=all --no-version",
+        "format": "prettier --write .",
+        "format:check": "prettier --check .",
+        "clean": "rm -rf dist",
+        "validate:remote-config": "node scripts/validate-remote-config.js",
+        "debug:android": "node scripts/debug-android.js",
+        "debug:android:once": "node scripts/debug-android.js --no-watch"
+    },
+    "devDependencies": {
+        "husky": "^9.1.7",
+        "prettier": "^3.9.4",
+        "rollup": "^4.62.2",
+        "rollup-plugin-copy": "^3.5.0"
+    }
 }

@@ -19,7 +19,12 @@ const rl = createInterface({ input: process.stdin, output: process.stdout });
 
 // Handle EOF on piped stdin
 let closed = false;
-const onClose = new Promise(r => rl.on('close', () => { closed = true; r(''); }));
+const onClose = new Promise((r) =>
+    rl.on('close', () => {
+        closed = true;
+        r('');
+    }),
+);
 
 async function ask(prompt) {
     if (closed) return '';
@@ -47,10 +52,10 @@ async function askTargets() {
 
         if (input === '4' || input === 'all') return [...TARGETS];
 
-        const indices = input.split(',').map(s => parseInt(s.trim(), 10));
+        const indices = input.split(',').map((s) => parseInt(s.trim(), 10));
         const selected = indices
-            .filter(i => i >= 1 && i <= TARGETS.length)
-            .map(i => TARGETS[i - 1]);
+            .filter((i) => i >= 1 && i <= TARGETS.length)
+            .map((i) => TARGETS[i - 1]);
 
         if (selected.length > 0) return [...new Set(selected)];
         console.log('  Invalid selection.');
@@ -59,7 +64,9 @@ async function askTargets() {
 
 async function main() {
     const targets = values.target
-        ? (values.target === 'all' ? [...TARGETS] : [values.target])
+        ? values.target === 'all'
+            ? [...TARGETS]
+            : [values.target]
         : await askTargets();
     const skipVersion = values['no-version'];
 
@@ -109,4 +116,7 @@ async function main() {
     console.log('\nDone!');
 }
 
-main().catch(err => { console.error(err); process.exit(1); });
+main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+});

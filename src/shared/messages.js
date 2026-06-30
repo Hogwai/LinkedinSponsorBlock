@@ -6,7 +6,7 @@ export const MESSAGE_TYPES = Object.freeze({
     COUNTER_UPDATE: 'COUNTER_UPDATE',
     GET_COUNTERS: 'GET_COUNTERS',
     RESET_COUNTERS: 'RESET_COUNTERS',
-    FETCH_REMOTE_CONFIG: 'FETCH_REMOTE_CONFIG'
+    FETCH_REMOTE_CONFIG: 'FETCH_REMOTE_CONFIG',
 });
 
 export function createUrlChangedMessage(url) {

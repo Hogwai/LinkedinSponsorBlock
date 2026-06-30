@@ -19,7 +19,9 @@ export const logger = {
             // Show startup message once
             if (!this._startupMessageShown) {
                 this._startupMessageShown = true;
-                console.log('[LinkedinSponsorBlock] Logging is disabled. Enable it from the settings to see logs.');
+                console.log(
+                    '[LinkedinSponsorBlock] Logging is disabled. Enable it from the settings to see logs.',
+                );
             }
         }
     },
@@ -29,14 +31,17 @@ export const logger = {
         this.buffer.push(message);
         if (!this.scheduled) {
             this.scheduled = true;
-            this._idleCallbackId = requestIdleCallback(() => {
-                console.groupCollapsed(`[LinkedinSponsorBlock] ${this.buffer.length} hidden`);
-                this.buffer.forEach(msg => console.debug(msg));
-                console.groupEnd();
-                this.buffer = [];
-                this.scheduled = false;
-                this._idleCallbackId = null;
-            }, { timeout: 1000 });
+            this._idleCallbackId = requestIdleCallback(
+                () => {
+                    console.groupCollapsed(`[LinkedinSponsorBlock] ${this.buffer.length} hidden`);
+                    this.buffer.forEach((msg) => console.debug(msg));
+                    console.groupEnd();
+                    this.buffer = [];
+                    this.scheduled = false;
+                    this._idleCallbackId = null;
+                },
+                { timeout: 1000 },
+            );
         }
     },
 
@@ -52,5 +57,5 @@ export const logger = {
         } else {
             console.warn(`[LinkedinSponsorBlock] ${message}`);
         }
-    }
+    },
 };

@@ -46,7 +46,7 @@ function validateStringArray(value, pathParts, { allowEmpty = false } = {}) {
 function hasBalancedDelimiters(selector) {
     const pairs = new Map([
         [')', '('],
-        [']', '[']
+        [']', '['],
     ]);
     const stack = [];
     let quote = null;
@@ -94,7 +94,9 @@ function validateSelectors(selectors, pathParts, { allowEmpty = false } = {}) {
 
     selectors.forEach((selector, index) => {
         if (typeof selector === 'string' && !isPlausibleSelector(selector)) {
-            addError(`${label(pathParts)}[${index}] is not a valid-looking CSS selector: ${selector}`);
+            addError(
+                `${label(pathParts)}[${index}] is not a valid-looking CSS selector: ${selector}`,
+            );
         }
     });
 }
@@ -201,14 +203,16 @@ function validateRemoteCoversEmbeddedConfig(config) {
             const remoteValue = remoteProfile.feedWrapper?.[key];
             const embeddedValue = embeddedProfile.feedWrapper?.[key];
             if (embeddedValue !== null && remoteValue !== embeddedValue) {
-                addError(`profiles.${profileName}.feedWrapper.${key} must match embedded config value: ${embeddedValue}`);
+                addError(
+                    `profiles.${profileName}.feedWrapper.${key} must match embedded config value: ${embeddedValue}`,
+                );
             }
         }
 
         validateRemoteIncludesEmbedded(
             remoteProfile.postContainers,
             embeddedProfile.postContainers,
-            ['profiles', profileName, 'postContainers']
+            ['profiles', profileName, 'postContainers'],
         );
 
         for (const category of REQUIRED_CATEGORIES) {
@@ -219,18 +223,20 @@ function validateRemoteCoversEmbeddedConfig(config) {
             validateRemoteIncludesEmbedded(
                 remoteDetection.keywordSelectors,
                 embeddedDetection.keywordSelectors,
-                ['profiles', profileName, 'detection', category, 'keywordSelectors']
+                ['profiles', profileName, 'detection', category, 'keywordSelectors'],
             );
             validateRemoteIncludesEmbedded(
                 remoteDetection.childSelectors,
                 embeddedDetection.childSelectors,
-                ['profiles', profileName, 'detection', category, 'childSelectors']
+                ['profiles', profileName, 'detection', category, 'childSelectors'],
             );
-            validateRemoteIncludesEmbedded(
-                remoteDetection.keywords,
-                embeddedDetection.keywords,
-                ['profiles', profileName, 'detection', category, 'keywords']
-            );
+            validateRemoteIncludesEmbedded(remoteDetection.keywords, embeddedDetection.keywords, [
+                'profiles',
+                profileName,
+                'detection',
+                category,
+                'keywords',
+            ]);
         }
     }
 }

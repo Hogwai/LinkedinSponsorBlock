@@ -1,7 +1,11 @@
 import api from './browser-api.js';
 import { SETTINGS_KEYS } from '../shared/settings.js';
 import { fetchRemoteConfigJSON } from '../shared/remote-config.js';
-import { MESSAGE_TYPES, createCounterUpdateMessage, createUrlChangedMessage } from '../shared/messages.js';
+import {
+    MESSAGE_TYPES,
+    createCounterUpdateMessage,
+    createUrlChangedMessage,
+} from '../shared/messages.js';
 
 // Global counters
 let totalPromotedBlocked = 0;
@@ -27,7 +31,7 @@ async function loadCounters() {
         [SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED]: 0,
         [SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED]: 0,
         [SETTINGS_KEYS.TOTAL_POSTS_SCANNED]: 0,
-        [SETTINGS_KEYS.ENABLED]: true
+        [SETTINGS_KEYS.ENABLED]: true,
     });
     totalPromotedBlocked = result[SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED];
     totalSuggestedBlocked = result[SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED];
@@ -41,7 +45,7 @@ async function saveCounters() {
     await api.storage.local.set({
         [SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED]: totalPromotedBlocked,
         [SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED]: totalSuggestedBlocked,
-        [SETTINGS_KEYS.TOTAL_POSTS_SCANNED]: totalPostsScanned
+        [SETTINGS_KEYS.TOTAL_POSTS_SCANNED]: totalPostsScanned,
     });
 }
 
@@ -64,11 +68,15 @@ api.runtime.onMessage.addListener((message, sender, sendResponse) => {
             totalSuggestedBlocked += message.suggested || 0;
             totalPostsScanned += message.scanned || 0;
             await saveCounters();
-            api.runtime.sendMessage(createCounterUpdateMessage({
-                promoted: totalPromotedBlocked,
-                suggested: totalSuggestedBlocked,
-                scanned: totalPostsScanned
-            })).catch(() => { });
+            api.runtime
+                .sendMessage(
+                    createCounterUpdateMessage({
+                        promoted: totalPromotedBlocked,
+                        suggested: totalSuggestedBlocked,
+                        scanned: totalPostsScanned,
+                    }),
+                )
+                .catch(() => {});
         })();
         return true;
     }
@@ -79,7 +87,7 @@ api.runtime.onMessage.addListener((message, sender, sendResponse) => {
             sendResponse({
                 promoted: totalPromotedBlocked,
                 suggested: totalSuggestedBlocked,
-                totalPostsScanned
+                totalPostsScanned,
             });
         });
         return true;
@@ -93,22 +101,28 @@ api.runtime.onMessage.addListener((message, sender, sendResponse) => {
             totalSuggestedBlocked = 0;
             totalPostsScanned = 0;
             await saveCounters();
-            api.runtime.sendMessage(createCounterUpdateMessage({
-                promoted: 0,
-                suggested: 0,
-                scanned: 0
-            })).catch(() => { });
+            api.runtime
+                .sendMessage(
+                    createCounterUpdateMessage({
+                        promoted: 0,
+                        suggested: 0,
+                        scanned: 0,
+                    }),
+                )
+                .catch(() => {});
         })();
         return true;
     }
 
     // Handle remote config fetch request from content script
     if (message.type === MESSAGE_TYPES.FETCH_REMOTE_CONFIG) {
-        fetchRemoteConfigJSON().then(config => {
-            sendResponse(config);
-        }).catch(() => {
-            sendResponse(null);
-        });
+        fetchRemoteConfigJSON()
+            .then((config) => {
+                sendResponse(config);
+            })
+            .catch(() => {
+                sendResponse(null);
+            });
         return true;
     }
 

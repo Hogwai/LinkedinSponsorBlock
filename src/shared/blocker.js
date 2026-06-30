@@ -48,8 +48,11 @@ export function createBlocker({ state, onBlocked } = {}) {
         }
 
         const groupedPosts = getUnscannedPosts(root);
-        const scanned = groupedPosts.sponsored.length + groupedPosts.suggested.length
-            + groupedPosts.recommended.length + groupedPosts.content.length;
+        const scanned =
+            groupedPosts.sponsored.length +
+            groupedPosts.suggested.length +
+            groupedPosts.recommended.length +
+            groupedPosts.content.length;
         if (typeof state.sessionPostsScanned !== 'undefined') {
             state.sessionPostsScanned += scanned;
         }
@@ -87,7 +90,12 @@ export function createBlocker({ state, onBlocked } = {}) {
             onBlocked?.({ promoted: promotedCount, suggested: suggestedCount, scanned });
         }
 
-        return { promoted: promotedCount, suggested: suggestedCount, scanned, content: contentCount };
+        return {
+            promoted: promotedCount,
+            suggested: suggestedCount,
+            scanned,
+            content: contentCount,
+        };
     }
 
     function resetSessionCounters() {
@@ -98,6 +106,6 @@ export function createBlocker({ state, onBlocked } = {}) {
 
     return {
         scanFeed,
-        resetSessionCounters
+        resetSessionCounters,
     };
 }

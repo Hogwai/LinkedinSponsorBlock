@@ -3,12 +3,12 @@ import { applyRemoteOverrides } from './remote-config.js';
 
 const LAYOUT_MARKERS = [
     { name: 'modern', selectors: ['body[data-rehydrated]'] },
-    { name: 'legacy', selectors: ['body.ember-application'] }
+    { name: 'legacy', selectors: ['body.ember-application'] },
 ];
 
 function detectLayout() {
     for (const { name, selectors } of LAYOUT_MARKERS) {
-        if (selectors.some(s => document.querySelector(s))) {
+        if (selectors.some((s) => document.querySelector(s))) {
             return name;
         }
     }
@@ -47,7 +47,7 @@ export function createObserver(scanFn, state) {
     function connect(root) {
         let debounceTimeout = null;
 
-        state.observer = new MutationObserver(mutations => {
+        state.observer = new MutationObserver((mutations) => {
             let hasNewElement = false;
 
             for (const m of mutations) {
@@ -70,7 +70,7 @@ export function createObserver(scanFn, state) {
 
         state.observer.observe(document.body, {
             childList: true,
-            subtree: true
+            subtree: true,
         });
 
         state.isObserverConnected = true;

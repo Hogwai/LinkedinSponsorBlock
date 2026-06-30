@@ -14,8 +14,8 @@ if (!version) {
  * Shared intro for content-script bundles.
  * Injects build-time flags exposed to module code via `var` (hoisted to IIFE scope).
  */
-const contentIntro = (noRemoteConfig ? 'var __NO_REMOTE_CONFIG__ = true;' : '')
-    + (noRemoteConfig ? '\n' : '');
+const contentIntro =
+    (noRemoteConfig ? 'var __NO_REMOTE_CONFIG__ = true;' : '') + (noRemoteConfig ? '\n' : '');
 
 // ==================== Userscript banner ====================
 const userscriptBanner = `// ==UserScript==
@@ -47,7 +47,7 @@ function manifestWithVersion(src, dest) {
             manifest.version = version;
             mkdirSync(dest, { recursive: true });
             writeFileSync(`${dest}/manifest.json`, JSON.stringify(manifest, null, 2) + '\n');
-        }
+        },
     };
 }
 
@@ -68,7 +68,11 @@ function copySharedAssets(dest) {
 const chromeBundles = [
     {
         input: 'src/extension/content.js',
-        output: { file: 'dist/chrome/LinkedinSponsorBlock.user.js', format: 'iife', intro: contentIntro },
+        output: {
+            file: 'dist/chrome/LinkedinSponsorBlock.user.js',
+            format: 'iife',
+            intro: contentIntro,
+        },
     },
     {
         input: 'src/extension/background.js',
@@ -87,7 +91,11 @@ const chromeBundles = [
 const firefoxBundles = [
     {
         input: 'src/extension/content.js',
-        output: { file: 'dist/firefox/LinkedinSponsorBlock.user.js', format: 'iife', intro: contentIntro },
+        output: {
+            file: 'dist/firefox/LinkedinSponsorBlock.user.js',
+            format: 'iife',
+            intro: contentIntro,
+        },
     },
     {
         input: 'src/extension/background.js',
@@ -127,4 +135,6 @@ if (target && !targets[target]) {
     process.exit(1);
 }
 
-export default target ? targets[target] : [...chromeBundles, ...firefoxBundles, ...userscriptBundles];
+export default target
+    ? targets[target]
+    : [...chromeBundles, ...firefoxBundles, ...userscriptBundles];

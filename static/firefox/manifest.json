@@ -10,9 +10,7 @@
             "id": "github@lw.mozmail.com",
             "strict_min_version": "109.0",
             "data_collection_permissions": {
-                "required": [
-                    "websiteContent"
-                ]
+                "required": ["websiteContent"]
             }
         }
     },
@@ -23,9 +21,7 @@
     },
     "content_scripts": [
         {
-            "matches": [
-                "https://*.linkedin.com/*"
-            ],
+            "matches": ["https://*.linkedin.com/*"],
             "run_at": "document_idle",
             "js": ["LinkedinSponsorBlock.user.js"]
         }
@@ -34,16 +30,10 @@
         "page": "popup.html",
         "open_in_tab": true
     },
-    "permissions": [
-        "activeTab",
-        "webNavigation",
-        "storage"
-    ],
-    "host_permissions": [
-        "https://raw.githubusercontent.com/Hogwai/LinkedinSponsorBlock/*"
-    ],
-    "background": { 
-        "scripts": ["background.js"] 
+    "permissions": ["activeTab", "webNavigation", "storage"],
+    "host_permissions": ["https://raw.githubusercontent.com/Hogwai/LinkedinSponsorBlock/*"],
+    "background": {
+        "scripts": ["background.js"]
     },
     "action": {
         "default_popup": "popup.html"

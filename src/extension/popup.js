@@ -2,7 +2,12 @@ import api from './browser-api.js';
 import { createTranslator } from '../shared/translations.js';
 import { SETTINGS_KEYS, DEFAULT_SETTINGS, detectLanguage } from '../shared/settings.js';
 import { CONFIG } from '../shared/config.js';
-import { MESSAGE_TYPES, createManualScanMessage, createResetCountersMessage, createSettingsChangedMessage } from '../shared/messages.js';
+import {
+    MESSAGE_TYPES,
+    createManualScanMessage,
+    createResetCountersMessage,
+    createSettingsChangedMessage,
+} from '../shared/messages.js';
 
 const statusEl = document.getElementById('status');
 const scanBtn = document.getElementById('manualScan');
@@ -69,7 +74,7 @@ function updateUILanguage() {
 
     if (isFirstLoad) {
         // No animation on initial popup open
-        elements.forEach(el => {
+        elements.forEach((el) => {
             const key = el.getAttribute('data-translate') || 'scanNow';
             el.textContent = t(key);
         });
@@ -78,7 +83,7 @@ function updateUILanguage() {
     }
 
     // Show skeleton placeholders, then reveal translations one by one
-    elements.forEach(el => el.classList.add('skeleton'));
+    elements.forEach((el) => el.classList.add('skeleton'));
 
     let i = 0;
     function updateNext() {
@@ -116,8 +121,13 @@ function renderPieChart(promoted, suggested, content) {
     const total = promoted + suggested + content;
     const segments = [
         { value: content, color: '#27ae60', labelKey: 'contentShort', defaultLabel: 'Content' },
-        { value: suggested, color: '#f39c12', labelKey: 'suggestedShort', defaultLabel: 'Suggested' },
-        { value: promoted, color: '#E74C3C', labelKey: 'promotedShort', defaultLabel: 'Promoted' }
+        {
+            value: suggested,
+            color: '#f39c12',
+            labelKey: 'suggestedShort',
+            defaultLabel: 'Suggested',
+        },
+        { value: promoted, color: '#E74C3C', labelKey: 'promotedShort', defaultLabel: 'Promoted' },
     ];
 
     if (pieChartWrapper) pieChartWrapper.style.display = total > 0 ? '' : 'none';
@@ -126,8 +136,8 @@ function renderPieChart(promoted, suggested, content) {
     let startAngle = -Math.PI / 2;
     let paths = '';
 
-    segments.forEach(function(seg) {
-        const pct = total > 0 ? ((seg.value / total) * 100) : 0;
+    segments.forEach(function (seg) {
+        const pct = total > 0 ? (seg.value / total) * 100 : 0;
         const hasValue = seg.value > 0 && total > 0;
 
         if (hasValue) {
@@ -139,16 +149,38 @@ function renderPieChart(promoted, suggested, content) {
             const y2 = 50 + 40 * Math.sin(endAngle);
             const largeArc = angle > Math.PI ? 1 : 0;
 
-            paths += '<path d="M50,50 L' + x1.toFixed(2) + ',' + y1.toFixed(2) + ' A40,40 0 ' + largeArc + ',1 ' + x2.toFixed(2) + ',' + y2.toFixed(2) + ' Z" fill="' + seg.color + '"/>';
+            paths +=
+                '<path d="M50,50 L' +
+                x1.toFixed(2) +
+                ',' +
+                y1.toFixed(2) +
+                ' A40,40 0 ' +
+                largeArc +
+                ',1 ' +
+                x2.toFixed(2) +
+                ',' +
+                y2.toFixed(2) +
+                ' Z" fill="' +
+                seg.color +
+                '"/>';
             startAngle = endAngle;
         }
 
         const row = document.createElement('div');
         row.className = 'pie-legend-row';
-        row.innerHTML = '<span class="pie-legend-dot" style="background:' + seg.color + '"></span>'
-            + '<span class="pie-legend-label">' + (t(seg.labelKey) || seg.defaultLabel) + '</span>'
-            + '<span class="pie-legend-pct">' + pct.toFixed(0) + '%</span>'
-            + '<span class="pie-legend-value">' + seg.value + '</span>';
+        row.innerHTML =
+            '<span class="pie-legend-dot" style="background:' +
+            seg.color +
+            '"></span>' +
+            '<span class="pie-legend-label">' +
+            (t(seg.labelKey) || seg.defaultLabel) +
+            '</span>' +
+            '<span class="pie-legend-pct">' +
+            pct.toFixed(0) +
+            '%</span>' +
+            '<span class="pie-legend-value">' +
+            seg.value +
+            '</span>';
         if (!hasValue) row.classList.add('pie-legend-row--empty');
         pieLegend.appendChild(row);
     });
@@ -161,7 +193,7 @@ async function updateCounters() {
     const result = await api.storage.local.get({
         [SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED]: 0,
         [SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED]: 0,
-        [SETTINGS_KEYS.TOTAL_POSTS_SCANNED]: 0
+        [SETTINGS_KEYS.TOTAL_POSTS_SCANNED]: 0,
     });
     const promoted = result[SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED];
     const suggested = result[SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED];
@@ -216,7 +248,9 @@ filterSuggested.addEventListener('change', async () => {
 // Filter recommended toggle
 filterRecommended.addEventListener('change', async () => {
     await saveSettings({ filterRecommended: filterRecommended.checked });
-    notifyContentScript(createSettingsChangedMessage({ filterRecommended: filterRecommended.checked }));
+    notifyContentScript(
+        createSettingsChangedMessage({ filterRecommended: filterRecommended.checked }),
+    );
 });
 
 // Logging toggle
@@ -268,7 +302,7 @@ confirmResetBtn.addEventListener('click', async () => {
     await saveSettings({
         [SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED]: 0,
         [SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED]: 0,
-        [SETTINGS_KEYS.TOTAL_POSTS_SCANNED]: 0
+        [SETTINGS_KEYS.TOTAL_POSTS_SCANNED]: 0,
     });
 
     statsScannedCount.textContent = '0';
@@ -393,7 +427,7 @@ updateFeedbackLink();
 async function checkReviewBanner() {
     const result = await api.storage.local.get({
         [SETTINGS_KEYS.INSTALL_DATE]: 0,
-        [SETTINGS_KEYS.REVIEW_BANNER_DISMISSED]: false
+        [SETTINGS_KEYS.REVIEW_BANNER_DISMISSED]: false,
     });
     if (result[SETTINGS_KEYS.REVIEW_BANNER_DISMISSED]) return;
 
@@ -418,7 +452,9 @@ async function detectMobile() {
         if (info.os === 'android') {
             document.body.classList.add('tab-mode');
         }
-    } catch { /* Chrome desktop, no Android */ }
+    } catch {
+        /* Chrome desktop, no Android */
+    }
 }
 
 // Initialize

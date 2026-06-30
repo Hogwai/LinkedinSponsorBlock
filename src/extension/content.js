@@ -6,7 +6,11 @@ import { SETTINGS_KEYS } from '../shared/settings.js';
 import api from './browser-api.js';
 import { applyRemoteConfig } from '../shared/remote-config.js';
 import { createBlocker } from '../shared/blocker.js';
-import { MESSAGE_TYPES, createBlockedMessage, createFetchRemoteConfigMessage } from '../shared/messages.js';
+import {
+    MESSAGE_TYPES,
+    createBlockedMessage,
+    createFetchRemoteConfigMessage,
+} from '../shared/messages.js';
 
 // ==================== STATE ====================
 const state = {
@@ -22,8 +26,8 @@ const state = {
         [SETTINGS_KEYS.FILTER_PROMOTED]: true,
         [SETTINGS_KEYS.FILTER_SUGGESTED]: true,
         [SETTINGS_KEYS.FILTER_RECOMMENDED]: true,
-        [SETTINGS_KEYS.LOGGING]: false
-    }
+        [SETTINGS_KEYS.LOGGING]: false,
+    },
 };
 
 // ==================== NOTIFIER ====================
@@ -38,27 +42,36 @@ const notifier = {
         if (!this.scheduled) {
             this.scheduled = true;
             setTimeout(() => {
-                requestIdleCallback(() => {
-                    if (this.pending) {
-                        const newPromoted = state.sessionPromotedRemoved - this.lastNotifiedPromoted;
-                        const newSuggested = state.sessionSuggestedRemoved - this.lastNotifiedSuggested;
-                        const newScanned = state.sessionPostsScanned - this.lastNotifiedScanned;
+                requestIdleCallback(
+                    () => {
+                        if (this.pending) {
+                            const newPromoted =
+                                state.sessionPromotedRemoved - this.lastNotifiedPromoted;
+                            const newSuggested =
+                                state.sessionSuggestedRemoved - this.lastNotifiedSuggested;
+                            const newScanned = state.sessionPostsScanned - this.lastNotifiedScanned;
 
-                        if (newPromoted > 0 || newSuggested > 0 || newScanned > 0) {
-                            api.runtime.sendMessage(createBlockedMessage({
-                                promoted: newPromoted,
-                                suggested: newSuggested,
-                                scanned: newScanned
-                            })).catch(() => { });
-                            this.lastNotifiedPromoted = state.sessionPromotedRemoved;
-                            this.lastNotifiedSuggested = state.sessionSuggestedRemoved;
-                            this.lastNotifiedScanned = state.sessionPostsScanned;
+                            if (newPromoted > 0 || newSuggested > 0 || newScanned > 0) {
+                                api.runtime
+                                    .sendMessage(
+                                        createBlockedMessage({
+                                            promoted: newPromoted,
+                                            suggested: newSuggested,
+                                            scanned: newScanned,
+                                        }),
+                                    )
+                                    .catch(() => {});
+                                this.lastNotifiedPromoted = state.sessionPromotedRemoved;
+                                this.lastNotifiedSuggested = state.sessionSuggestedRemoved;
+                                this.lastNotifiedScanned = state.sessionPostsScanned;
+                            }
+
+                            this.pending = false;
                         }
-
-                        this.pending = false;
-                    }
-                    this.scheduled = false;
-                }, { timeout: 500 });
+                        this.scheduled = false;
+                    },
+                    { timeout: 500 },
+                );
             }, CONFIG.DELAYS.NOTIFICATION);
         }
     },
@@ -66,7 +79,7 @@ const notifier = {
         this.lastNotifiedPromoted = 0;
         this.lastNotifiedSuggested = 0;
         this.lastNotifiedScanned = 0;
-    }
+    },
 };
 
 // ==================== BLOCKER ====================
@@ -74,7 +87,7 @@ const blocker = createBlocker({
     state,
     onBlocked() {
         notifier.queue();
-    }
+    },
 });
 const { scanFeed } = blocker;
 
@@ -93,7 +106,7 @@ async function loadSettings() {
         [SETTINGS_KEYS.FILTER_PROMOTED]: true,
         [SETTINGS_KEYS.FILTER_SUGGESTED]: true,
         [SETTINGS_KEYS.FILTER_RECOMMENDED]: true,
-        [SETTINGS_KEYS.LOGGING]: false
+        [SETTINGS_KEYS.LOGGING]: false,
     });
     state.settings = result;
     logger.setEnabled(result[SETTINGS_KEYS.LOGGING] || false);
@@ -112,10 +125,12 @@ function updateSettings(newSettings) {
         state.settings[SETTINGS_KEYS.FILTER_PROMOTED] = newSettings[SETTINGS_KEYS.FILTER_PROMOTED];
     }
     if (newSettings[SETTINGS_KEYS.FILTER_SUGGESTED] !== undefined) {
-        state.settings[SETTINGS_KEYS.FILTER_SUGGESTED] = newSettings[SETTINGS_KEYS.FILTER_SUGGESTED];
+        state.settings[SETTINGS_KEYS.FILTER_SUGGESTED] =
+            newSettings[SETTINGS_KEYS.FILTER_SUGGESTED];
     }
     if (newSettings[SETTINGS_KEYS.FILTER_RECOMMENDED] !== undefined) {
-        state.settings[SETTINGS_KEYS.FILTER_RECOMMENDED] = newSettings[SETTINGS_KEYS.FILTER_RECOMMENDED];
+        state.settings[SETTINGS_KEYS.FILTER_RECOMMENDED] =
+            newSettings[SETTINGS_KEYS.FILTER_RECOMMENDED];
     }
     if (newSettings[SETTINGS_KEYS.LOGGING] !== undefined) {
         state.settings[SETTINGS_KEYS.LOGGING] = newSettings[SETTINGS_KEYS.LOGGING];
@@ -146,15 +161,18 @@ api.runtime.onMessage.addListener((message, _sender, sendResponse) => {
 
 async function init() {
     await loadSettings();
-    await applyRemoteConfig({
-        async get(key) {
-            const result = await api.storage.local.get({ [key]: null });
-            return result[key];
+    await applyRemoteConfig(
+        {
+            async get(key) {
+                const result = await api.storage.local.get({ [key]: null });
+                return result[key];
+            },
+            async set(key, value) {
+                await api.storage.local.set({ [key]: value });
+            },
         },
-        async set(key, value) {
-            await api.storage.local.set({ [key]: value });
-        }
-    }, () => api.runtime.sendMessage(createFetchRemoteConfigMessage()));
+        () => api.runtime.sendMessage(createFetchRemoteConfigMessage()),
+    );
     state.isCurrentlyFeedPage = isFeedPage();
 
     if (document.body) {
@@ -164,7 +182,8 @@ async function init() {
             if (document.body) {
                 state.waiter.disconnect();
                 state.waiter = null;
-                if (state.isCurrentlyFeedPage && state.settings[SETTINGS_KEYS.ENABLED]) observer.start();
+                if (state.isCurrentlyFeedPage && state.settings[SETTINGS_KEYS.ENABLED])
+                    observer.start();
             }
         });
         state.waiter.observe(document.documentElement, { childList: true });
