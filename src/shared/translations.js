@@ -44,7 +44,14 @@ export const TRANSLATIONS = {
         dismiss: 'Dismiss',
         madeBy: 'Made by',
         versionLabel: 'Version',
-        logging: 'Enable logging'
+        logging: 'Enable logging',
+        postsScanned: 'Posts scanned',
+        postsContent: 'Content posts',
+        promotedShort: 'Promoted',
+        suggestedShort: 'Suggested',
+        contentShort: 'Content',
+        statsTitle: 'Statistics',
+        noData: 'No data yet'
     },
     fr: {
         title: 'Linkedin Sponsor Block',
@@ -91,7 +98,14 @@ export const TRANSLATIONS = {
         dismiss: 'Masquer',
         madeBy: 'Créé par',
         versionLabel: 'Version',
-        logging: 'Activer les logs'
+        logging: 'Activer les logs',
+        postsScanned: 'Posts scannés',
+        postsContent: 'Posts organiques',
+        promotedShort: 'Promotionnels',
+        suggestedShort: 'Suggérés',
+        contentShort: 'Contenu',
+        statsTitle: 'Statistiques',
+        noData: 'Aucune donnée pour le moment'
     },
     es: {
         title: 'Linkedin Sponsor Block',
@@ -138,7 +152,14 @@ export const TRANSLATIONS = {
         dismiss: 'Cerrar',
         madeBy: 'Hecho por',
         versionLabel: 'Versión',
-        logging: 'Activar registros'
+        logging: 'Activar registros',
+        postsScanned: 'Publicaciones escaneadas',
+        postsContent: 'Publicaciones de contenido',
+        promotedShort: 'Promocionadas',
+        suggestedShort: 'Sugeridas',
+        contentShort: 'Contenido',
+        statsTitle: 'Estadísticas',
+        noData: 'Sin datos aún',
     },
     pt: {
         title: 'Linkedin Sponsor Block',
@@ -185,7 +206,14 @@ export const TRANSLATIONS = {
         dismiss: 'Fechar',
         madeBy: 'Feito por',
         versionLabel: 'Versão',
-        logging: 'Ativar registros'
+        logging: 'Ativar registros',
+        postsScanned: 'Publicações escaneadas',
+        postsContent: 'Publicações de conteúdo',
+        promotedShort: 'Promovidas',
+        suggestedShort: 'Sugeridas',
+        contentShort: 'Conteúdo',
+        statsTitle: 'Estatísticas',
+        noData: 'Nenhum dado ainda',
     },
     de: {
         title: 'Linkedin Sponsor Block',
@@ -232,7 +260,14 @@ export const TRANSLATIONS = {
         dismiss: 'Schließen',
         madeBy: 'Erstellt von',
         versionLabel: 'Version',
-        logging: 'Protokollierung aktivieren'
+        logging: 'Protokollierung aktivieren',
+        postsScanned: 'Beiträge gescannt',
+        postsContent: 'Inhaltsbeiträge',
+        promotedShort: 'Gesponsert',
+        suggestedShort: 'Vorgeschlagen',
+        contentShort: 'Inhalt',
+        statsTitle: 'Statistiken',
+        noData: 'Noch keine Daten',
     },
     it: {
         title: 'Linkedin Sponsor Block',
@@ -279,7 +314,14 @@ export const TRANSLATIONS = {
         dismiss: 'Chiudi',
         madeBy: 'Creato da',
         versionLabel: 'Versione',
-        logging: 'Attiva registrazione'
+        logging: 'Attiva registrazione',
+        postsScanned: 'Post scansionati',
+        postsContent: 'Post di contenuto',
+        promotedShort: 'Sponsorizzati',
+        suggestedShort: 'Suggeriti',
+        contentShort: 'Contenuto',
+        statsTitle: 'Statistiche',
+        noData: 'Nessun dato ancora',
     },
     hi: {
         title: 'Linkedin Sponsor Block',
@@ -326,7 +368,14 @@ export const TRANSLATIONS = {
         dismiss: 'बंद करें',
         madeBy: 'द्वारा निर्मित',
         versionLabel: 'संस्करण',
-        logging: 'लॉगिंग सक्रिय करें'
+        logging: 'लॉगिंग सक्रिय करें',
+        postsScanned: 'स्कैन किए गए पोस्ट',
+        postsContent: 'सामग्री पोस्ट',
+        promotedShort: 'प्रचारित',
+        suggestedShort: 'सुझाए गए',
+        contentShort: 'सामग्री',
+        statsTitle: 'आंकड़े',
+        noData: 'अभी तक कोई डेटा नहीं',
     },
     ar: {
         title: 'Linkedin Sponsor Block',
@@ -373,7 +422,14 @@ export const TRANSLATIONS = {
         dismiss: 'إغلاق',
         madeBy: 'صنع بواسطة',
         versionLabel: 'الإصدار',
-        logging: 'تفعيل السجلات'
+        logging: 'تفعيل السجلات',
+        postsScanned: 'المنشورات الممسوحة',
+        postsContent: 'منشورات المحتوى',
+        promotedShort: 'مروّج',
+        suggestedShort: 'مقترح',
+        contentShort: 'محتوى',
+        statsTitle: 'الإحصائيات',
+        noData: 'لا توجد بيانات بعد',
     },
     zh: {
         title: 'Linkedin Sponsor Block',
@@ -420,7 +476,14 @@ export const TRANSLATIONS = {
         dismiss: '关闭',
         madeBy: '由...制作',
         versionLabel: '版本',
-        logging: '启用日志'
+        logging: '启用日志',
+        postsScanned: '已扫描帖子',
+        postsContent: '内容帖子',
+        promotedShort: '推广',
+        suggestedShort: '推荐',
+        contentShort: '内容',
+        statsTitle: '统计',
+        noData: '暂无数据',
     },
     ja: {
         title: 'Linkedin Sponsor Block',
@@ -467,7 +530,14 @@ export const TRANSLATIONS = {
         dismiss: '閉じる',
         madeBy: '作成者',
         versionLabel: 'バージョン',
-        logging: 'ログを有効にする'
+        logging: 'ログを有効にする',
+        postsScanned: 'スキャン済み投稿',
+        postsContent: 'コンテンツ投稿',
+        promotedShort: 'プロモーション',
+        suggestedShort: 'おすすめ',
+        contentShort: 'コンテンツ',
+        statsTitle: '統計',
+        noData: 'データはまだありません'
     }
 };
 

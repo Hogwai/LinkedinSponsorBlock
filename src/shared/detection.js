@@ -53,6 +53,8 @@ export function getUnscannedPosts(root) {
             groups.suggested.push(post);
         } else if (isRecommended(post, profile)) {
             groups.recommended.push(post);
+        } else {
+            groups.content.push(post);
         }
     });
 

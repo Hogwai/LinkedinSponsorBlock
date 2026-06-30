@@ -12,9 +12,10 @@ export const SETTINGS_KEYS = {
     POSITION: 'position',
     TOTAL_PROMOTED_BLOCKED: 'totalPromotedBlocked',
     TOTAL_SUGGESTED_BLOCKED: 'totalSuggestedBlocked',
+    TOTAL_POSTS_SCANNED: 'totalPostsScanned',
     INSTALL_DATE: 'installDate',
     REVIEW_BANNER_DISMISSED: 'reviewBannerDismissed',
-    LOGGING: 'logging'
+    LOGGING: 'logging',
 };
 
 export const DEFAULT_SETTINGS = {
@@ -27,9 +28,10 @@ export const DEFAULT_SETTINGS = {
     [SETTINGS_KEYS.POSITION]: 'br',
     [SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED]: 0,
     [SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED]: 0,
+    [SETTINGS_KEYS.TOTAL_POSTS_SCANNED]: 0,
     [SETTINGS_KEYS.INSTALL_DATE]: 0,
     [SETTINGS_KEYS.REVIEW_BANNER_DISMISSED]: false,
-    [SETTINGS_KEYS.LOGGING]: false
+    [SETTINGS_KEYS.LOGGING]: false,
 };
 
 export const LANGUAGES = ['en', 'fr', 'es', 'pt', 'de', 'it', 'hi', 'ar', 'zh', 'ja'];
@@ -43,7 +45,7 @@ export const POSITIONS = {
     BOTTOM_RIGHT: 'br',
     BOTTOM_LEFT: 'bl',
     TOP_RIGHT: 'tr',
-    TOP_LEFT: 'tl'
+    TOP_LEFT: 'tl',
 };
 
 /**

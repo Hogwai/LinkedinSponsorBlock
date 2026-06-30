@@ -48,6 +48,11 @@ export function createBlocker({ state, onBlocked } = {}) {
         }
 
         const groupedPosts = getUnscannedPosts(root);
+        const scanned = groupedPosts.sponsored.length + groupedPosts.suggested.length
+            + groupedPosts.recommended.length + groupedPosts.content.length;
+        if (typeof state.sessionPostsScanned !== 'undefined') {
+            state.sessionPostsScanned += scanned;
+        }
         let promotedCount = 0;
         let suggestedCount = 0;
 
@@ -72,16 +77,23 @@ export function createBlocker({ state, onBlocked } = {}) {
             }
         }
 
-        if (promotedCount > 0 || suggestedCount > 0) {
-            onBlocked?.({ promoted: promotedCount, suggested: suggestedCount });
+        // Mark content (organic) posts as scanned so they aren't re-processed
+        const contentCount = groupedPosts.content.length;
+        for (const post of groupedPosts.content) {
+            scannedPosts.add(post);
         }
 
-        return { promoted: promotedCount, suggested: suggestedCount };
+        if (scanned > 0) {
+            onBlocked?.({ promoted: promotedCount, suggested: suggestedCount, scanned });
+        }
+
+        return { promoted: promotedCount, suggested: suggestedCount, scanned, content: contentCount };
     }
 
     function resetSessionCounters() {
         state.sessionPromotedRemoved = 0;
         state.sessionSuggestedRemoved = 0;
+        state.sessionPostsScanned = 0;
     }
 
     return {

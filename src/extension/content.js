@@ -14,6 +14,7 @@ const state = {
     waiter: null,
     sessionPromotedRemoved: 0,
     sessionSuggestedRemoved: 0,
+    sessionPostsScanned: 0,
     isObserverConnected: false,
     isCurrentlyFeedPage: false,
     settings: {
@@ -31,6 +32,7 @@ const notifier = {
     scheduled: false,
     lastNotifiedPromoted: 0,
     lastNotifiedSuggested: 0,
+    lastNotifiedScanned: 0,
     queue() {
         this.pending = true;
         if (!this.scheduled) {
@@ -40,14 +42,17 @@ const notifier = {
                     if (this.pending) {
                         const newPromoted = state.sessionPromotedRemoved - this.lastNotifiedPromoted;
                         const newSuggested = state.sessionSuggestedRemoved - this.lastNotifiedSuggested;
+                        const newScanned = state.sessionPostsScanned - this.lastNotifiedScanned;
 
-                        if (newPromoted > 0 || newSuggested > 0) {
+                        if (newPromoted > 0 || newSuggested > 0 || newScanned > 0) {
                             api.runtime.sendMessage(createBlockedMessage({
                                 promoted: newPromoted,
-                                suggested: newSuggested
+                                suggested: newSuggested,
+                                scanned: newScanned
                             })).catch(() => { });
                             this.lastNotifiedPromoted = state.sessionPromotedRemoved;
                             this.lastNotifiedSuggested = state.sessionSuggestedRemoved;
+                            this.lastNotifiedScanned = state.sessionPostsScanned;
                         }
 
                         this.pending = false;
@@ -60,6 +65,7 @@ const notifier = {
     reset() {
         this.lastNotifiedPromoted = 0;
         this.lastNotifiedSuggested = 0;
+        this.lastNotifiedScanned = 0;
     }
 };
 

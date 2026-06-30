@@ -257,6 +257,12 @@ body {
     color: #0A66C2;
 }
 
+/* Header button group */
+.header-btns {
+    display: flex;
+    gap: 2px;
+}
+
 /* Modal */
 .modal {
     display: none;
@@ -267,13 +273,13 @@ body {
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
     z-index: 1000;
-    animation: fadeIn 0.2s ease-out;
 }
 
 .modal.active {
     display: flex;
     align-items: center;
     justify-content: center;
+    animation: fadeIn 0.2s ease-out forwards;
 }
 
 .modal-content {
@@ -283,9 +289,12 @@ body {
     max-width: 340px;
     max-height: 90vh;
     overflow: hidden;
-    animation: slideIn 0.3s ease-out;
     display: flex;
     flex-direction: column;
+}
+
+.modal.active .modal-content {
+    animation: slideIn 0.3s ease-out forwards;
 }
 
 .modal-header {
@@ -720,6 +729,84 @@ body.lang-hi {
     font-weight: 500;
 }
 
+/* ---- Stats Modal ---- */
+.stats-scanned-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: #6c757d;
+}
+
+.stats-scanned-header .stats-scanned-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: #0A66C2;
+}
+
+.pie-chart-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 14px;
+}
+
+#pieChart {
+    display: block;
+}
+
+.pie-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.pie-legend-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #495057;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.pie-legend-row--empty {
+    opacity: 0.45;
+}
+
+.pie-legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.pie-legend-label {
+    flex: 1;
+}
+
+.pie-legend-pct {
+    font-size: 12px;
+    color: #adb5bd;
+    margin-right: 6px;
+    min-width: 36px;
+    text-align: right;
+}
+
+.pie-legend-value {
+    font-weight: 600;
+    text-align: right;
+    min-width: 30px;
+}
+
+.pie-empty {
+    text-align: center;
+    color: #adb5bd;
+    font-size: 13px;
+    padding: 20px 0;
+}
+
 /* Mobile responsive, popup opens in a separate tab on Firefox Android */
 .tab-mode .container {
     padding: 24px 20px;
@@ -788,3 +875,17 @@ body.lang-hi {
 
 /* Collapsible */
 .tab-mode .collapsible-chevron { width: 20px; height: 20px; }
+
+/* Stats modal — tab mode */
+.tab-mode .stats-scanned-header { font-size: 16px; margin-bottom: 16px; }
+.tab-mode .stats-scanned-header .stats-scanned-value { font-size: 28px; }
+.tab-mode .pie-chart-wrapper { margin-bottom: 20px; }
+.tab-mode #pieChart { width: 200px; height: 200px; }
+.tab-mode .pie-legend { gap: 10px; }
+.tab-mode .pie-legend-row { font-size: 15px; padding: 6px 12px; }
+
+.tab-mode .pie-legend-dot { width: 14px; height: 14px; }
+
+.tab-mode .pie-legend-pct { font-size: 13px; min-width: 42px; }
+
+.tab-mode .pie-empty { font-size: 15px; padding: 24px 0; }

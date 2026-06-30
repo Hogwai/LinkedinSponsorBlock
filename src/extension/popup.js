@@ -12,9 +12,14 @@ const filterSuggested = document.getElementById('filterSuggested');
 const filterRecommended = document.getElementById('filterRecommended');
 const loggingToggle = document.getElementById('loggingToggle');
 const languageSelect = document.getElementById('languageSelect');
-const promotedCountEl = document.getElementById('promotedCount');
-const suggestedCountEl = document.getElementById('suggestedCount');
 const container = document.querySelector('.container');
+const openStatsBtn = document.getElementById('openStats');
+const statsModal = document.getElementById('statsModal');
+const closeStatsBtn = document.getElementById('closeStats');
+const statsScannedCount = document.getElementById('statsScannedCount');
+const pieChart = document.getElementById('pieChart');
+const pieChartWrapper = document.querySelector('.pie-chart-wrapper');
+const pieLegend = document.getElementById('pieLegend');
 const openSettingsBtn = document.getElementById('openSettings');
 const settingsModal = document.getElementById('settingsModal');
 const closeSettingsBtn = document.getElementById('closeSettings');
@@ -100,23 +105,70 @@ async function loadSettings() {
     filterSuggested.checked = result.filterSuggested;
     filterRecommended.checked = result.filterRecommended;
     loggingToggle.checked = result.logging || false;
-    promotedCountEl.textContent = result.totalPromotedBlocked;
-    suggestedCountEl.textContent = result.totalSuggestedBlocked;
-
     languageSelect.value = result.language || detectLanguage();
 
     updateDisabledState(result.enabled);
     updateUILanguage();
 }
 
-// Update counters from background
+// Render SVG pie chart
+function renderPieChart(promoted, suggested, content) {
+    const total = promoted + suggested + content;
+    const segments = [
+        { value: content, color: '#27ae60', labelKey: 'contentShort', defaultLabel: 'Content' },
+        { value: suggested, color: '#f39c12', labelKey: 'suggestedShort', defaultLabel: 'Suggested' },
+        { value: promoted, color: '#E74C3C', labelKey: 'promotedShort', defaultLabel: 'Promoted' }
+    ];
+
+    if (pieChartWrapper) pieChartWrapper.style.display = total > 0 ? '' : 'none';
+    pieChart.innerHTML = '';
+    pieLegend.innerHTML = '';
+    let startAngle = -Math.PI / 2;
+    let paths = '';
+
+    segments.forEach(function(seg) {
+        const pct = total > 0 ? ((seg.value / total) * 100) : 0;
+        const hasValue = seg.value > 0 && total > 0;
+
+        if (hasValue) {
+            const angle = (seg.value / total) * Math.PI * 2;
+            const endAngle = startAngle + angle;
+            const x1 = 50 + 40 * Math.cos(startAngle);
+            const y1 = 50 + 40 * Math.sin(startAngle);
+            const x2 = 50 + 40 * Math.cos(endAngle);
+            const y2 = 50 + 40 * Math.sin(endAngle);
+            const largeArc = angle > Math.PI ? 1 : 0;
+
+            paths += '<path d="M50,50 L' + x1.toFixed(2) + ',' + y1.toFixed(2) + ' A40,40 0 ' + largeArc + ',1 ' + x2.toFixed(2) + ',' + y2.toFixed(2) + ' Z" fill="' + seg.color + '"/>';
+            startAngle = endAngle;
+        }
+
+        const row = document.createElement('div');
+        row.className = 'pie-legend-row';
+        row.innerHTML = '<span class="pie-legend-dot" style="background:' + seg.color + '"></span>'
+            + '<span class="pie-legend-label">' + (t(seg.labelKey) || seg.defaultLabel) + '</span>'
+            + '<span class="pie-legend-pct">' + pct.toFixed(0) + '%</span>'
+            + '<span class="pie-legend-value">' + seg.value + '</span>';
+        if (!hasValue) row.classList.add('pie-legend-row--empty');
+        pieLegend.appendChild(row);
+    });
+
+    pieChart.innerHTML = paths;
+}
+
+// Update counters from storage
 async function updateCounters() {
     const result = await api.storage.local.get({
         [SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED]: 0,
-        [SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED]: 0
+        [SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED]: 0,
+        [SETTINGS_KEYS.TOTAL_POSTS_SCANNED]: 0
     });
-    promotedCountEl.textContent = result[SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED];
-    suggestedCountEl.textContent = result[SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED];
+    const promoted = result[SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED];
+    const suggested = result[SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED];
+    const scanned = result[SETTINGS_KEYS.TOTAL_POSTS_SCANNED];
+    const content = Math.max(0, scanned - promoted - suggested);
+    statsScannedCount.textContent = scanned;
+    renderPieChart(promoted, suggested, content);
 }
 
 // Save settings to storage
@@ -215,11 +267,12 @@ cancelResetBtn.addEventListener('click', () => {
 confirmResetBtn.addEventListener('click', async () => {
     await saveSettings({
         [SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED]: 0,
-        [SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED]: 0
+        [SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED]: 0,
+        [SETTINGS_KEYS.TOTAL_POSTS_SCANNED]: 0
     });
 
-    promotedCountEl.textContent = '0';
-    suggestedCountEl.textContent = '0';
+    statsScannedCount.textContent = '0';
+    renderPieChart(0, 0, 0);
 
     api.runtime.sendMessage(createResetCountersMessage());
 
@@ -230,6 +283,22 @@ confirmResetBtn.addEventListener('click', async () => {
 
     setStatus(t('countersReset'), 'success');
     setTimeout(() => setStatus(''), 3000);
+});
+
+// Stats modal
+openStatsBtn.addEventListener('click', () => {
+    updateCounters();
+    statsModal.classList.add('active');
+});
+
+closeStatsBtn.addEventListener('click', () => {
+    statsModal.classList.remove('active');
+});
+
+statsModal.addEventListener('click', (e) => {
+    if (e.target === statsModal) {
+        statsModal.classList.remove('active');
+    }
 });
 
 // Notify content script of settings changes
@@ -275,8 +344,7 @@ scanBtn.addEventListener('click', async () => {
 // Listen for counter updates from background
 api.runtime.onMessage.addListener((message) => {
     if (message.type === MESSAGE_TYPES.COUNTER_UPDATE) {
-        promotedCountEl.textContent = message.promoted;
-        suggestedCountEl.textContent = message.suggested;
+        updateCounters();
     }
 });
 
@@ -285,8 +353,7 @@ api.runtime.onConnect.addListener((port) => {
     if (port.name === 'counterUpdate') {
         port.onMessage.addListener((msg) => {
             if (msg.type === MESSAGE_TYPES.COUNTER_UPDATE) {
-                promotedCountEl.textContent = msg.promoted;
-                suggestedCountEl.textContent = msg.suggested;
+                updateCounters();
             }
         });
     }

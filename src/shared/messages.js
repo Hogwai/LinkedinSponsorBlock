@@ -21,12 +21,12 @@ export function createSettingsChangedMessage(settings) {
     return { type: MESSAGE_TYPES.SETTINGS_CHANGED, ...settings };
 }
 
-export function createBlockedMessage({ promoted = 0, suggested = 0 } = {}) {
-    return { type: MESSAGE_TYPES.BLOCKED, promoted, suggested };
+export function createBlockedMessage({ promoted = 0, suggested = 0, scanned = 0 } = {}) {
+    return { type: MESSAGE_TYPES.BLOCKED, promoted, suggested, scanned };
 }
 
-export function createCounterUpdateMessage({ promoted = 0, suggested = 0 } = {}) {
-    return { type: MESSAGE_TYPES.COUNTER_UPDATE, promoted, suggested };
+export function createCounterUpdateMessage({ promoted = 0, suggested = 0, scanned = 0 } = {}) {
+    return { type: MESSAGE_TYPES.COUNTER_UPDATE, promoted, suggested, scanned };
 }
 
 export function createResetCountersMessage() {
