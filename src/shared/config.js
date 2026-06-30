@@ -68,6 +68,7 @@ const SHARED_KEYWORDS = {
         'Followed by', // ENGLISH
         'Suivi par', // FRENCH
         'Gefolgt von', // GERMAN
+        'Sind Follower:innen', // GERMAN
         'Seguido por', // SPANISH / PORTUGUESE
         'Seguito da', // ITALIAN
         'Gevolgd door', // DUTCH
