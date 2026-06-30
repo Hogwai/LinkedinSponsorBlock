@@ -41,6 +41,8 @@ const dismissBannerBtn = document.getElementById('dismissBanner');
 const feedbackLink = document.getElementById('feedbackLink');
 const feedbackBannerLink = document.getElementById('feedbackBannerLink');
 const settingsVersionEl = document.getElementById('settingsVersion');
+const promotedCountEl = document.getElementById('promotedCount');
+const suggestedCountEl = document.getElementById('suggestedCount');
 
 let t = createTranslator('en');
 
@@ -200,6 +202,8 @@ async function updateCounters() {
     const scanned = result[SETTINGS_KEYS.TOTAL_POSTS_SCANNED];
     const content = Math.max(0, scanned - promoted - suggested);
     statsScannedCount.textContent = scanned;
+    promotedCountEl.textContent = promoted;
+    suggestedCountEl.textContent = suggested;
     renderPieChart(promoted, suggested, content);
 }
 
@@ -306,6 +310,8 @@ confirmResetBtn.addEventListener('click', async () => {
     });
 
     statsScannedCount.textContent = '0';
+    promotedCountEl.textContent = '0';
+    suggestedCountEl.textContent = '0';
     renderPieChart(0, 0, 0);
 
     api.runtime.sendMessage(createResetCountersMessage());
