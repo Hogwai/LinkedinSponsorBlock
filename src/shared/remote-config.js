@@ -154,7 +154,7 @@ export async function fetchRemoteConfigJSON() {
 
 export async function applyRemoteConfig(storage, fetcher) {
     if (remoteConfigDisabled) return;
-    // Phase 1: load cached config into memory (do NOT merge — layout not detected yet)
+    // Phase 1: load cached config into memory
     try {
         const cached = await storage.get(STORAGE_KEY);
         if (isValid(cached)) {
