@@ -188,7 +188,7 @@ function handleUrlChange() {
 }
 
 // Listen to history changes (SPA navigation)
-// With @grant, Tampermonkey runs in a sandbox — use unsafeWindow to patch the page's real history
+// With @grant, Tampermonkey runs in a sandbox: use unsafeWindow to patch the page's real history
 const pageWindow = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window;
 const originalPushState = pageWindow.history.pushState;
 const originalReplaceState = pageWindow.history.replaceState;
