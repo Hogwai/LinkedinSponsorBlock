@@ -6,6 +6,7 @@ import { MESSAGE_TYPES, createCounterUpdateMessage, createUrlChangedMessage } fr
 // Global counters
 let totalPromotedBlocked = 0;
 let totalSuggestedBlocked = 0;
+let totalPostsScanned = 0;
 let isEnabled = true;
 
 // Gate: all message handlers wait for counters to be loaded
@@ -25,10 +26,12 @@ async function loadCounters() {
     const result = await api.storage.local.get({
         [SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED]: 0,
         [SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED]: 0,
+        [SETTINGS_KEYS.TOTAL_POSTS_SCANNED]: 0,
         [SETTINGS_KEYS.ENABLED]: true
     });
     totalPromotedBlocked = result[SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED];
     totalSuggestedBlocked = result[SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED];
+    totalPostsScanned = result[SETTINGS_KEYS.TOTAL_POSTS_SCANNED];
     isEnabled = result[SETTINGS_KEYS.ENABLED];
     updateBadge(isEnabled);
 }
@@ -37,7 +40,8 @@ async function loadCounters() {
 async function saveCounters() {
     await api.storage.local.set({
         [SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED]: totalPromotedBlocked,
-        [SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED]: totalSuggestedBlocked
+        [SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED]: totalSuggestedBlocked,
+        [SETTINGS_KEYS.TOTAL_POSTS_SCANNED]: totalPostsScanned
     });
 }
 
@@ -58,10 +62,12 @@ api.runtime.onMessage.addListener((message, sender, sendResponse) => {
             await countersReady;
             totalPromotedBlocked += message.promoted || 0;
             totalSuggestedBlocked += message.suggested || 0;
+            totalPostsScanned += message.scanned || 0;
             await saveCounters();
             api.runtime.sendMessage(createCounterUpdateMessage({
                 promoted: totalPromotedBlocked,
-                suggested: totalSuggestedBlocked
+                suggested: totalSuggestedBlocked,
+                scanned: totalPostsScanned
             })).catch(() => { });
         })();
         return true;
@@ -72,7 +78,8 @@ api.runtime.onMessage.addListener((message, sender, sendResponse) => {
         countersReady.then(() => {
             sendResponse({
                 promoted: totalPromotedBlocked,
-                suggested: totalSuggestedBlocked
+                suggested: totalSuggestedBlocked,
+                totalPostsScanned
             });
         });
         return true;
@@ -84,10 +91,12 @@ api.runtime.onMessage.addListener((message, sender, sendResponse) => {
             await countersReady;
             totalPromotedBlocked = 0;
             totalSuggestedBlocked = 0;
+            totalPostsScanned = 0;
             await saveCounters();
             api.runtime.sendMessage(createCounterUpdateMessage({
                 promoted: 0,
-                suggested: 0
+                suggested: 0,
+                scanned: 0
             })).catch(() => { });
         })();
         return true;

@@ -10,8 +10,9 @@ export const SETTINGS_KEYS = {
     FILTER_RECOMMENDED: 'filterRecommended',
     LANGUAGE: 'language',
     POSITION: 'position',
-    TOTAL_PROMOTED_BLOCKED: 'totalPromotedBlocked',
-    TOTAL_SUGGESTED_BLOCKED: 'totalSuggestedBlocked',
+        TOTAL_PROMOTED_BLOCKED: 'totalPromotedBlocked',
+        TOTAL_SUGGESTED_BLOCKED: 'totalSuggestedBlocked',
+        TOTAL_POSTS_SCANNED: 'totalPostsScanned',
     INSTALL_DATE: 'installDate',
     REVIEW_BANNER_DISMISSED: 'reviewBannerDismissed',
     LOGGING: 'logging'
@@ -25,8 +26,9 @@ export const DEFAULT_SETTINGS = {
     [SETTINGS_KEYS.FILTER_RECOMMENDED]: true,
     [SETTINGS_KEYS.LANGUAGE]: 'en',
     [SETTINGS_KEYS.POSITION]: 'br',
-    [SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED]: 0,
-    [SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED]: 0,
+        [SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED]: 0,
+        [SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED]: 0,
+        [SETTINGS_KEYS.TOTAL_POSTS_SCANNED]: 0,
     [SETTINGS_KEYS.INSTALL_DATE]: 0,
     [SETTINGS_KEYS.REVIEW_BANNER_DISMISSED]: false,
     [SETTINGS_KEYS.LOGGING]: false
