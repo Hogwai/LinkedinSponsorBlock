@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { CONFIG, getActiveProfile, applyLayout } from '../src/shared/config.js';
 
 describe('CONFIG structure', () => {
@@ -34,6 +34,14 @@ describe('CONFIG structure', () => {
 
 describe('getActiveProfile', () => {
     it('returns the modern profile by default', () => {
+        const profile = getActiveProfile();
+        expect(profile).toBe(CONFIG.profiles.modern);
+    });
+
+    it('falls back to modern when activeProfile does not match any profile', async () => {
+        vi.resetModules();
+        const { CONFIG, getActiveProfile } = await import('../src/shared/config.js');
+        CONFIG.activeProfile = 'nonexistent';
         const profile = getActiveProfile();
         expect(profile).toBe(CONFIG.profiles.modern);
     });

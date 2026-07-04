@@ -60,7 +60,7 @@ const notifier = {
                                             scanned: newScanned,
                                         }),
                                     )
-                                    .catch(() => {});
+                                    .catch((err) => { logger.warn('Failed to send blocked message to background', err); });
                                 this.lastNotifiedPromoted = state.sessionPromotedRemoved;
                                 this.lastNotifiedSuggested = state.sessionSuggestedRemoved;
                                 this.lastNotifiedScanned = state.sessionPostsScanned;

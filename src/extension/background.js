@@ -1,5 +1,6 @@
 import api from './browser-api.js';
 import { SETTINGS_KEYS } from '../shared/settings.js';
+import { logger } from '../shared/logger.js';
 import { fetchRemoteConfigJSON } from '../shared/remote-config.js';
 import {
     MESSAGE_TYPES,
@@ -14,7 +15,13 @@ let totalPostsScanned = 0;
 let isEnabled = true;
 
 // Gate: all message handlers wait for counters to be loaded
-const countersReady = loadCounters();
+const countersReady = loadCounters().catch((err) => {
+    logger.warn('Failed to load counters from storage, using defaults', err);
+    totalPromotedBlocked = 0;
+    totalSuggestedBlocked = 0;
+    totalPostsScanned = 0;
+    isEnabled = true;
+});
 
 // Update badge based on enabled state
 function updateBadge(enabled) {
@@ -76,7 +83,7 @@ api.runtime.onMessage.addListener((message, sender, sendResponse) => {
                         scanned: totalPostsScanned,
                     }),
                 )
-                .catch(() => {});
+                .catch((err) => { logger.warn('Failed to broadcast counter update after blocked', err); });
         })();
         return true;
     }
@@ -109,7 +116,7 @@ api.runtime.onMessage.addListener((message, sender, sendResponse) => {
                         scanned: 0,
                     }),
                 )
-                .catch(() => {});
+                .catch((err) => { logger.warn('Failed to broadcast counter update after reset', err); });
         })();
         return true;
     }

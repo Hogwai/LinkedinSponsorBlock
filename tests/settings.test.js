@@ -77,11 +77,22 @@ describe('mergeSettings', () => {
 });
 
 describe('detectLanguage', () => {
-    it('returns "en" for unsupported languages', () => {
-        const originalLanguage = navigator.language;
-        // We can't easily mock navigator.language in jsdom,
-        // but we can verify the function exists and returns a string
-        expect(typeof detectLanguage()).toBe('string');
+    it('returns detected language for supported locales', () => {
+        Object.defineProperty(navigator, 'language', {
+            value: 'fr-FR',
+            configurable: true,
+            writable: true,
+        });
+        expect(detectLanguage()).toBe('fr');
+    });
+
+    it('falls back to "en" for unsupported locale codes', () => {
+        Object.defineProperty(navigator, 'language', {
+            value: 'zz-ZZ',
+            configurable: true,
+            writable: true,
+        });
+        expect(detectLanguage()).toBe('en');
     });
 });
 

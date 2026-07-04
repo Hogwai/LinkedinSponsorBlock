@@ -64,7 +64,7 @@ export function createObserver(scanFn, state) {
 
             clearTimeout(debounceTimeout);
             debounceTimeout = setTimeout(() => {
-                scanFn(document);
+                scanFn(root);
             }, CONFIG.DELAYS.OBSERVER_RETRY);
         });
 

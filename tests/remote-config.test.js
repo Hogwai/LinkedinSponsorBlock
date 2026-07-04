@@ -92,7 +92,7 @@ describe('applyRemoteOverrides', () => {
             CONFIG.profiles.desktop.detection.sponsored.keywords,
         ).toBeInstanceOf(Set);
         expect(
-            CONFIG.profiles.desktop.detection.sponsored.keywords.has('Promoted'),
+            CONFIG.profiles.desktop.detection.sponsored.keywords.has('promoted'),
         ).toBe(true);
     });
 
@@ -333,5 +333,41 @@ describe('applyRemoteConfig', () => {
                 expect.any(Error),
             );
         });
+    });
+
+    it('logs warning when cached config has profile with null detection', async () => {
+        const configWithNullDetection = {
+            version: 2,
+            profiles: {
+                desktop: {
+                    feedWrapper: { mobile: null, desktop: null, newFeed: null },
+                    postContainers: ['.feed-shared-update-v2'],
+                    detection: null,
+                },
+            },
+        };
+        const storage = makeStorage(configWithNullDetection);
+        const fetcher = vi.fn().mockResolvedValue(validConfig);
+
+        await remoteConfig.applyRemoteConfig(storage, fetcher);
+
+        expect(logger.warn).toHaveBeenCalledWith(
+            'Cached remote config is invalid; using embedded config',
+        );
+    });
+
+    it('logs warning when cached config has non-object profiles', async () => {
+        const configWithBadProfiles = {
+            version: 2,
+            profiles: 'not-an-object',
+        };
+        const storage = makeStorage(configWithBadProfiles);
+        const fetcher = vi.fn().mockResolvedValue(validConfig);
+
+        await remoteConfig.applyRemoteConfig(storage, fetcher);
+
+        expect(logger.warn).toHaveBeenCalledWith(
+            'Cached remote config is invalid; using embedded config',
+        );
     });
 });

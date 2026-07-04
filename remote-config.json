@@ -45,6 +45,7 @@
                         "promocionado",
                         "promovida",
                         "الترويج",
+                        "تم الترويج",
                         "post sponsorizzato",
                         "promosso da",
                         "promosso",
@@ -83,7 +84,8 @@
                         "广告",
                         "推广",
                         "促銷內容",
-                        "贊助"
+                        "贊助",
+                        "宣傳單位："
                     ]
                 },
                 "suggested": {
@@ -206,6 +208,7 @@
                         "promocionado",
                         "promovida",
                         "الترويج",
+                        "تم الترويج",
                         "post sponsorizzato",
                         "promosso da",
                         "promosso",
@@ -244,7 +247,8 @@
                         "广告",
                         "推广",
                         "促銷內容",
-                        "贊助"
+                        "贊助",
+                        "宣傳單位："
                     ]
                 },
                 "suggested": {
