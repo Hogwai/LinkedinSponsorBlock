@@ -1,8 +1,17 @@
 /**
  * Multi-language keyword sets for detecting sponsored/suggested/recommended posts.
- * Each keyword is lowercased. These are the embedded defaults; remote config
- * overrides may supplement or replace them at runtime.
+ * Each keyword is lowercased and NFC-normalized. These are the embedded defaults;
+ * remote config overrides may supplement or replace them at runtime.
  */
+
+/**
+ * Normalize text for keyword matching: lowercase + NFC (handles Unicode
+ * composed/decomposed differences across scripts like Gurmukhi, Devanagari).
+ */
+export function normalizeKeyword(text) {
+    return text.toLowerCase().normalize('NFC');
+}
+
 export const SHARED_KEYWORDS = {
     sponsored: new Set(
         [
@@ -63,7 +72,8 @@ export const SHARED_KEYWORDS = {
             '推广', // CHINESE (SIMPLIFIED)
             '促銷內容', // CHINESE (TRADITIONAL)
             '贊助', // CHINESE (TRADITIONAL)
-        ].map((t) => t.toLowerCase()),
+            '宣傳單位：', // CHINESE (TRADITIONAL)
+        ].map(normalizeKeyword),
     ),
     suggested: new Set(
         [
@@ -93,7 +103,7 @@ export const SHARED_KEYWORDS = {
             '팔로우한 사람', // KOREAN
             'متابعة من', // ARABIC
             'ถูกติดตามโดย', // THAI alternative
-        ].map((t) => t.toLowerCase()),
+        ].map(normalizeKeyword),
     ),
     recommended: new Set(
         [
@@ -134,6 +144,6 @@ export const SHARED_KEYWORDS = {
             'แนะนำสำหรับคุณ', // THAI
             'Inirerekomenda para sa iyo', // TAGALOG
             'Đề xuất cho bạn', // VIETNAMESE
-        ].map((t) => t.toLowerCase()),
+        ].map(normalizeKeyword),
     ),
 };

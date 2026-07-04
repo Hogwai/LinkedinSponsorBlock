@@ -1,5 +1,6 @@
 import { CONFIG } from './config.js';
 import { logger } from './logger.js';
+import { normalizeKeyword } from './keywords.js';
 
 // Set NO_REMOTE_CONFIG build env to bypass and use the embedded config only.
 // The build injects `var __NO_REMOTE_CONFIG__ = true;` into the bundle.
@@ -101,7 +102,7 @@ function mergeProfile(remote, profileName) {
                     cat,
                     {
                         keywordSelectors: src.keywordSelectors,
-                        keywords: new Set(src.keywords),
+                        keywords: new Set(src.keywords.map(normalizeKeyword)),
                         childSelectors: src.childSelectors,
                     },
                 ];

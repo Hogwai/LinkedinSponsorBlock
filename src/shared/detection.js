@@ -1,4 +1,5 @@
 import { getActiveProfile } from './config.js';
+import { normalizeKeyword } from './keywords.js';
 
 export const scannedPosts = new WeakSet();
 
@@ -7,12 +8,12 @@ function matchesByKeyword(post, detection) {
     const candidates = keywordSelectors.flatMap((sel) => Array.from(post.querySelectorAll(sel)));
     if (
         candidates.some((el) => {
-            const text = el.textContent.trim().toLowerCase();
+            const text = normalizeKeyword(el.textContent.trim());
             if (keywords.has(text)) return true;
             // Fallback: check direct text nodes (handles "Sponsorisé par <a>Company</a>")
             const directText = Array.from(el.childNodes)
                 .filter((n) => n.nodeType === Node.TEXT_NODE)
-                .map((n) => n.textContent.trim().toLowerCase())
+                .map((n) => normalizeKeyword(n.textContent.trim()))
                 .filter((t) => t.length > 0);
             return directText.some((t) => keywords.has(t));
         })

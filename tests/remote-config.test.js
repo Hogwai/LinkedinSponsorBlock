@@ -92,7 +92,7 @@ describe('applyRemoteOverrides', () => {
             CONFIG.profiles.desktop.detection.sponsored.keywords,
         ).toBeInstanceOf(Set);
         expect(
-            CONFIG.profiles.desktop.detection.sponsored.keywords.has('Promoted'),
+            CONFIG.profiles.desktop.detection.sponsored.keywords.has('promoted'),
         ).toBe(true);
     });
 

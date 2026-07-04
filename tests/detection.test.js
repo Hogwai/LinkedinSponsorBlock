@@ -142,6 +142,92 @@ describe('getUnscannedPosts: feed-empty', () => {
 
 
 
+describe('Unicode normalization', () => {
+    // LinkedIn may serve Gurmukhi/Punjabi in precomposed Unicode form (U+0A5E, U+0A36)
+    // while the keyword source uses decomposed form (U+0A2B+U+0A3C, U+0A38+U+0A3C).
+    // NFC normalization must reconcile both.
+    it('detects Punjabi "recommended" with precomposed Unicode (like LinkedIn serves)', () => {
+        // LinkedIn uses precomposed Gurmukhi (U+0A5E ਫ਼, U+0A36 ਸ਼) while the
+        // keyword source uses decomposed forms (U+0A2B+U+0A3C, U+0A38+U+0A3C).
+        // NFC normalization must reconcile them.
+        const post = document.createElement('div');
+        post.className = 'feed-shared-update-v2';
+        post.id = 'ember-punjabi';
+
+        const label = document.createElement('p');
+        label.setAttribute('componentkey', 'test');
+        // Precomposed form: 17 code points
+        label.textContent = String.fromCodePoint(
+            0x0A24, 0x0A41, 0x0A39, 0x0A3E, 0x0A21, 0x0A47, // ਤੁਹਾਡੇ
+            0x0020, // space
+            0x0A32, 0x0A08, // ਲਈ
+            0x0020, // space
+            0x0A38, 0x0A3F, // ਸਿ
+            0x0A5E, 0x0A3E, 0x0A30, // ਫ਼ਾਰ (precomposed)
+            0x0A36, 0x0A40, // ਸ਼ੀ (precomposed)
+        );
+        post.appendChild(label);
+
+        document.body.innerHTML = '';
+        document.body.appendChild(post);
+
+        const groups = detection.getUnscannedPosts(document.body);
+        expect(groups.recommended).toHaveLength(1);
+        expect(groups.sponsored).toHaveLength(0);
+        expect(groups.suggested).toHaveLength(0);
+        expect(groups.content).toHaveLength(0);
+    });
+
+    it('detects Arabic "تم الترويج" as sponsored', () => {
+        const post = document.createElement('div');
+        post.className = 'feed-shared-update-v2';
+        post.id = 'ember-arabic';
+
+        const label = document.createElement('p');
+        label.setAttribute('componentkey', 'test');
+        label.textContent = 'تم الترويج';
+        post.appendChild(label);
+
+        document.body.innerHTML = '';
+        document.body.appendChild(post);
+
+        const groups = detection.getUnscannedPosts(document.body);
+        expect(groups.sponsored).toHaveLength(1);
+        expect(groups.content).toHaveLength(0);
+    });
+
+    it('detects Traditional Chinese "宣傳單位：" as sponsored via direct text node', () => {
+        // Simulates LinkedIn zh-TW post with structure from user's report:
+        // <p componentkey="..."><span>宣傳單位：<a><strong>Company</strong></a></span></p>
+        // The span's direct text node "宣傳單位：" matches the keyword.
+        const post = document.createElement('div');
+        post.className = 'feed-shared-update-v2';
+        post.id = 'ember-zh-tw';
+
+        const span = document.createElement('span');
+        span.appendChild(document.createTextNode('宣傳單位：'));
+        const link = document.createElement('a');
+        link.href = '#';
+        const strong = document.createElement('strong');
+        strong.textContent = 'Société';
+        link.appendChild(strong);
+        span.appendChild(link);
+
+        const label = document.createElement('p');
+        label.setAttribute('componentkey', 'test');
+        label.appendChild(span);
+
+        post.appendChild(label);
+
+        document.body.innerHTML = '';
+        document.body.appendChild(post);
+
+        const groups = detection.getUnscannedPosts(document.body);
+        expect(groups.sponsored).toHaveLength(1);
+        expect(groups.content).toHaveLength(0);
+    });
+});
+
 describe('legacy profile detection', () => {
     it('works with legacy selectors', async () => {
         config.applyLayout('legacy');
