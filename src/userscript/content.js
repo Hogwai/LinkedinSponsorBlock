@@ -14,15 +14,13 @@ function getStored(key, defaultValue) {
     try {
         const raw = localStorage.getItem(STORAGE_PREFIX + key);
         return raw !== null ? JSON.parse(raw) : defaultValue;
-    } catch {
-        return defaultValue;
-    }
+    } catch { logger.warn('localStorage get failed', key); return defaultValue; }
 }
 
 function setStored(key, value) {
     try {
         localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(value));
-    } catch { /* storage full or unavailable */ }
+    } catch { logger.warn('localStorage set failed', key); }
 }
 
 function getTotalCounters() {
@@ -52,6 +50,7 @@ function resetTotalCounters() {
 const state = {
     observer: null,
     waiter: null,
+    pollingInterval: null,
     sessionPromotedRemoved: 0,
     sessionSuggestedRemoved: 0,
     isObserverConnected: false,
@@ -205,9 +204,6 @@ pageWindow.history.replaceState = function(...args) {
 
 pageWindow.addEventListener('popstate', handleUrlChange);
 
-// Fallback polling for edge cases
-setInterval(handleUrlChange, 1000);
-
 state.isCurrentlyFeedPage = isFeedPage();
 
 async function start() {
@@ -216,11 +212,11 @@ async function start() {
             try {
                 const raw = localStorage.getItem(key);
                 return raw !== null ? JSON.parse(raw) : null;
-            } catch { return null; }
+            } catch { logger.warn('cache read failed in start'); return null; }
         },
         async set(key, value) {
             try { localStorage.setItem(key, JSON.stringify(value)); }
-            catch { /* storage full */ }
+            catch { logger.warn('cache write failed in start'); }
         }
     }, () => new Promise((resolve, reject) => {
         GM_xmlhttpRequest({
@@ -230,7 +226,7 @@ async function start() {
             onload(res) {
                 try {
                     resolve(res.status === 200 ? JSON.parse(res.responseText) : null);
-                } catch { resolve(null); }
+                } catch { logger.warn('Failed to parse remote config response'); resolve(null); }
             },
             onerror() { reject(new Error('GM_xmlhttpRequest failed')); },
             ontimeout() { reject(new Error('GM_xmlhttpRequest timeout')); }
@@ -243,6 +239,7 @@ async function start() {
     } else {
         state.ui.hide();
     }
+    state.pollingInterval = setInterval(handleUrlChange, 1000);
 }
 
 if (document.body) {

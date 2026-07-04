@@ -27,6 +27,10 @@ function isArrayOfStrings(v, allowEmpty = false) {
     );
 }
 
+/**
+ * Validates a CSS selector against the current page DOM.
+ * Returns true if the selector is syntactically valid and matches at least one element.
+ */
 function isValidSelector(s) {
     try {
         document.querySelector(s);

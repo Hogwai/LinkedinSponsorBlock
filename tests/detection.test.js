@@ -123,6 +123,21 @@ describe('getUnscannedPosts: feed-empty', () => {
         expect(groups.recommended).toHaveLength(0);
         expect(groups.content).toHaveLength(0);
     });
+
+    it('handles root being a post container element (matches path)', () => {
+        // Create an element matching a modern post container selector
+        const post = document.createElement('div');
+        post.className = 'feed-shared-update-v2';
+        post.id = 'ember1234';
+        post.textContent = 'Some organic content';
+        document.body.innerHTML = '';
+        document.body.appendChild(post);
+
+        // Pass the post element itself as root (triggers root.matches? path)
+        const groups = detection.getUnscannedPosts(post);
+        expect(groups.content).toHaveLength(1);
+        expect(groups.sponsored).toHaveLength(0);
+    });
 });
 
 

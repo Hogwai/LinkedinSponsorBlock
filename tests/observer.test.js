@@ -63,6 +63,23 @@ describe('start: layout detection', () => {
         // Just confirm legacy profile is loaded separately: layout is detected during connect
         // The observer.start will retry because no feed wrapper matches
     });
+
+    it('connects without any layout markers when feed is found', () => {
+        // No layout markers on body — detectLayout returns null
+        const feed = document.createElement('div');
+        feed.setAttribute('data-testid', 'mainFeed');
+        document.body.appendChild(feed);
+
+        const scanFn = vi.fn();
+        const state = createTestState();
+        const observer = createObserver(scanFn, state);
+
+        observer.start();
+
+        // Should still find feed via modern default profile and connect
+        expect(state.isObserverConnected).toBe(true);
+        expect(scanFn).toHaveBeenCalled();
+    });
 });
 
 describe('start: feed finding', () => {
