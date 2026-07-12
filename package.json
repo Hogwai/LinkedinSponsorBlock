@@ -28,6 +28,6 @@
         "prettier": "^3.9.4",
         "rollup": "^4.62.2",
         "rollup-plugin-copy": "^3.5.0",
-        "vitest": "^4.1.9"
+        "vitest": "^4.1.10"
     }
 }
