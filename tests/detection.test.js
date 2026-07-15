@@ -196,6 +196,50 @@ describe('Unicode normalization', () => {
         expect(groups.content).toHaveLength(0);
     });
 
+    it('strips invisible Unicode formatting chars (RLM, LRM, ZWJ) from Arabic text', () => {
+        // LinkedIn may insert invisible formatting characters (U+200F RLM, U+200E LRM,
+        // U+200D ZWJ) into RTL text. The keyword matcher must strip them before comparison.
+        const post = document.createElement('div');
+        post.setAttribute('data-lazy-mount-id', 'test-mount');
+        post.style.display = 'contents';
+
+        const label = document.createElement('p');
+        label.setAttribute('componentkey', 'test');
+
+        // Simulate text with surrounding invisible characters like LinkedIn serves
+        const rlm = '\u200F';
+        const lrm = '\u200E';
+        label.textContent = `${rlm}${lrm}تم الترويج${rlm}${lrm}`;
+        post.appendChild(label);
+
+        document.body.innerHTML = '';
+        document.body.appendChild(post);
+
+        const groups = detection.getUnscannedPosts(document.body);
+        expect(groups.sponsored).toHaveLength(1);
+        expect(groups.content).toHaveLength(0);
+    });
+
+    it('strips Arabic letter mark (U+061C) from Arabic text', () => {
+        // U+061C Arabic Letter Mark is another invisible formatting character
+        const post = document.createElement('div');
+        post.setAttribute('data-lazy-mount-id', 'test-alm');
+        post.style.display = 'contents';
+
+        const label = document.createElement('p');
+        label.setAttribute('componentkey', 'test');
+        const alm = '\u061C';
+        label.textContent = `${alm}تم الترويج${alm}`;
+        post.appendChild(label);
+
+        document.body.innerHTML = '';
+        document.body.appendChild(post);
+
+        const groups = detection.getUnscannedPosts(document.body);
+        expect(groups.sponsored).toHaveLength(1);
+        expect(groups.content).toHaveLength(0);
+    });
+
     it('detects Traditional Chinese "宣傳單位：" as sponsored via direct text node', () => {
         // Simulates LinkedIn zh-TW post with structure from user's report:
         // <p componentkey="..."><span>宣傳單位：<a><strong>Company</strong></a></span></p>
