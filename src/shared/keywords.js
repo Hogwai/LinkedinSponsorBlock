@@ -34,6 +34,7 @@ export const SHARED_KEYWORDS = {
             'Promoted by', // ENGLISH
             'Anzeige', // GERMAN
             'Gesponsert', // GERMAN
+            'Gesponsert von', // GERMAN
             'Promocionado', // SPANISH
             'Promovida', // PORTUGUESE
             'الترويج', // ARABIC
@@ -91,6 +92,7 @@ export const SHARED_KEYWORDS = {
             'Suivi par', // FRENCH
             'Gefolgt von', // GERMAN
             'Sind Follower:innen', // GERMAN
+            'ist Follower:in', // GERMAN
             'Seguido por', // SPANISH / PORTUGUESE
             'Seguito da', // ITALIAN
             'Gevolgd door', // DUTCH
