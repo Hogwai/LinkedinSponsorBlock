@@ -6,10 +6,15 @@
 
 /**
  * Normalize text for keyword matching: lowercase + NFC (handles Unicode
- * composed/decomposed differences across scripts like Gurmukhi, Devanagari).
+ * composed/decomposed differences across scripts like Gurmukhi, Devanagari)
+ * Strip invisible formatting characters (RLM, LRM, ZWJ, ZWNJ, etc.)
+ * that LinkedIn inserts into right-to-left text.
  */
 export function normalizeKeyword(text) {
-    return text.toLowerCase().normalize('NFC');
+    return text
+        .toLowerCase()
+        .normalize('NFC')
+        .replace(/[\u00AD\u061C\u180E\u200B-\u200F\u202A-\u202E\u2060-\u2069\uFEFF]+/g, '');
 }
 
 export const SHARED_KEYWORDS = {
@@ -41,7 +46,7 @@ export const SHARED_KEYWORDS = {
             'Propagace', // CZECH
             'Promoveret', // DANISH
             'Προωθημένη', // GREEK
-            'تبلیغ‌شده', // PERSIAN
+            'تبلیغشده', // PERSIAN
             'Mainostettu', // FINNISH
             'प्रमोट किया गया', // HINDI
             'Kiemelt', // HUNGARIAN
@@ -129,7 +134,7 @@ export const SHARED_KEYWORDS = {
             'আপনার জন্য সুপারিশকৃত', // BENGALI
             'Anbefalet til dig', // DANISH
             'Προτεινόμενα για εσάς', // GREEK
-            'توصیه‌شده برای شما', // PERSIAN
+            'توصیهشده برای شما', // PERSIAN
             'Suositellut sinulle', // FINNISH
             'Önnek javasolt', // HUNGARIAN
             'Rekomendasi untuk Anda', // INDONESIAN
