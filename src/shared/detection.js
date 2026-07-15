@@ -10,12 +10,19 @@ function matchesByKeyword(post, detection) {
         candidates.some((el) => {
             const text = normalizeKeyword(el.textContent.trim());
             if (keywords.has(text)) return true;
+
             // Fallback: check direct text nodes (handles "Sponsorisé par <a>Company</a>")
             const directText = Array.from(el.childNodes)
                 .filter((n) => n.nodeType === Node.TEXT_NODE)
                 .map((n) => normalizeKeyword(n.textContent.trim()))
                 .filter((t) => t.length > 0);
-            return directText.some((t) => keywords.has(t));
+            if (directText.some((t) => keywords.has(t))) return true;
+            
+            // Secondary fallback: check if element text contains any keyword as substring
+            for (const kw of keywords) {
+                if (text.includes(kw)) return true;
+            }
+            return false;
         })
     ) {
         return true;
