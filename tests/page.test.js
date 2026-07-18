@@ -83,18 +83,22 @@ describe('page.js', () => {
             expect(state.isCurrentlyFeedPage).toBe(false);
         });
 
-        it('does nothing when staying on feed', async () => {
+        it('restarts observer when staying on feed (SPA navigation)', async () => {
             const { createPageManager } = await import('../src/shared/page.js');
             const state = { isCurrentlyFeedPage: true };
-            let observerCalled = false;
+            let started = false;
+            let stopped = false;
+            let resetCalled = false;
             const observer = {
-                start: () => { observerCalled = true; },
-                stop: () => { observerCalled = true; }
+                start: () => { started = true; },
+                stop: () => { stopped = true; }
             };
-            const pm = createPageManager(state, observer, () => {});
+            const pm = createPageManager(state, observer, () => { resetCalled = true; });
             window.location.pathname = '/feed/';
             pm.handleUrlChange();
-            expect(observerCalled).toBe(false);
+            expect(stopped).toBe(true);
+            expect(started).toBe(true);
+            expect(resetCalled).toBe(false);
         });
     });
 });
