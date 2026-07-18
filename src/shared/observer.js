@@ -41,7 +41,8 @@ export function createObserver(scanFn, state) {
             }
         }
 
-        return findFeedWrapper(getActiveProfile());
+        const feed = findFeedWrapper(getActiveProfile());
+        return feed;
     }
 
     function connect(root) {
@@ -64,7 +65,7 @@ export function createObserver(scanFn, state) {
 
             clearTimeout(debounceTimeout);
             debounceTimeout = setTimeout(() => {
-                scanFn(root);
+                scanFn(document);
             }, CONFIG.DELAYS.OBSERVER_RETRY);
         });
 
@@ -75,11 +76,13 @@ export function createObserver(scanFn, state) {
 
         state.isObserverConnected = true;
         retryCount = 0;
-        scanFn(root);
+        scanFn(document);
     }
 
     function start() {
-        if (state.isObserverConnected) return;
+        if (state.isObserverConnected) {
+            return;
+        }
 
         const feed = findFeed();
 

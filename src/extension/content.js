@@ -176,7 +176,9 @@ async function init() {
     state.isCurrentlyFeedPage = isFeedPage();
 
     if (document.body) {
-        if (state.isCurrentlyFeedPage && state.settings[SETTINGS_KEYS.ENABLED]) observer.start();
+        if (state.isCurrentlyFeedPage && state.settings[SETTINGS_KEYS.ENABLED]) {
+            observer.start();
+        }
     } else {
         state.waiter = new MutationObserver(() => {
             if (document.body) {
