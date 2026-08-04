@@ -43,7 +43,7 @@ Fixes #(issue number)
 
 - [ ] Tested on Chrome Extension
 - [ ] Tested on Firefox Extension
-- [ ] Tested on Userscript (Tampermonkey)
+- [ ] Tested on Userscript
 - [ ] Build succeeds (`npm run build`)
 - [ ] No console errors
 
