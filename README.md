@@ -16,10 +16,10 @@ Please check for extension updates or report the issue on [GitHub](https://githu
 - [Installation](#-installation)
   - [Google Chrome & Chromium-based browsers](#-google-chrome--chromium-based-browsers)
   - [Firefox Extension](#-firefox-extension)
-  - [Userscript (Tampermonkey)](#-userscript-tampermonkey)
+  - [Userscript (Violentmonkey or Tampermonkey)](#-userscript-violentmonkey-or-tampermonkey)
 - [Detailed Installation Guide](#-detailed-installation-guide)
   - [Prerequisites](#prerequisites)
-  - [Installing Tampermonkey](#installing-tampermonkey)
+  - [Installing a userscript manager](#installing-a-userscript-manager)
   - [Installing the script](#installing-the-linkedinsponsorblock-script)
   - [Usage](#usage)
   - [Troubleshooting](#troubleshooting)
@@ -53,14 +53,14 @@ Please check for extension updates or report the issue on [GitHub](https://githu
 
 ## Features
 
-- 🚫 **Automatic removal** – Hides sponsored posts, suggested content, and partner promotions
-- 📱 **Desktop & mobile** – Works on both desktop and mobile versions of Linkedin (Firefox & userscript)
-- 🌐 **Multilingual support** – Works with all languages available on Linkedin
-- 🌍 **Localized UI** – Extension interface available in English and French
-- ⚡ **Lightweight & discreet** – Runs in the background without slowing your browsing
-- 💼 **Focused feed** – Concentrate on the content that actually matters to you
-- 📊 **Counter tracking** – See how many posts have been blocked
-- ⚙️ **Customizable filters** – Choose what to block (promoted, suggested, or both)
+- 🚫 **Automatic removal**:  Hides sponsored posts, suggested content, and partner promotions
+- 📱 **Desktop & mobile**:  Works on both desktop and mobile versions of Linkedin (Firefox & userscript)
+- 🌐 **Multilingual support**:  Works with all languages available on Linkedin
+- 🌍 **Localized UI**:  Extension interface available in English and French
+- ⚡ **Lightweight & discreet**:  Runs in the background without slowing your browsing
+- 💼 **Focused feed**:  Concentrate on the content that actually matters to you
+- 📊 **Counter tracking**:  See how many posts have been blocked
+- ⚙️ **Customizable filters**:  Choose what to block (promoted, suggested, or both)
 
 Perfect for professionals, recruiters, or regular Linkedin users who want a more relevant and distraction-free feed.
 
@@ -86,9 +86,9 @@ Available on the [Chrome Web Store](https://chromewebstore.google.com/detail/lin
 
 <a href="https://addons.mozilla.org/en-US/firefox/addon/linkedin-sponsor-block/" target="_blank"><img src="https://user-images.githubusercontent.com/585534/107280546-7b9b2a00-6a26-11eb-8f9f-f95932f4bfec.png" alt="Get Linkedin Sponsor Block for Firefox" height="60"></a>
 
-### 🔧 Userscript (Tampermonkey)
+### 🔧 Userscript (Violentmonkey or Tampermonkey)
 
-<a href="https://greasyfork.org/fr/scripts/546877-linkedinsponsorblock" target="_blank"><img src="https://img.shields.io/badge/Install%20from-Greasyfork-990000?style=for-the-badge&logo=tampermonkey&logoColor=white" alt="Install from Greasyfork"></a>
+<a href="https://greasyfork.org/fr/scripts/546877-linkedinsponsorblock" target="_blank"><img src="https://img.shields.io/badge/Install%20from-Greasyfork-990000?style=for-the-badge" alt="Install from Greasyfork"></a>
 
 <a href="https://github.com/Hogwai/LinkedinSponsorBlock/releases/download/userscript-v1.2.16/LinkedinSponsorBlock.user.js" target="_blank"><img src="https://img.shields.io/badge/Install%20from-GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="Install from GitHub"></a>
 
@@ -101,26 +101,33 @@ Available on the [Chrome Web Store](https://chromewebstore.google.com/detail/lin
 #### Prerequisites
 
 - A compatible web browser (Google Chrome, Firefox, Edge, etc.)
-- The **Tampermonkey** extension installed
+- A userscript manager: **[Violentmonkey](https://violentmonkey.github.io/get-it/)** or **[Tampermonkey](https://www.tampermonkey.net/)**
 
-#### Installing Tampermonkey
+#### Installing a userscript manager
 
-- **Google Chrome**: Go to the [Chrome Web Store](https://chromewebstore.google.com/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?pli=1) and click "Add to Chrome"
-- **Firefox**: Go to [Mozilla Add-ons](https://addons.mozilla.org/fr/firefox/addon/tampermonkey/) and click "Add to Firefox"
-- **Other browsers**: Search for "Tampermonkey" in your browser's extension store (Edge, Opera, etc.)
+- **Tampermonkey**
+  - Google Chrome: Go to the [Chrome Web Store](https://chromewebstore.google.com/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo) and click "Add to Chrome"
+  - Firefox: Go to [Mozilla Add-ons](https://addons.mozilla.org/fr/firefox/addon/tampermonkey/) and click "Add to Firefox"
+- **Violentmonkey**
+  - Chrome and Chromium-based browsers: Go to the [Chrome Web Store](https://chromewebstore.google.com/detail/violentmonkey/jinjaccalgkegednnccohejagnlnfdag) and click "Add to Chrome"
+  - Firefox: Go to [Mozilla Add-ons](https://addons.mozilla.org/firefox/addon/violentmonkey/) and click "Add to Firefox"
+- **Other browsers**: Search for "Violentmonkey" or "Tampermonkey" in your browser's extension store.
 
 #### Installing the LinkedinSponsorBlock script
 
-1. **From Greasyfork:**
-   - Go to the script page: [LinkedinSponsorBlock](https://greasyfork.org/fr/scripts/546877-linkedinsponsorblock)
-   - Click "Install this script" and confirm
+##### From Greasyfork
 
-2. **From GitHub:**
-   - Click here: [LinkedinSponsorBlock.user.js](https://github.com/Hogwai/LinkedinSponsorBlock/releases/download/userscript-v1.2.16/LinkedinSponsorBlock.user.js) to install directly
-   - Or browse the userscript releases: [Releases](https://github.com/Hogwai/LinkedinSponsorBlock/releases?q=userscript&expanded=true)
+- Go to the script page: [LinkedinSponsorBlock](https://greasyfork.org/fr/scripts/546877-linkedinsponsorblock)
+- Click "Install this script" and confirm
 
-3. **Verify that the script is enabled:**
-   - In the Tampermonkey dashboard (click the icon > "Dashboard"), ensure that the `LinkedinSponsorBlock` script is enabled (switch to "On")
+##### From GitHub
+
+- Click here: [LinkedinSponsorBlock.user.js](https://github.com/Hogwai/LinkedinSponsorBlock/releases/download/userscript-v1.2.16/LinkedinSponsorBlock.user.js) to install directly
+- Or browse the userscript releases: [Releases](https://github.com/Hogwai/LinkedinSponsorBlock/releases?q=userscript&expanded=true)
+
+##### Verify that the script is enabled
+
+- In your userscript manager's dashboard, ensure that the `LinkedinSponsorBlock` script is enabled.
 
 #### Usage
 
@@ -131,8 +138,8 @@ Available on the [Chrome Web Store](https://chromewebstore.google.com/detail/lin
 
 **Script not working?**
 
-- Verify that Tampermonkey is enabled and that the script is correctly installed
-- Ensure that the site URL matches the script's `@match` patterns (`https://www.linkedin.com/feed/*`)
+- Verify that your userscript manager is enabled and that the script is correctly installed
+- Ensure that the site URL matches the script's `@include` patterns (for example, `https://www.linkedin.com/feed/`)
 - Check the browser console for error messages
 - On Google Chrome, you will have to allow userscripts:
 

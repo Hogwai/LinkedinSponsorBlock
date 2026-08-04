@@ -16,7 +16,7 @@ body:
       options:
         - Chrome Extension
         - Firefox Extension
-        - Userscript (Tampermonkey/Greasemonkey)
+        - Userscript
     validations:
       required: true
 
