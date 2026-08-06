@@ -219,6 +219,14 @@ const STYLES = `
         transform: translateX(16px);
     }
 
+    /* ---- Shortcut hint ---- */
+    .lsb-shortcut-hint {
+        font-size: 11px;
+        color: #777;
+        padding: 0 0 6px;
+        line-height: 1.35;
+    }
+
     /* ---- Scan button ---- */
     .lsb-scan-btn {
         display: block;
@@ -570,7 +578,9 @@ function createDOM() {
             toggleRow('blockPromotedPosts', 'Block promoted', 'lsb-filter-promoted', 'lsb-filter-toggle'),
             toggleRow('blockSuggestedPosts', 'Block suggested', 'lsb-filter-suggested', 'lsb-filter-toggle'),
             toggleRow('blockRecommendedPosts', 'Block "Recommended for you"', 'lsb-filter-recommended', 'lsb-filter-toggle'),
-            toggleRow('logging', 'Enable logging', 'lsb-logging')
+            toggleRow('logging', 'Enable logging', 'lsb-logging'),
+            toggleRow('hideFloatingUI', 'Hide floating icon', 'lsb-hide-floating-ui'),
+            el('p', { class: 'lsb-shortcut-hint', 'data-t': 'floatingUIShortcut' }, 'Shortcut: Ctrl+Shift+Space to restore')
         ),
         // Scan button
         el('button', { class: 'lsb-scan-btn', id: 'lsb-scan', 'data-t': 'scanNow' }, 'Scan now'),
@@ -628,6 +638,8 @@ export function createFloatingUI({
     onToggleSuggested,
     onToggleRecommended,
     onToggleLogging,
+    onToggleHideFloatingUI,
+    isFeedPage,
     onScan,
     onLanguageChange,
     onPositionChange,
@@ -654,6 +666,7 @@ export function createFloatingUI({
     const suggestedInput = $('lsb-filter-suggested');
     const recommendedInput = $('lsb-filter-recommended');
     const loggingInput = $('lsb-logging');
+    const hideFloatingInput = $('lsb-hide-floating-ui');
     const scanBtn = $('lsb-scan');
     const langSelect = $('lsb-language');
     const posSelect = $('lsb-position');
@@ -725,6 +738,8 @@ export function createFloatingUI({
     suggestedInput.checked = settings.filterSuggested;
     recommendedInput.checked = settings.filterRecommended;
     loggingInput.checked = settings[SETTINGS_KEYS.LOGGING] || false;
+    let floatingUIHidden = settings[SETTINGS_KEYS.HIDE_FLOATING_UI] || false;
+    hideFloatingInput.checked = floatingUIHidden;
     langSelect.value = currentLang;
     posSelect.value = settings.position || 'br';
     updateDisabledState(settings.enabled);
@@ -773,6 +788,14 @@ export function createFloatingUI({
         if (settings.onDismissBanner) settings.onDismissBanner();
     });
 
+    function setFloatingUIHidden(hidden) {
+        floatingUIHidden = hidden;
+        hideFloatingInput.checked = hidden;
+        const onFeedPage = typeof isFeedPage !== 'function' || isFeedPage();
+        host.style.display = hidden || !onFeedPage ? 'none' : '';
+        if (hidden) panel.classList.remove('open');
+    }
+
     // ---- Events ----
     fab.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -785,11 +808,41 @@ export function createFloatingUI({
         panel.classList.remove('open');
     });
 
-    document.addEventListener('click', (e) => {
+    function handleDocumentClick(e) {
         if (!host.contains(e.target)) {
             panel.classList.remove('open');
         }
-    });
+    }
+
+    document.addEventListener('click', handleDocumentClick);
+
+    function isEditableTarget(target) {
+        return target instanceof HTMLElement && (
+            target.matches('input, textarea, select') || target.isContentEditable
+        );
+    }
+
+    function isEditableEvent(event) {
+        return isEditableTarget(event.target) || isEditableTarget(shadow.activeElement);
+    }
+
+    function handleFloatingUIShortcut(event) {
+        if (
+            event.code !== 'Space' ||
+            !event.ctrlKey ||
+            !event.shiftKey ||
+            event.altKey ||
+            event.metaKey ||
+            event.repeat ||
+            event.isComposing ||
+            isEditableEvent(event)
+        ) return;
+
+        setFloatingUIHidden(!floatingUIHidden);
+        onToggleHideFloatingUI(floatingUIHidden);
+    }
+
+    document.addEventListener('keydown', handleFloatingUIShortcut);
 
     enabledInput.addEventListener('change', () => {
         updateDisabledState(enabledInput.checked);
@@ -815,6 +868,11 @@ export function createFloatingUI({
 
     loggingInput.addEventListener('change', () => {
         onToggleLogging(loggingInput.checked);
+    });
+
+    hideFloatingInput.addEventListener('change', () => {
+        setFloatingUIHidden(hideFloatingInput.checked);
+        onToggleHideFloatingUI(hideFloatingInput.checked);
     });
 
     scanBtn.addEventListener('click', () => {
@@ -848,6 +906,7 @@ export function createFloatingUI({
 
     // Append to page
     document.body.appendChild(host);
+    if (floatingUIHidden) setFloatingUIHidden(true);
 
     // Public API
     return {
@@ -874,13 +933,17 @@ export function createFloatingUI({
             }
         },
         show() {
-            host.style.display = '';
+            const onFeedPage = typeof isFeedPage !== 'function' || isFeedPage();
+            if (!floatingUIHidden && onFeedPage) host.style.display = '';
         },
         hide() {
             host.style.display = 'none';
             panel.classList.remove('open');
         },
         destroy() {
+            document.removeEventListener('click', handleDocumentClick);
+            document.removeEventListener('keydown', handleFloatingUIShortcut);
+            clearTimeout(statusTimer);
             host.remove();
         }
     };

@@ -5,6 +5,7 @@ describe('TRANSLATIONS', () => {
     const requiredKeys = [
         'title', 'enabled', 'blockPromotedPosts', 'blockSuggestedPosts',
         'blockRecommendedPosts', 'settingsTitle', 'language',
+        'hideFloatingUI', 'floatingUIShortcut',
     ];
 
     const variants = Object.keys(TRANSLATIONS);
