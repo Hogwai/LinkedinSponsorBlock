@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
     SETTINGS_KEYS,
     DEFAULT_SETTINGS,
+    EXTENSION_STORAGE_DEFAULTS,
     LANGUAGES,
     POSITIONS,
     getSetting,
@@ -16,6 +17,7 @@ describe('SETTINGS_KEYS', () => {
         expect(SETTINGS_KEYS.FILTER_SUGGESTED).toBe('filterSuggested');
         expect(SETTINGS_KEYS.FILTER_RECOMMENDED).toBe('filterRecommended');
         expect(SETTINGS_KEYS.LOGGING).toBe('logging');
+        expect(SETTINGS_KEYS.HIDE_FLOATING_UI).toBe('hideFloatingUI');
     });
 });
 
@@ -35,6 +37,42 @@ describe('DEFAULT_SETTINGS', () => {
         expect(DEFAULT_SETTINGS[SETTINGS_KEYS.FILTER_PROMOTED]).toBe(true);
         expect(DEFAULT_SETTINGS[SETTINGS_KEYS.FILTER_SUGGESTED]).toBe(true);
         expect(DEFAULT_SETTINGS[SETTINGS_KEYS.FILTER_RECOMMENDED]).toBe(true);
+    });
+
+    it('hide floating UI is disabled by default', () => {
+        expect(DEFAULT_SETTINGS[SETTINGS_KEYS.HIDE_FLOATING_UI]).toBe(false);
+    });
+});
+
+describe('EXTENSION_STORAGE_DEFAULTS', () => {
+    const expectedKeys = [
+        SETTINGS_KEYS.ENABLED,
+        SETTINGS_KEYS.FILTER_PROMOTED,
+        SETTINGS_KEYS.FILTER_SUGGESTED,
+        SETTINGS_KEYS.FILTER_RECOMMENDED,
+        SETTINGS_KEYS.LANGUAGE,
+        SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED,
+        SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED,
+        SETTINGS_KEYS.TOTAL_POSTS_SCANNED,
+        SETTINGS_KEYS.INSTALL_DATE,
+        SETTINGS_KEYS.REVIEW_BANNER_DISMISSED,
+        SETTINGS_KEYS.LOGGING,
+    ];
+
+    it('contains exactly the extension-owned keys', () => {
+        expect(Object.keys(EXTENSION_STORAGE_DEFAULTS).sort()).toEqual([...expectedKeys].sort());
+    });
+
+    it('uses canonical DEFAULT_SETTINGS values for every key', () => {
+        for (const key of expectedKeys) {
+            expect(EXTENSION_STORAGE_DEFAULTS[key]).toBe(DEFAULT_SETTINGS[key]);
+        }
+    });
+
+    it('does not include userscript-only or UI-only keys', () => {
+        expect(EXTENSION_STORAGE_DEFAULTS).not.toHaveProperty(SETTINGS_KEYS.HIDE_FLOATING_UI);
+        expect(EXTENSION_STORAGE_DEFAULTS).not.toHaveProperty(SETTINGS_KEYS.DISCREET);
+        expect(EXTENSION_STORAGE_DEFAULTS).not.toHaveProperty(SETTINGS_KEYS.POSITION);
     });
 });
 

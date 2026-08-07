@@ -133,6 +133,8 @@ Available on the [Chrome Web Store](https://chromewebstore.google.com/detail/lin
 
 - Visit [linkedin.com/feed](https://www.linkedin.com/feed/)
 - Open the browser console (`F12` > Console) to view logs (e.g., how many ads were removed)
+- Open the floating panel and enable **Hide floating icon** to keep the icon hidden across LinkedIn pages and browser sessions
+- To restore the icon, press **Ctrl+Shift+Space**. On ChromeOS, this shortcut is reserved for changing keyboard languages and may not reach the userscript
 
 #### Troubleshooting
 

@@ -16,6 +16,7 @@ export const SETTINGS_KEYS = {
     INSTALL_DATE: 'installDate',
     REVIEW_BANNER_DISMISSED: 'reviewBannerDismissed',
     LOGGING: 'logging',
+    HIDE_FLOATING_UI: 'hideFloatingUI',
 };
 
 export const DEFAULT_SETTINGS = {
@@ -32,7 +33,35 @@ export const DEFAULT_SETTINGS = {
     [SETTINGS_KEYS.INSTALL_DATE]: 0,
     [SETTINGS_KEYS.REVIEW_BANNER_DISMISSED]: false,
     [SETTINGS_KEYS.LOGGING]: false,
+    [SETTINGS_KEYS.HIDE_FLOATING_UI]: false,
 };
+
+/**
+ * Extension-owned storage keys, in order. Excludes userscript-only
+ * (HIDE_FLOATING_UI) and UI-only (DISCREET, POSITION) keys so the popup
+ * never writes or queries them.
+ */
+const extensionStorageKeys = [
+    SETTINGS_KEYS.ENABLED,
+    SETTINGS_KEYS.FILTER_PROMOTED,
+    SETTINGS_KEYS.FILTER_SUGGESTED,
+    SETTINGS_KEYS.FILTER_RECOMMENDED,
+    SETTINGS_KEYS.LANGUAGE,
+    SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED,
+    SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED,
+    SETTINGS_KEYS.TOTAL_POSTS_SCANNED,
+    SETTINGS_KEYS.INSTALL_DATE,
+    SETTINGS_KEYS.REVIEW_BANNER_DISMISSED,
+    SETTINGS_KEYS.LOGGING,
+];
+
+/**
+ * Defaults for extension-owned storage keys only. Values are derived from the
+ * canonical DEFAULT_SETTINGS so they can never drift out of sync.
+ */
+export const EXTENSION_STORAGE_DEFAULTS = Object.fromEntries(
+    extensionStorageKeys.map((key) => [key, DEFAULT_SETTINGS[key]]),
+);
 
 export const LANGUAGES = ['en', 'fr', 'es', 'pt', 'de', 'it', 'hi', 'ar', 'zh', 'ja'];
 

@@ -4,24 +4,16 @@ import { createObserver } from '../shared/observer.js';
 import { isFeedPage, createPageManager } from '../shared/page.js';
 import { SETTINGS_KEYS, DEFAULT_SETTINGS } from '../shared/settings.js';
 import { createFloatingUI } from './ui.js';
+import { createUserscriptStorage } from './storage.js';
 import { REMOTE_CONFIG_URL, applyRemoteConfig } from '../shared/remote-config.js';
 import { createBlocker } from '../shared/blocker.js';
 
 // ==================== STORAGE ====================
-const STORAGE_PREFIX = 'lsb_';
-
-function getStored(key, defaultValue) {
-    try {
-        const raw = localStorage.getItem(STORAGE_PREFIX + key);
-        return raw !== null ? JSON.parse(raw) : defaultValue;
-    } catch { logger.warn('localStorage get failed', key); return defaultValue; }
-}
-
-function setStored(key, value) {
-    try {
-        localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(value));
-    } catch { logger.warn('localStorage set failed', key); }
-}
+const settingsStorage = createUserscriptStorage(localStorage, (operation, key, error) => {
+    logger.warn(`localStorage ${operation} failed for ${key}`, error);
+});
+const getStored = settingsStorage.get;
+const setStored = settingsStorage.set;
 
 function getTotalCounters() {
     return {
@@ -63,7 +55,11 @@ const state = {
         [SETTINGS_KEYS.FILTER_RECOMMENDED]: getStored(SETTINGS_KEYS.FILTER_RECOMMENDED, DEFAULT_SETTINGS[SETTINGS_KEYS.FILTER_RECOMMENDED]),
         [SETTINGS_KEYS.LANGUAGE]: getStored(SETTINGS_KEYS.LANGUAGE, DEFAULT_SETTINGS[SETTINGS_KEYS.LANGUAGE]),
         [SETTINGS_KEYS.POSITION]: getStored(SETTINGS_KEYS.POSITION, DEFAULT_SETTINGS[SETTINGS_KEYS.POSITION]),
-        [SETTINGS_KEYS.LOGGING]: getStored(SETTINGS_KEYS.LOGGING, DEFAULT_SETTINGS[SETTINGS_KEYS.LOGGING])
+        [SETTINGS_KEYS.LOGGING]: getStored(SETTINGS_KEYS.LOGGING, DEFAULT_SETTINGS[SETTINGS_KEYS.LOGGING]),
+        [SETTINGS_KEYS.HIDE_FLOATING_UI]: settingsStorage.getBoolean(
+            SETTINGS_KEYS.HIDE_FLOATING_UI,
+            DEFAULT_SETTINGS[SETTINGS_KEYS.HIDE_FLOATING_UI]
+        )
     },
     ui: null
 };
@@ -161,7 +157,12 @@ function initUI() {
             state.settings[SETTINGS_KEYS.LOGGING] = enabled;
             setStored(SETTINGS_KEYS.LOGGING, enabled);
             logger.setEnabled(enabled);
-        }
+        },
+        onToggleHideFloatingUI(hidden) {
+            state.settings[SETTINGS_KEYS.HIDE_FLOATING_UI] = hidden;
+            setStored(SETTINGS_KEYS.HIDE_FLOATING_UI, hidden);
+        },
+        isFeedPage: () => state.isCurrentlyFeedPage
     });
 }
 

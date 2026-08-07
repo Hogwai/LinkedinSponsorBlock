@@ -1,6 +1,6 @@
 import api from './browser-api.js';
 import { createTranslator } from '../shared/translations.js';
-import { SETTINGS_KEYS, DEFAULT_SETTINGS, detectLanguage } from '../shared/settings.js';
+import { SETTINGS_KEYS, EXTENSION_STORAGE_DEFAULTS, detectLanguage } from '../shared/settings.js';
 import { CONFIG } from '../shared/config.js';
 import {
     MESSAGE_TYPES,
@@ -105,7 +105,7 @@ function updateUILanguage() {
 
 // Load settings from storage
 async function loadSettings() {
-    const result = await api.storage.local.get(DEFAULT_SETTINGS);
+    const result = await api.storage.local.get(EXTENSION_STORAGE_DEFAULTS);
 
     extensionToggle.checked = result.enabled;
     filterPromoted.checked = result.filterPromoted;
