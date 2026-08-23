@@ -67,6 +67,47 @@ function makeStorage(getResult) {
     };
 }
 
+// Deep-ish merge helper to build mutated copies of a valid profile so each
+// validation branch can be exercised independently. Keys explicitly set to
+// `undefined` are removed (so e.g. `{ feedWrapper: undefined }` deletes it).
+function omitUndefined(obj) {
+    for (const k of Object.keys(obj)) {
+        if (obj[k] === undefined) delete obj[k];
+    }
+    return obj;
+}
+
+function makeProfile(overrides = {}) {
+    const detOverrides = overrides.detection || {};
+    const baseDet = validProfile.detection;
+    return omitUndefined({
+        ...validProfile,
+        ...omitUndefined({ ...overrides }),
+        feedWrapper: omitUndefined({
+            ...validProfile.feedWrapper,
+            ...(omitUndefined({ ...(overrides.feedWrapper || {}) })),
+        }),
+        postContainers:
+            overrides.postContainers === undefined
+                ? [...validProfile.postContainers]
+                : overrides.postContainers,
+        detection: omitUndefined({
+            sponsored: omitUndefined({
+                ...baseDet.sponsored,
+                ...omitUndefined({ ...(detOverrides.sponsored || {}) }),
+            }),
+            suggested: omitUndefined({
+                ...baseDet.suggested,
+                ...omitUndefined({ ...(detOverrides.suggested || {}) }),
+            }),
+            recommended: omitUndefined({
+                ...baseDet.recommended,
+                ...omitUndefined({ ...(detOverrides.recommended || {}) }),
+            }),
+        }),
+    });
+}
+
 // ---------------------------------------------------------------------------
 // applyRemoteOverrides
 // ---------------------------------------------------------------------------
@@ -368,6 +409,185 @@ describe('applyRemoteConfig', () => {
 
         expect(logger.warn).toHaveBeenCalledWith(
             'Cached remote config is invalid; using embedded config',
+        );
+    });
+});
+
+// ---------------------------------------------------------------------------
+// isValidProfile validation fallbacks (cached config rejected per-field)
+// ---------------------------------------------------------------------------
+
+describe('isValidProfile validation fallbacks', () => {
+    // Each case mutates a valid profile so exactly one validation guard fails.
+    // All should be rejected with the same "invalid cache" warning.
+    it.each([
+        ['profile is null', null],
+        ['feedWrapper is missing', { feedWrapper: undefined }],
+        ['feedWrapper value is a non-string non-null', makeProfile({ feedWrapper: { mobile: 123 } })],
+        ['feedWrapper value is an empty string', makeProfile({ feedWrapper: { desktop: '' } })],
+        ['feedWrapper value is an invalid CSS selector', makeProfile({ feedWrapper: { newFeed: '[[' } })],
+        ['postContainers is missing', { postContainers: undefined }],
+        ['postContainers is empty', makeProfile({ postContainers: [] })],
+        ['postContainers contains a non-string', makeProfile({ postContainers: [123] })],
+        ['detection entry is missing', (() => {
+            const p = makeProfile();
+            delete p.detection.sponsored;
+            return p;
+        })()],
+        ['keywordSelectors is empty', makeProfile({ detection: { sponsored: { keywordSelectors: [] } } })],
+        ['keywordSelectors has an invalid selector', makeProfile({ detection: { sponsored: { keywordSelectors: ['['] } } })],
+        ['keywords is empty', makeProfile({ detection: { sponsored: { keywords: [] } } })],
+        ['childSelectors is not an array', makeProfile({ detection: { suggested: { childSelectors: 'x' } } })],
+        ['childSelectors has an invalid selector', makeProfile({ detection: { recommended: { childSelectors: ['['] } } })],
+    ])('rejects cached config when %s', async (_label, profile) => {
+        const storage = makeStorage({
+            version: 2,
+            profiles: { desktop: profile },
+        });
+
+        await remoteConfig.applyRemoteConfig(storage, vi.fn());
+
+        expect(logger.warn).toHaveBeenCalledWith(
+            'Cached remote config is invalid; using embedded config',
+        );
+        expect(logger.info).not.toHaveBeenCalledWith(
+            'Remote config fetched and applied',
+        );
+    });
+});
+
+// ---------------------------------------------------------------------------
+// __NO_REMOTE_CONFIG__ build flag
+// ---------------------------------------------------------------------------
+
+describe('__NO_REMOTE_CONFIG__ disabled mode', () => {
+    // resetModules() gives the fresh module its own logger/config instances,
+    // so re-import them and re-attach spies before asserting.
+    async function importWithFlag(flagValue) {
+        globalThis.__NO_REMOTE_CONFIG__ = flagValue;
+        vi.resetModules();
+        const [mod, configMod, loggerMod] = await Promise.all([
+            import('../src/shared/remote-config.js'),
+            import('../src/shared/config.js'),
+            import('../src/shared/logger.js'),
+        ]);
+        vi.spyOn(loggerMod.logger, 'info').mockReturnValue(undefined);
+        vi.spyOn(loggerMod.logger, 'warn').mockReturnValue(undefined);
+        return { remoteConfig: mod, CONFIG: configMod.CONFIG, logger: loggerMod.logger };
+    }
+
+    afterEach(() => {
+        delete globalThis.__NO_REMOTE_CONFIG__;
+    });
+
+    it('short-circuits applyRemoteOverrides and applyRemoteConfig when flag is true', async () => {
+        const { remoteConfig: fresh, CONFIG: freshConfig, logger: freshLogger } =
+            await importWithFlag(true);
+
+        const fetcher = vi.fn();
+        const storage = makeStorage(validConfig);
+
+        // Capture the embedded profile reference; mergeProfile would replace it.
+        const modernBefore = freshConfig.profiles.modern;
+
+        fresh.applyRemoteOverrides('desktop');
+        await fresh.applyRemoteConfig(storage, fetcher);
+        // Allow any (unexpected) fire-and-forget work to surface.
+        await new Promise((r) => setTimeout(r, 50));
+
+        expect(fetcher).not.toHaveBeenCalled();
+        expect(storage.set).not.toHaveBeenCalled();
+        expect(freshLogger.info).not.toHaveBeenCalled();
+        expect(freshLogger.warn).not.toHaveBeenCalled();
+        // Embedded CONFIG must remain untouched (no merge happened).
+        expect(freshConfig.profiles.modern).toBe(modernBefore);
+    });
+
+    it('behaves normally when flag is explicitly false', async () => {
+        const { remoteConfig: fresh, logger: freshLogger } =
+            await importWithFlag(false);
+
+        const fetcher = vi.fn().mockResolvedValue(validConfig);
+        const storage = makeStorage(null);
+
+        await fresh.applyRemoteConfig(storage, fetcher);
+
+        await vi.waitFor(() => {
+            expect(storage.set).toHaveBeenCalled();
+        });
+        expect(freshLogger.info).toHaveBeenCalledWith(
+            'Remote config fetched and applied',
+        );
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Fetch-phase merge and failure edge cases
+// ---------------------------------------------------------------------------
+
+describe('fetch phase merge and failures', () => {
+    it('merges fetched config when activeProfileName matches (no warning)', async () => {
+        remoteConfig.applyRemoteOverrides('desktop');
+        const storage = makeStorage(null);
+        const fetcher = vi.fn().mockResolvedValue(validConfig);
+
+        await remoteConfig.applyRemoteConfig(storage, fetcher);
+
+        await vi.waitFor(() => {
+            expect(storage.set).toHaveBeenCalled();
+        });
+
+        expect(logger.warn).not.toHaveBeenCalledWith(
+            'Remote config has no profile named: desktop',
+        );
+        expect(
+            CONFIG.profiles.desktop.detection.sponsored.keywords,
+        ).toBeInstanceOf(Set);
+    });
+
+    it('logs fetch-failed warning when storage.set rejects after a valid fetch', async () => {
+        const storage = {
+            get: async () => null,
+            set: vi.fn().mockRejectedValue(new Error('Quota exceeded')),
+        };
+        const fetcher = vi.fn().mockResolvedValue(validConfig);
+
+        await remoteConfig.applyRemoteConfig(storage, fetcher);
+
+        await vi.waitFor(() => {
+            expect(logger.warn).toHaveBeenCalledWith(
+                'Remote config fetch failed; using embedded config',
+                expect.any(Error),
+            );
+        });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// fetchRemoteConfigJSON error propagation
+// ---------------------------------------------------------------------------
+
+describe('fetchRemoteConfigJSON error paths', () => {
+    it('rejects when response.json() fails to parse invalid JSON', async () => {
+        globalThis.fetch = vi.fn().mockResolvedValue({
+            ok: true,
+            json: async () => {
+                throw new SyntaxError('Unexpected token < in JSON');
+            },
+        });
+
+        await expect(remoteConfig.fetchRemoteConfigJSON()).rejects.toThrow(
+            SyntaxError,
+        );
+    });
+
+    it('rejects when the network request itself fails', async () => {
+        globalThis.fetch = vi
+            .fn()
+            .mockRejectedValue(new TypeError('Failed to fetch'));
+
+        await expect(remoteConfig.fetchRemoteConfigJSON()).rejects.toThrow(
+            'Failed to fetch',
         );
     });
 });
