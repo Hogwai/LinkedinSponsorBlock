@@ -272,6 +272,46 @@ describe('Unicode normalization', () => {
     });
 });
 
+describe('substring fallback false positives', () => {
+    function createPostWithText(text, componentkey) {
+        const post = document.createElement('div');
+        post.setAttribute('data-lazy-mount-id', 'test-substring');
+
+        const p = document.createElement('p');
+        p.setAttribute('componentkey', componentkey);
+        p.textContent = text;
+        post.appendChild(p);
+
+        document.body.innerHTML = '';
+        document.body.appendChild(post);
+        return post;
+    }
+
+    it('long organic prose containing "followed by" is not blocked as suggested', () => {
+        // Prose containers (feed-commentary/comment-commentary) are excluded from keyword scanning via config selectors.
+        const longProse =
+            'How do we fundamentally discover new things? In a letter to Maurice Solovine, ' +
+            'Albert Einstein conceptualized discovery as a cyclical process involving an ' +
+            "intuitive 'jump' from sensory experience to axioms, followed by logical " +
+            'deduction. While Generative AI has mastered Induction and is rapidly conquering ' +
+            'Deduction, we argue it lacks the mechanism for Abduction.';
+        expect(longProse.length).toBeGreaterThan(100);
+
+        createPostWithText(longProse, 'feed-commentary_regression-test');
+        const groups = detection.getUnscannedPosts(document.body);
+        expect(groups.suggested).toHaveLength(0);
+        expect(groups.content).toHaveLength(1);
+    });
+
+    it('short label-like text containing a keyword is still detected via substring', () => {
+        // Real suggested posts show short header labels like "Followed by 2,415 people"
+        createPostWithText('Followed by 2,415 people you may know', 'post-header-label-test');
+        const groups = detection.getUnscannedPosts(document.body);
+        expect(groups.suggested).toHaveLength(1);
+        expect(groups.content).toHaveLength(0);
+    });
+});
+
 describe('legacy profile detection', () => {
     it('works with legacy selectors', async () => {
         config.applyLayout('legacy');
