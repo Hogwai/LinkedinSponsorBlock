@@ -35,6 +35,10 @@ const DEFAULT_POST_CONTAINERS = [
     'li.feed-item',
 ];
 
+// Exclude post/commentary prose containers from keyword scanning.
+const PROSE_EXCLUSION =
+    ':not([componentkey^="feed-commentary"]):not([componentkey^="comment-commentary"])';
+
 export const CONFIG = {
     activeProfile: 'modern',
     profiles: {
@@ -42,17 +46,24 @@ export const CONFIG = {
             feedWrapper: DEFAULT_FEED_WRAPPER,
             postContainers: DEFAULT_POST_CONTAINERS,
             detection: {
-                sponsored: createDetection(
-                    'sponsored',
-                    ['p[componentkey]', 'p[componentkey] > span', 'p[class]', 'p[class] > span'],
-                    ['article[data-sponsored-tracking-url]'],
-                ),
+                sponsored: createDetection('sponsored', [
+                    `p[componentkey]${PROSE_EXCLUSION}`,
+                    `p[componentkey]${PROSE_EXCLUSION} > span`,
+                    `p[class]${PROSE_EXCLUSION}`,
+                    `p[class]${PROSE_EXCLUSION} > span`,
+                ], 
+                ['article[data-sponsored-tracking-url]']),
                 suggested: createDetection(
                     'suggested',
-                    ['p[componentkey]', 'p[componentkey] > span'],
+                    [
+                        `p[componentkey]${PROSE_EXCLUSION}`,
+                        `p[componentkey]${PROSE_EXCLUSION} > span`,
+                    ],
                     ['p[data-test-id="main-feed-card__header"]'],
                 ),
-                recommended: createDetection('recommended', ['p[componentkey]']),
+                recommended: createDetection('recommended', [
+                    `p[componentkey]${PROSE_EXCLUSION}`,
+                ]),
             },
         }),
         legacy: createProfile({

@@ -21,10 +21,10 @@
             "detection": {
                 "sponsored": {
                     "keywordSelectors": [
-                        "p[componentkey]",
-                        "p[componentkey] > span",
-                        "p[class]",
-                        "p[class] > span"
+                        "p[componentkey]:not([componentkey^=\"feed-commentary\"]):not([componentkey^=\"comment-commentary\"])",
+                        "p[componentkey]:not([componentkey^=\"feed-commentary\"]):not([componentkey^=\"comment-commentary\"]) > span",
+                        "p[class]:not([componentkey^=\"feed-commentary\"]):not([componentkey^=\"comment-commentary\"])",
+                        "p[class]:not([componentkey^=\"feed-commentary\"]):not([componentkey^=\"comment-commentary\"]) > span"
                     ],
                     "childSelectors": ["article[data-sponsored-tracking-url]"],
                     "keywords": [
@@ -90,7 +90,10 @@
                     ]
                 },
                 "suggested": {
-                    "keywordSelectors": ["p[componentkey]", "p[componentkey] > span"],
+                    "keywordSelectors": [
+                        "p[componentkey]:not([componentkey^=\"feed-commentary\"]):not([componentkey^=\"comment-commentary\"])",
+                        "p[componentkey]:not([componentkey^=\"feed-commentary\"]):not([componentkey^=\"comment-commentary\"]) > span"
+                    ],
                     "childSelectors": ["p[data-test-id=\"main-feed-card__header\"]"],
                     "keywords": [
                         "suggestions",
@@ -124,7 +127,9 @@
                     ]
                 },
                 "recommended": {
-                    "keywordSelectors": ["p[componentkey]"],
+                    "keywordSelectors": [
+                        "p[componentkey]:not([componentkey^=\"feed-commentary\"]):not([componentkey^=\"comment-commentary\"])"
+                    ],
                     "childSelectors": [],
                     "keywords": [
                         "recommended for you",
