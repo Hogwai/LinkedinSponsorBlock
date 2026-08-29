@@ -193,12 +193,12 @@ const pageWindow = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window;
 const originalPushState = pageWindow.history.pushState;
 const originalReplaceState = pageWindow.history.replaceState;
 
-pageWindow.history.pushState = function(...args) {
+pageWindow.history.pushState = function (...args) {
     originalPushState.apply(this, args);
     handleUrlChange();
 };
 
-pageWindow.history.replaceState = function(...args) {
+pageWindow.history.replaceState = function (...args) {
     originalReplaceState.apply(this, args);
     handleUrlChange();
 };
@@ -207,33 +207,99 @@ pageWindow.addEventListener('popstate', handleUrlChange);
 
 state.isCurrentlyFeedPage = isFeedPage();
 
-async function start() {
-    await applyRemoteConfig({
+function setRemoteDebugStatus(status) {
+    const payload = {
+        ...status,
+        at: new Date().toISOString()
+    };
+
+    try {
+        localStorage.setItem('lsb_remote_status', JSON.stringify(payload));
+    } catch { /* ignored */ }
+
+    try {
+        pageWindow.__LinkedinSponsorBlockRemote = payload;
+    } catch { /* ignored */ }
+
+    logger.info(`Remote status ${JSON.stringify(payload)}`);
+}
+
+async function getUserscriptValue(key) {
+    try {
+        if (typeof GM_getValue !== 'undefined') return GM_getValue(key, null);
+        if (typeof GM !== 'undefined' && GM.getValue) return await GM.getValue(key, null);
+    } catch (err) {
+        setRemoteDebugStatus({ phase: 'storage-get-failed', error: String(err) });
+    }
+
+    try {
+        const raw = localStorage.getItem(key);
+        return raw !== null ? JSON.parse(raw) : null;
+    } catch { return null; }
+}
+
+async function setUserscriptValue(key, value) {
+    try {
+        if (typeof GM_setValue !== 'undefined') GM_setValue(key, value);
+        else if (typeof GM !== 'undefined' && GM.setValue) await GM.setValue(key, value);
+    } catch (err) {
+        setRemoteDebugStatus({ phase: 'gm-storage-set-failed', error: String(err) });
+    }
+
+    try {
+        localStorage.setItem(key, JSON.stringify(value));
+    } catch (err) {
+        setRemoteDebugStatus({ phase: 'local-storage-set-failed', error: String(err) });
+    }
+}
+
+function start() {
+    logger.setEnabled(state.settings[SETTINGS_KEYS.LOGGING]);
+    applyRemoteConfig({
         async get(key) {
-            try {
-                const raw = localStorage.getItem(key);
-                return raw !== null ? JSON.parse(raw) : null;
-            } catch { logger.warn('cache read failed in start'); return null; }
+            return await getUserscriptValue(key);
         },
         async set(key, value) {
-            try { localStorage.setItem(key, JSON.stringify(value)); }
-            catch { logger.warn('cache write failed in start'); }
+            await setUserscriptValue(key, value);
+            setRemoteDebugStatus({ phase: 'stored', key });
         }
     }, () => new Promise((resolve, reject) => {
-        GM_xmlhttpRequest({
+        const request = (typeof GM_xmlhttpRequest !== 'undefined' && GM_xmlhttpRequest)
+            || (typeof GM !== 'undefined' && GM.xmlHttpRequest);
+
+        if (!request) {
+            setRemoteDebugStatus({ phase: 'no-request-api' });
+            reject(new Error('No userscript HTTP request API available'));
+            return;
+        }
+
+        setRemoteDebugStatus({ phase: 'fetching', url: REMOTE_CONFIG_URL });
+        logger.info(`Fetching remote config: ${REMOTE_CONFIG_URL}`);
+        request({
             method: 'GET',
             url: REMOTE_CONFIG_URL,
             timeout: 5000,
             onload(res) {
+                setRemoteDebugStatus({ phase: 'response', status: res.status });
+                logger.info(`Remote config response status: ${res.status}`);
                 try {
                     resolve(res.status === 200 ? JSON.parse(res.responseText) : null);
-                } catch { logger.warn('Failed to parse remote config response'); resolve(null); }
+                } catch (err) {
+                    setRemoteDebugStatus({ phase: 'parse-failed', error: String(err) });
+                    logger.warn('Remote config response JSON parse failed', err);
+                    resolve(null);
+                }
             },
-            onerror() { reject(new Error('GM_xmlhttpRequest failed')); },
-            ontimeout() { reject(new Error('GM_xmlhttpRequest timeout')); }
+            onerror() {
+                setRemoteDebugStatus({ phase: 'request-error' });
+                reject(new Error('GM_xmlhttpRequest failed'));
+            },
+            ontimeout() {
+                setRemoteDebugStatus({ phase: 'request-timeout' });
+                reject(new Error('GM_xmlhttpRequest timeout'));
+            }
         });
     }));
-    logger.setEnabled(state.settings[SETTINGS_KEYS.LOGGING]);
     initUI();
     if (state.isCurrentlyFeedPage) {
         if (state.settings[SETTINGS_KEYS.ENABLED]) observer.start();
