@@ -97,6 +97,7 @@
                     "childSelectors": ["p[data-test-id=\"main-feed-card__header\"]"],
                     "keywords": [
                         "suggestions",
+                        "d’après votre activité",
                         "suggested",
                         "from your activity",
                         "vorgeschlagen",
@@ -265,6 +266,7 @@
                     "childSelectors": [],
                     "keywords": [
                         "suggestions",
+                        "d’après votre activité",
                         "suggested",
                         "from your activity",
                         "vorgeschlagen",
