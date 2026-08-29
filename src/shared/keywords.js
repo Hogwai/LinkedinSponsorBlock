@@ -84,6 +84,7 @@ export const SHARED_KEYWORDS = {
     suggested: new Set(
         [
             'Suggestions', // FRENCH
+            'D’après votre activité', // FRENCH
             'Suggested', // ENGLISH
             'From your activity', // ENGLISH
             'Vorgeschlagen', // GERMAN

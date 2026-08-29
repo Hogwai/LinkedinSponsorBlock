@@ -248,3 +248,52 @@ describe('getUnscannedPosts: feed-real-legit', () => {
         expect(sponsoredPost.textContent.toLowerCase()).toContain('sponsorisé');
     });
 });
+
+describe('getUnscannedPosts: feed-real-from-your-activity', () => {
+    let feed;
+
+    beforeEach(() => {
+        feed = loadFixtureDOM('feed-real-from-your-activity.html');
+        document.body.innerHTML = '';
+        document.body.appendChild(feed);
+    });
+
+    it('detects the suggested posts via "From your activity" keyword', () => {
+        const groups = detection.getUnscannedPosts(document.body);
+        expect(groups.suggested).toHaveLength(2);
+    });
+
+    it('classifies the organic post as content', () => {
+        const groups = detection.getUnscannedPosts(document.body);
+        expect(groups.content).toHaveLength(1);
+    });
+
+    it('total posts = 3 (2 from your activity + 1 organic)', () => {
+        const groups = detection.getUnscannedPosts(document.body);
+        const total =
+            groups.sponsored.length +
+            groups.suggested.length +
+            groups.recommended.length +
+            groups.content.length;
+        expect(total).toBe(3);
+    });
+
+    it('"From your activity" and "D’après votre activité" texts are standalone (no mixed content)', () => {
+        const groups = detection.getUnscannedPosts(document.body);
+        const firstSuggestedPost = groups.suggested[0];
+        const secondSuggestedPost = groups.suggested[1];
+        const hasSuggestions = Array.from(firstSuggestedPost.querySelectorAll('*'))
+            .some(el => el.textContent.trim() === 'From your activity') &&
+            Array.from(secondSuggestedPost.querySelectorAll('*'))
+                .some(el => el.textContent.trim() === 'D’après votre activité');
+
+        expect(hasSuggestions).toBe(true);
+    });
+
+    it('translation button does not interfere with detection', () => {
+        // The button "Afficher la traduction" is not a detection trigger
+        const groups = detection.getUnscannedPosts(document.body);
+        expect(groups.suggested).toHaveLength(2);
+        expect(groups.sponsored).toHaveLength(0);
+    });
+});
