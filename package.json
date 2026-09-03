@@ -16,6 +16,8 @@
         "test:watch": "vitest",
         "test:coverage": "vitest run --coverage",
         "clean": "rm -rf dist",
+        "keyword:sync": "node scripts/manage-keywords.js sync",
+        "keyword:check": "node scripts/manage-keywords.js check",
         "validate:remote-config": "node scripts/validate-remote-config.js",
         "debug:android": "node scripts/debug-android.js",
         "debug:android:once": "node scripts/debug-android.js --no-watch"

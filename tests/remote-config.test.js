@@ -218,7 +218,7 @@ describe('applyRemoteConfig', () => {
     });
 
     it('logs warning when cache is present but invalid', async () => {
-        const invalidConfig = { version: 2, profiles: {} }; // empty → invalid
+        const invalidConfig = { version: 2, profiles: {} }; // empty -> invalid
         await remoteConfig.applyRemoteConfig(makeStorage(invalidConfig), vi.fn());
 
         expect(logger.warn).toHaveBeenCalledWith(
@@ -232,7 +232,7 @@ describe('applyRemoteConfig', () => {
             profiles: {
                 desktop: {
                     feedWrapper: { mobile: null, desktop: null, newFeed: null },
-                    postContainers: ['['], // invalid CSS → querySelector throws → catch L35
+                    postContainers: ['['], // invalid CSS -> querySelector throws -> catch L35
                     detection: {
                         sponsored: {
                             keywordSelectors: ['.feed-shared-update-v2'],

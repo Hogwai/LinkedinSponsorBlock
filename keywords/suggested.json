@@ -1,0 +1,74 @@
+{
+  "FRENCH": [
+    "Suggestions",
+    "D’après votre activité",
+    "Suivi par"
+  ],
+  "ENGLISH": [
+    "Suggested",
+    "From your activity",
+    "Followed by"
+  ],
+  "GERMAN": [
+    "Vorgeschlagen",
+    "Aus ihren Aktivitäten",
+    "Gefolgt von",
+    "Sind Follower:innen",
+    "ist Follower:in"
+  ],
+  "SPANISH": [
+    "Sugerencias",
+    "De tu actividad",
+    "Seguido por"
+  ],
+  "PORTUGUESE": [
+    "Sugestões",
+    "Das suas atividades"
+  ],
+  "ITALIAN": [
+    "Seguito da"
+  ],
+  "DUTCH": [
+    "Gevolgd door"
+  ],
+  "NORWEGIAN": [
+    "Følges av"
+  ],
+  "SWEDISH": [
+    "Följs av"
+  ],
+  "INDONESIAN": [
+    "Diikuti oleh"
+  ],
+  "ROMANIAN": [
+    "Urmărit de"
+  ],
+  "BULGARIAN": [
+    "Следят"
+  ],
+  "TURKISH": [
+    "Takip edilen"
+  ],
+  "THAI": [
+    "ติดตามโดย",
+    "ถูกติดตามโดย"
+  ],
+  "VIETNAMESE": [
+    "Được theo dõi bởi"
+  ],
+  "GREEK": [
+    "ακολουθείται από"
+  ],
+  "JAPANESE": [
+    "によってフォロー"
+  ],
+  "HINDI": [
+    "से अनुसरण"
+  ],
+  "KOREAN": [
+    "팔로우한 사람"
+  ],
+  "ARABIC": [
+    "متابعة من"
+  ]
+}

@@ -26,7 +26,9 @@
                         "p[class]:not([componentkey^=\"feed-commentary\"]):not([componentkey^=\"comment-commentary\"])",
                         "p[class]:not([componentkey^=\"feed-commentary\"]):not([componentkey^=\"comment-commentary\"]) > span"
                     ],
-                    "childSelectors": ["article[data-sponsored-tracking-url]"],
+                    "childSelectors": [
+                        "article[data-sponsored-tracking-url]"
+                    ],
                     "keywords": [
                         "post sponsorisé",
                         "sponsorisé",
@@ -94,24 +96,26 @@
                         "p[componentkey]:not([componentkey^=\"feed-commentary\"]):not([componentkey^=\"comment-commentary\"])",
                         "p[componentkey]:not([componentkey^=\"feed-commentary\"]):not([componentkey^=\"comment-commentary\"]) > span"
                     ],
-                    "childSelectors": ["p[data-test-id=\"main-feed-card__header\"]"],
+                    "childSelectors": [
+                        "p[data-test-id=\"main-feed-card__header\"]"
+                    ],
                     "keywords": [
                         "suggestions",
                         "d’après votre activité",
+                        "suivi par",
                         "suggested",
                         "from your activity",
+                        "followed by",
                         "vorgeschlagen",
                         "aus ihren aktivitäten",
-                        "sugerencias",
-                        "de tu actividad",
-                        "sugestões",
-                        "das suas atividades",
-                        "followed by",
-                        "suivi par",
                         "gefolgt von",
                         "sind follower:innen",
                         "ist follower:in",
+                        "sugerencias",
+                        "de tu actividad",
                         "seguido por",
+                        "sugestões",
+                        "das suas atividades",
                         "seguito da",
                         "gevolgd door",
                         "følges av",
@@ -121,13 +125,13 @@
                         "следят",
                         "takip edilen",
                         "ติดตามโดย",
+                        "ถูกติดตามโดย",
                         "được theo dõi bởi",
                         "ακολουθείται από",
                         "によってフォロー",
                         "से अनुसरण",
                         "팔로우한 사람",
-                        "متابعة من",
-                        "ถูกติดตามโดย"
+                        "متابعة من"
                     ]
                 },
                 "recommended": {
@@ -139,6 +143,7 @@
                         "recommended for you",
                         "recommandé pour vous",
                         "te recomendamos",
+                        "recomendaciones",
                         "recomendações para você",
                         "für sie empfohlen",
                         "consigliato per te",
@@ -172,8 +177,7 @@
                         "మీ కోసం సిఫార్సు చేయబడినవి",
                         "แนะนำสำหรับคุณ",
                         "inirerekomenda para sa iyo",
-                        "đề xuất cho bạn",
-                        "recomendaciones"
+                        "đề xuất cho bạn"
                     ]
                 }
             }
@@ -265,25 +269,27 @@
                     ]
                 },
                 "suggested": {
-                    "keywordSelectors": ["span.update-components-header__text-view"],
+                    "keywordSelectors": [
+                        "span.update-components-header__text-view"
+                    ],
                     "childSelectors": [],
                     "keywords": [
                         "suggestions",
                         "d’après votre activité",
+                        "suivi par",
                         "suggested",
                         "from your activity",
+                        "followed by",
                         "vorgeschlagen",
                         "aus ihren aktivitäten",
-                        "sugerencias",
-                        "de tu actividad",
-                        "sugestões",
-                        "das suas atividades",
-                        "followed by",
-                        "suivi par",
                         "gefolgt von",
                         "sind follower:innen",
                         "ist follower:in",
+                        "sugerencias",
+                        "de tu actividad",
                         "seguido por",
+                        "sugestões",
+                        "das suas atividades",
                         "seguito da",
                         "gevolgd door",
                         "følges av",
@@ -293,22 +299,25 @@
                         "следят",
                         "takip edilen",
                         "ติดตามโดย",
+                        "ถูกติดตามโดย",
                         "được theo dõi bởi",
                         "ακολουθείται από",
                         "によってフォロー",
                         "से अनुसरण",
                         "팔로우한 사람",
-                        "متابعة من",
-                        "ถูกติดตามโดย"
+                        "متابعة من"
                     ]
                 },
                 "recommended": {
-                    "keywordSelectors": ["span.update-components-header__text-view"],
+                    "keywordSelectors": [
+                        "span.update-components-header__text-view"
+                    ],
                     "childSelectors": [],
                     "keywords": [
                         "recommended for you",
                         "recommandé pour vous",
                         "te recomendamos",
+                        "recomendaciones",
                         "recomendações para você",
                         "für sie empfohlen",
                         "consigliato per te",
@@ -342,8 +351,7 @@
                         "మీ కోసం సిఫార్సు చేయబడినవి",
                         "แนะนำสำหรับคุณ",
                         "inirerekomenda para sa iyo",
-                        "đề xuất cho bạn",
-                        "recomendaciones"
+                        "đề xuất cho bạn"
                     ]
                 }
             }
