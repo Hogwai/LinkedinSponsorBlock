@@ -88,8 +88,11 @@ export const SHARED_KEYWORDS = {
             'Suggested', // ENGLISH
             'From your activity', // ENGLISH
             'Vorgeschlagen', // GERMAN
+            'Aus Ihren Aktivitäten', // GERMAN
             'Sugerencias', // SPANISH
+            'De tu actividad', // SPANISH
             'Sugestões', // PORTUGUESE
+            'Das suas atividades', // PORTUGUESE
             'Followed by', // ENGLISH
             'Suivi par', // FRENCH
             'Gefolgt von', // GERMAN
