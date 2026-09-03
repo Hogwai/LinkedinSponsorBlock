@@ -65,7 +65,7 @@ describe('start: layout detection', () => {
     });
 
     it('connects without any layout markers when feed is found', () => {
-        // No layout markers on body — detectLayout returns null
+        // No layout markers on body, detectLayout returns null
         const feed = document.createElement('div');
         feed.setAttribute('data-testid', 'mainFeed');
         document.body.appendChild(feed);

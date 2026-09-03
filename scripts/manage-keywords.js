@@ -2,7 +2,7 @@
 
 /**
  * Manage keywords in keywords/*.json and sync to remote-config.json.
- * src/shared/keywords.js imports JSON directly — no JS generation.
+ * src/shared/keywords.js imports JSON directly
  *
  * Usage:
  *   node scripts/manage-keywords.js sync              # sync keywords/*.json -> remote-config.json
