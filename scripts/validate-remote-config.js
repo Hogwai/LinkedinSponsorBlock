@@ -179,15 +179,21 @@ function normalizeCollection(value) {
     return value instanceof Set ? [...value] : value;
 }
 
+function normalizeKeywordForValidation(text) {
+    return typeof text === 'string'
+        ? text.toLowerCase().normalize('NFC').replace(/[\u00AD\u061C\u180E\u200B-\u200F\u202A-\u202E\u2060-\u2069\uFEFF]+/g, '')
+        : text;
+}
+
 function validateRemoteIncludesEmbedded(remoteValue, embeddedValue, pathParts) {
     const remoteItems = normalizeCollection(remoteValue);
     const embeddedItems = normalizeCollection(embeddedValue);
 
     if (!Array.isArray(remoteItems) || !Array.isArray(embeddedItems)) return;
 
-    const remoteSet = new Set(remoteItems);
+    const remoteSet = new Set(remoteItems.map(normalizeKeywordForValidation));
     for (const item of embeddedItems) {
-        if (!remoteSet.has(item)) {
+        if (!remoteSet.has(normalizeKeywordForValidation(item))) {
             addError(`${label(pathParts)} is missing embedded config value: ${item}`);
         }
     }

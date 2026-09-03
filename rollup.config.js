@@ -1,6 +1,31 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'fs';
 import copy from 'rollup-plugin-copy';
 
+function jsonPlugin() {
+    return {
+        name: 'json',
+        resolveId(source, importer) {
+            if (source.endsWith('.json')) {
+                return null;
+            }
+            return null;
+        },
+        load(id) {
+            const cleanId = id.split('?')[0];
+            if (cleanId.endsWith('.json')) {
+                try {
+                    const content = readFileSync(cleanId, 'utf8');
+                    JSON.parse(content);
+                    return `export default ${content};`;
+                } catch {
+                    return null;
+                }
+            }
+            return null;
+        },
+    };
+}
+
 const target = process.env.BUILD_TARGET; // 'chrome', 'firefox', 'userscript', or undefined (all)
 const version = process.env.VERSION;
 const noRemoteConfig = !!process.env.NO_REMOTE_CONFIG;
@@ -73,18 +98,17 @@ const chromeBundles = [
             format: 'iife',
             intro: contentIntro,
         },
+        plugins: [jsonPlugin()],
     },
     {
         input: 'src/extension/background.js',
         output: { file: 'dist/chrome/background.js', format: 'iife' },
+        plugins: [jsonPlugin()],
     },
     {
         input: 'src/extension/popup.js',
         output: { file: 'dist/chrome/popup.js', format: 'iife' },
-        plugins: [
-            copySharedAssets('dist/chrome'),
-            manifestWithVersion('static/chrome/manifest.json', 'dist/chrome'),
-        ],
+        plugins: [jsonPlugin(), copySharedAssets('dist/chrome'), manifestWithVersion('static/chrome/manifest.json', 'dist/chrome')],
     },
 ];
 
@@ -96,18 +120,17 @@ const firefoxBundles = [
             format: 'iife',
             intro: contentIntro,
         },
+        plugins: [jsonPlugin()],
     },
     {
         input: 'src/extension/background.js',
         output: { file: 'dist/firefox/background.js', format: 'iife' },
+        plugins: [jsonPlugin()],
     },
     {
         input: 'src/extension/popup.js',
         output: { file: 'dist/firefox/popup.js', format: 'iife' },
-        plugins: [
-            copySharedAssets('dist/firefox'),
-            manifestWithVersion('static/firefox/manifest.json', 'dist/firefox'),
-        ],
+        plugins: [jsonPlugin(), copySharedAssets('dist/firefox'), manifestWithVersion('static/firefox/manifest.json', 'dist/firefox')],
     },
 ];
 
@@ -120,6 +143,7 @@ const userscriptBundles = [
             banner: userscriptBanner,
             intro: `${contentIntro}const __VERSION__ = '${version}';`,
         },
+        plugins: [jsonPlugin()],
     },
 ];
 
