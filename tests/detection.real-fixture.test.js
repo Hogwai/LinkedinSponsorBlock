@@ -245,12 +245,16 @@ describe('getUnscannedPosts: feed-real-legit', () => {
 
     it('"aime ce contenu" social proof does not match any keyword', () => {
         // The social proof bar has p[componentkey] with text "X aime ce contenu"
-        // This should not trigger any detection
+        // This should not trigger any detection.
+        // Whitespace is normalized first: fixtures are HTML files, so the text can be broken
+        // across lines by formatting without changing what the detection code sees.
         const groups = detection.getUnscannedPosts(document.body);
         const legitPost = groups.content[0];
         const hasSocialProof = Array.from(
             legitPost.querySelectorAll('[componentkey*="social"]'),
-        ).some((el) => el.textContent.toLowerCase().includes('aime ce contenu'));
+        ).some((el) =>
+            el.textContent.replace(/\s+/g, ' ').toLowerCase().includes('aime ce contenu'),
+        );
         expect(hasSocialProof).toBe(true);
     });
 
