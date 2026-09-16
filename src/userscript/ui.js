@@ -578,7 +578,8 @@ function createDOM() {
             toggleRow('blockPromotedPosts', 'Block promoted', 'lsb-filter-promoted', 'lsb-filter-toggle'),
             toggleRow('blockSuggestedPosts', 'Block suggested', 'lsb-filter-suggested', 'lsb-filter-toggle'),
             toggleRow('blockRecommendedPosts', 'Block "Recommended for you"', 'lsb-filter-recommended', 'lsb-filter-toggle'),
-            toggleRow('logging', 'Enable logging', 'lsb-logging'),
+            toggleRow('logging', 'Enable simple logging', 'lsb-logging'),
+            toggleRow('verboseLogging', 'Enable detailed logging', 'lsb-verbose-logging'),
             toggleRow('hideFloatingUI', 'Hide floating icon', 'lsb-hide-floating-ui'),
             el('p', { class: 'lsb-shortcut-hint', 'data-t': 'floatingUIShortcut' }, 'Shortcut: Ctrl+Shift+Space to restore')
         ),
@@ -638,6 +639,7 @@ export function createFloatingUI({
     onToggleSuggested,
     onToggleRecommended,
     onToggleLogging,
+    onToggleVerbose,
     onToggleHideFloatingUI,
     isFeedPage,
     onScan,
@@ -666,6 +668,7 @@ export function createFloatingUI({
     const suggestedInput = $('lsb-filter-suggested');
     const recommendedInput = $('lsb-filter-recommended');
     const loggingInput = $('lsb-logging');
+    const verboseLoggingInput = $('lsb-verbose-logging');
     const hideFloatingInput = $('lsb-hide-floating-ui');
     const scanBtn = $('lsb-scan');
     const langSelect = $('lsb-language');
@@ -738,6 +741,7 @@ export function createFloatingUI({
     suggestedInput.checked = settings.filterSuggested;
     recommendedInput.checked = settings.filterRecommended;
     loggingInput.checked = settings[SETTINGS_KEYS.LOGGING] || false;
+    verboseLoggingInput.checked = settings[SETTINGS_KEYS.VERBOSE_LOGGING] || false;
     let floatingUIHidden = settings[SETTINGS_KEYS.HIDE_FLOATING_UI] || false;
     hideFloatingInput.checked = floatingUIHidden;
     langSelect.value = currentLang;
@@ -870,6 +874,10 @@ export function createFloatingUI({
         onToggleLogging(loggingInput.checked);
     });
 
+    verboseLoggingInput.addEventListener('change', () => {
+        onToggleVerbose(verboseLoggingInput.checked);
+    });
+
     hideFloatingInput.addEventListener('change', () => {
         setFloatingUIHidden(hideFloatingInput.checked);
         onToggleHideFloatingUI(hideFloatingInput.checked);
@@ -930,6 +938,9 @@ export function createFloatingUI({
             }
             if (newSettings.logging !== undefined) {
                 loggingInput.checked = newSettings.logging;
+            }
+            if (newSettings.verboseLogging !== undefined) {
+                verboseLoggingInput.checked = newSettings.verboseLogging;
             }
         },
         show() {

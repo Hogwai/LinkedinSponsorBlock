@@ -323,13 +323,11 @@ describe('getUnscannedPosts: feed-real-follow-button', () => {
         document.body.appendChild(feed);
     });
 
-    it('detects author-not-in-network suggestions via the structural markers', () => {
+    it('detects author-not-in-network suggestions via the author-row markers', () => {
         const groups = detection.getUnscannedPosts(document.body);
-        expect(groups.suggested).toHaveLength(3);
+        expect(groups.suggested).toHaveLength(2);
         const ids = groups.suggested.map((p) => p.getAttribute('data-lazy-mount-id'));
-        expect(ids).toEqual(
-            expect.arrayContaining(['fixture-follow-1', 'fixture-follow-2', 'fixture-connect-1']),
-        );
+        expect(ids).toEqual(expect.arrayContaining(['fixture-follow-1', 'fixture-connect-1']));
     });
 
     it('keeps the "liked by a network member" post as content despite its author Follow button', () => {
@@ -337,7 +335,13 @@ describe('getUnscannedPosts: feed-real-follow-button', () => {
         const contentIds = groups.content.map((p) => p.getAttribute('data-lazy-mount-id'));
         expect(contentIds).toContain('fixture-liked-by');
         expect(contentIds).not.toContain('fixture-follow-1');
-        expect(contentIds).not.toContain('fixture-follow-2');
+    });
+
+    it('keeps a post whose author is followed but that embeds a Follow button for someone else', () => {
+        const groups = detection.getUnscannedPosts(document.body);
+        const contentIds = groups.content.map((p) => p.getAttribute('data-lazy-mount-id'));
+        expect(contentIds).toContain('fixture-embedded-follow');
+        expect(contentIds).not.toContain('fixture-follow-1');
     });
 
     it('classifies the organic post as content and does NOT flag prose containing "suivre"', () => {
@@ -349,7 +353,7 @@ describe('getUnscannedPosts: feed-real-follow-button', () => {
         expect(organic.querySelector('button[componentkey^="auto-component-"]')).toBeNull();
     });
 
-    it('total posts = 5 (3 suggestions + 2 content)', () => {
+    it('total posts = 5 (2 suggestions + 3 content)', () => {
         const groups = detection.getUnscannedPosts(document.body);
         const total =
             groups.sponsored.length +
@@ -357,21 +361,18 @@ describe('getUnscannedPosts: feed-real-follow-button', () => {
             groups.recommended.length +
             groups.content.length;
         expect(total).toBe(5);
-        expect(groups.content).toHaveLength(2);
+        expect(groups.content).toHaveLength(3);
     });
 
-    it('hides follow-button suggestions with the blocker, keeps context-header posts visible', async () => {
+    it('hides author-row suggestions with the blocker, keeps context-header and embedded posts visible', async () => {
         const { createBlocker } = await import('../src/shared/blocker.js');
         const state = createTestState();
         const blocker = createBlocker({ state });
         const result = blocker.scanFeed(document.body);
 
-        expect(result.suggested).toBe(3);
-        expect(result.content).toBe(2);
+        expect(result.suggested).toBe(2);
+        expect(result.content).toBe(3);
         expect(feed.querySelector('[data-lazy-mount-id="fixture-follow-1"]').style.display).toBe(
-            'none',
-        );
-        expect(feed.querySelector('[data-lazy-mount-id="fixture-follow-2"]').style.display).toBe(
             'none',
         );
         expect(feed.querySelector('[data-lazy-mount-id="fixture-connect-1"]').style.display).toBe(
@@ -379,6 +380,9 @@ describe('getUnscannedPosts: feed-real-follow-button', () => {
         );
         expect(
             feed.querySelector('[data-lazy-mount-id="fixture-liked-by"]').style.display,
+        ).not.toBe('none');
+        expect(
+            feed.querySelector('[data-lazy-mount-id="fixture-embedded-follow"]').style.display,
         ).not.toBe('none');
         expect(
             feed.querySelector('[data-lazy-mount-id="fixture-organic-1"]').style.display,

@@ -23,9 +23,14 @@ const DEFAULT_FEED_WRAPPER = {
     mobile: 'ol.feed-container',
 };
 
+/**
+ * Generic container markers that LinkedIn also uses outside posts (nav bar, side rails, feed modules)
+ */
+export const GENERIC_POST_CONTAINERS = ['div[data-display-contents="true"]'];
+
 const DEFAULT_POST_CONTAINERS = [
     'div[data-lazy-mount-id]',
-    'div[data-display-contents="true"]',
+    ...GENERIC_POST_CONTAINERS,
     '.ember-view.occludable-update',
     '[class*="ember-view"][class*="occludable-update"]',
     'div[class*="feed-shared-update-v2"][id*="ember"]',
@@ -36,8 +41,10 @@ const DEFAULT_POST_CONTAINERS = [
 ];
 
 // Exclude post/commentary prose containers from keyword scanning.
+// SDUI prose lives inside [data-testid="expandable-text-box"]; excluding it stops the
+// substring fallback from matching keywords inside long prose (false positives).
 const PROSE_EXCLUSION =
-    ':not([componentkey^="feed-commentary"]):not([componentkey^="comment-commentary"])';
+    ':not([componentkey^="feed-commentary"]):not([componentkey^="comment-commentary"]):not(:has([data-testid="expandable-text-box"]))';
 
 export const CONFIG = {
     activeProfile: 'modern',
@@ -61,7 +68,7 @@ export const CONFIG = {
                     ],
                     [
                         'p[data-test-id="main-feed-card__header"]',
-                        'div[data-lazy-mount-id]:not(:has(hr[role="presentation"])) :is(button[componentkey^="auto-component-"], [componentkey^="ConnectButtonstate:"])',
+                        'div[data-lazy-mount-id]:not(:has(hr[role="presentation"])) h2 + div :is(button[componentkey^="auto-component-"], [componentkey^="ConnectButtonstate:"])',
                     ],
                 ),
                 recommended: createDetection('recommended', [

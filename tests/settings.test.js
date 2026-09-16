@@ -17,6 +17,7 @@ describe('SETTINGS_KEYS', () => {
         expect(SETTINGS_KEYS.FILTER_SUGGESTED).toBe('filterSuggested');
         expect(SETTINGS_KEYS.FILTER_RECOMMENDED).toBe('filterRecommended');
         expect(SETTINGS_KEYS.LOGGING).toBe('logging');
+        expect(SETTINGS_KEYS.VERBOSE_LOGGING).toBe('verboseLogging');
         expect(SETTINGS_KEYS.HIDE_FLOATING_UI).toBe('hideFloatingUI');
     });
 });
@@ -57,6 +58,7 @@ describe('EXTENSION_STORAGE_DEFAULTS', () => {
         SETTINGS_KEYS.INSTALL_DATE,
         SETTINGS_KEYS.REVIEW_BANNER_DISMISSED,
         SETTINGS_KEYS.LOGGING,
+        SETTINGS_KEYS.VERBOSE_LOGGING,
     ];
 
     it('contains exactly the extension-owned keys', () => {
@@ -100,9 +102,10 @@ describe('mergeSettings', () => {
     });
 
     it('overrides specific keys', () => {
-        const merged = mergeSettings({ enabled: false, logging: true });
+        const merged = mergeSettings({ enabled: false, logging: true, verboseLogging: true });
         expect(merged.enabled).toBe(false);
         expect(merged.logging).toBe(true);
+        expect(merged.verboseLogging).toBe(true);
         // Other values remain default
         expect(merged.filterPromoted).toBe(true);
     });

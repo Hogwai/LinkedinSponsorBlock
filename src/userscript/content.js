@@ -56,6 +56,7 @@ const state = {
         [SETTINGS_KEYS.LANGUAGE]: getStored(SETTINGS_KEYS.LANGUAGE, DEFAULT_SETTINGS[SETTINGS_KEYS.LANGUAGE]),
         [SETTINGS_KEYS.POSITION]: getStored(SETTINGS_KEYS.POSITION, DEFAULT_SETTINGS[SETTINGS_KEYS.POSITION]),
         [SETTINGS_KEYS.LOGGING]: getStored(SETTINGS_KEYS.LOGGING, DEFAULT_SETTINGS[SETTINGS_KEYS.LOGGING]),
+        [SETTINGS_KEYS.VERBOSE_LOGGING]: getStored(SETTINGS_KEYS.VERBOSE_LOGGING, DEFAULT_SETTINGS[SETTINGS_KEYS.VERBOSE_LOGGING]),
         [SETTINGS_KEYS.HIDE_FLOATING_UI]: settingsStorage.getBoolean(
             SETTINGS_KEYS.HIDE_FLOATING_UI,
             DEFAULT_SETTINGS[SETTINGS_KEYS.HIDE_FLOATING_UI]
@@ -158,6 +159,11 @@ function initUI() {
             setStored(SETTINGS_KEYS.LOGGING, enabled);
             logger.setEnabled(enabled);
         },
+        onToggleVerbose(enabled) {
+            state.settings[SETTINGS_KEYS.VERBOSE_LOGGING] = enabled;
+            setStored(SETTINGS_KEYS.VERBOSE_LOGGING, enabled);
+            logger.setVerbose(enabled);
+        },
         onToggleHideFloatingUI(hidden) {
             state.settings[SETTINGS_KEYS.HIDE_FLOATING_UI] = hidden;
             setStored(SETTINGS_KEYS.HIDE_FLOATING_UI, hidden);
@@ -254,6 +260,9 @@ async function setUserscriptValue(key, value) {
 }
 
 function start() {
+    // Verbose first: either toggle alone must keep logging active, and this avoids
+    // the "logging is disabled" message when only detailed logging is enabled.
+    logger.setVerbose(state.settings[SETTINGS_KEYS.VERBOSE_LOGGING]);
     logger.setEnabled(state.settings[SETTINGS_KEYS.LOGGING]);
     applyRemoteConfig({
         async get(key) {

@@ -310,6 +310,32 @@ describe('substring fallback false positives', () => {
         expect(groups.suggested).toHaveLength(1);
         expect(groups.content).toHaveLength(0);
     });
+
+    it('SDUI prose inside [data-testid="expandable-text-box"] is not scanned for keywords', () => {
+        const post = document.createElement('div');
+        post.setAttribute('data-lazy-mount-id', 'test-sdui-prose');
+
+        const p = document.createElement('p');
+        p.setAttribute('componentkey', '4da5cb83-0000-0000-0000-000000000000');
+
+        const span = document.createElement('span');
+        span.setAttribute('data-testid', 'expandable-text-box');
+        span.textContent =
+            'We were followed by a long discussion about suggestions, sponsorisé and ' +
+            'en partenariat avec a client — none of this is a LinkedIn label.';
+
+        p.appendChild(span);
+        post.appendChild(p);
+
+        document.body.innerHTML = '';
+        document.body.appendChild(post);
+
+        const groups = detection.getUnscannedPosts(document.body);
+        expect(groups.suggested).toHaveLength(0);
+        expect(groups.sponsored).toHaveLength(0);
+        expect(groups.recommended).toHaveLength(0);
+        expect(groups.content).toHaveLength(1);
+    });
 });
 
 describe('legacy profile detection', () => {
@@ -327,5 +353,90 @@ describe('legacy profile detection', () => {
         expect(groups).toHaveProperty('suggested');
         expect(groups).toHaveProperty('recommended');
         expect(groups).toHaveProperty('content');
+    });
+});
+
+describe('matchReason (diagnostics)', () => {
+    const modern = (category) => config.CONFIG.profiles.modern.detection[category];
+
+    function mount(html) {
+        document.body.innerHTML = html;
+        return document.body.querySelector('[data-lazy-mount-id]');
+    }
+
+    it('reports keyword-exact for a label that equals a keyword', () => {
+        const post = mount(
+            '<div data-lazy-mount-id="r1"><p componentkey="k1">Post sponsorisé</p></div>',
+        );
+        expect(detection.matchReason(post, modern('sponsored'))).toMatchObject({
+            kind: 'keyword-exact',
+            keyword: 'post sponsorisé',
+        });
+    });
+
+    it('reports keyword-text-node for "Suivi par" followed by a link', () => {
+        const post = mount(
+            '<div data-lazy-mount-id="r2"><p componentkey="k2">Suivi par <a href="#">Alice</a></p></div>',
+        );
+        const reason = detection.matchReason(post, modern('suggested'));
+        expect(reason.kind).toBe('keyword-text-node');
+        expect(reason.keyword).toBe('suivi par');
+    });
+
+    it('reports keyword-substring for a short label with a count', () => {
+        const post = mount(
+            '<div data-lazy-mount-id="r3"><p componentkey="k3">Followed by 2,415 people you may know</p></div>',
+        );
+        const reason = detection.matchReason(post, modern('suggested'));
+        expect(reason.kind).toBe('keyword-substring');
+        expect(reason.keyword).toBe('followed by');
+    });
+
+    it('reports the structural selector for an author-row Follow button', () => {
+        const post = mount(
+            '<div data-lazy-mount-id="r4"><h2>Post du fil d’actualité</h2>' +
+                '<div class="author-row"><button componentkey="auto-component-1" aria-label="Suivre X">Suivre</button></div></div>',
+        );
+        const reason = detection.matchReason(post, modern('suggested'));
+        expect(reason.kind).toBe('child-selector');
+        expect(reason.selector).toContain('h2 + div');
+    });
+
+    it('returns null when nothing matches', () => {
+        const post = mount(
+            '<div data-lazy-mount-id="r5"><p componentkey="k5">Just an organic post</p></div>',
+        );
+        expect(detection.matchReason(post, modern('suggested'))).toBeNull();
+    });
+});
+
+describe('post containers', () => {
+    it('marks lazy-mount containers as primary posts, generic blocks as secondary', () => {
+        document.body.innerHTML = `
+            <div data-display-contents="true">Search Home Network Jobs</div>
+            <div data-lazy-mount-id="p1" style="display: contents">
+                <div data-display-contents="true">
+                    <h2><span>Feed post</span></h2>
+                    <p componentkey="c1">Just an organic post</p>
+                </div>
+            </div>
+        `;
+        const generic = document.body.querySelector('div[data-display-contents="true"]');
+        const real = document.body.querySelector('div[data-lazy-mount-id]');
+        expect(detection.isPrimaryPostContainer(real)).toBe(true);
+        expect(detection.isPrimaryPostContainer(generic)).toBe(false);
+    });
+
+    it('still detects a real post wrapped in a lazy-mount container', () => {
+        document.body.innerHTML = `
+            <div data-lazy-mount-id="p1" style="display: contents">
+                <div data-display-contents="true">
+                    <h2><span>Feed post</span></h2>
+                    <p componentkey="c1">Just an organic post</p>
+                </div>
+            </div>
+        `;
+        const groups = detection.getUnscannedPosts(document.body);
+        expect(groups.content).toHaveLength(1);
     });
 });

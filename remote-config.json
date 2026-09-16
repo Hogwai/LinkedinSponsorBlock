@@ -21,10 +21,10 @@
             "detection": {
                 "sponsored": {
                     "keywordSelectors": [
-                        "p[componentkey]:not([componentkey^=\"feed-commentary\"]):not([componentkey^=\"comment-commentary\"])",
-                        "p[componentkey]:not([componentkey^=\"feed-commentary\"]):not([componentkey^=\"comment-commentary\"]) > span",
-                        "p[class]:not([componentkey^=\"feed-commentary\"]):not([componentkey^=\"comment-commentary\"])",
-                        "p[class]:not([componentkey^=\"feed-commentary\"]):not([componentkey^=\"comment-commentary\"]) > span"
+                        "p[componentkey]:not([componentkey^=\"feed-commentary\"]):not([componentkey^=\"comment-commentary\"]):not(:has([data-testid=\"expandable-text-box\"]))",
+                        "p[componentkey]:not([componentkey^=\"feed-commentary\"]):not([componentkey^=\"comment-commentary\"]):not(:has([data-testid=\"expandable-text-box\"])) > span",
+                        "p[class]:not([componentkey^=\"feed-commentary\"]):not([componentkey^=\"comment-commentary\"]):not(:has([data-testid=\"expandable-text-box\"]))",
+                        "p[class]:not([componentkey^=\"feed-commentary\"]):not([componentkey^=\"comment-commentary\"]):not(:has([data-testid=\"expandable-text-box\"])) > span"
                     ],
                     "childSelectors": [
                         "article[data-sponsored-tracking-url]"
@@ -93,12 +93,12 @@
                 },
                 "suggested": {
                     "keywordSelectors": [
-                        "p[componentkey]:not([componentkey^=\"feed-commentary\"]):not([componentkey^=\"comment-commentary\"])",
-                        "p[componentkey]:not([componentkey^=\"feed-commentary\"]):not([componentkey^=\"comment-commentary\"]) > span"
+                        "p[componentkey]:not([componentkey^=\"feed-commentary\"]):not([componentkey^=\"comment-commentary\"]):not(:has([data-testid=\"expandable-text-box\"]))",
+                        "p[componentkey]:not([componentkey^=\"feed-commentary\"]):not([componentkey^=\"comment-commentary\"]):not(:has([data-testid=\"expandable-text-box\"])) > span"
                     ],
                     "childSelectors": [
                         "p[data-test-id=\"main-feed-card__header\"]",
-                        "div[data-lazy-mount-id]:not(:has(hr[role=\"presentation\"])) :is(button[componentkey^=\"auto-component-\"], [componentkey^=\"ConnectButtonstate:\"])"
+                        "div[data-lazy-mount-id]:not(:has(hr[role=\"presentation\"])) h2 + div :is(button[componentkey^=\"auto-component-\"], [componentkey^=\"ConnectButtonstate:\"])"
                     ],
                     "keywords": [
                         "suggestions",
@@ -137,7 +137,7 @@
                 },
                 "recommended": {
                     "keywordSelectors": [
-                        "p[componentkey]:not([componentkey^=\"feed-commentary\"]):not([componentkey^=\"comment-commentary\"])"
+                        "p[componentkey]:not([componentkey^=\"feed-commentary\"]):not([componentkey^=\"comment-commentary\"]):not(:has([data-testid=\"expandable-text-box\"]))"
                     ],
                     "childSelectors": [],
                     "keywords": [

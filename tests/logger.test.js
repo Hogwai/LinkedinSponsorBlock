@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
 let logger;
 
@@ -6,6 +6,10 @@ beforeEach(async () => {
     vi.resetModules();
     const mod = await import('../src/shared/logger.js');
     logger = mod.logger;
+});
+
+afterEach(() => {
+    globalThis.localStorage?.removeItem('lsb_debug');
 });
 
 describe('initial state', () => {
@@ -56,6 +60,62 @@ describe('setEnabled', () => {
         expect(spy).toHaveBeenCalledTimes(1); // still once
 
         spy.mockRestore();
+    });
+});
+
+describe('setVerbose', () => {
+    it('enables verbose mode', () => {
+        logger.setVerbose(true);
+        expect(logger.verbose).toBe(true);
+    });
+
+    it('keeps verbose on when the lsb_debug localStorage flag is set', () => {
+        globalThis.localStorage.setItem('lsb_debug', '1');
+        logger.setVerbose(false);
+        expect(logger.verbose).toBe(true);
+    });
+});
+
+describe('independent toggles', () => {
+    it('logs when only detailed logging is enabled', () => {
+        logger.setVerbose(true);
+        logger.setEnabled(false);
+        logger.log('detailed only');
+        expect(logger.buffer).toContain('detailed only');
+    });
+
+    it('logs when only simple logging is enabled', () => {
+        logger.setEnabled(true);
+        logger.setVerbose(false);
+        logger.log('simple only');
+        expect(logger.buffer).toContain('simple only');
+    });
+
+    it('stays silent when both toggles are off', () => {
+        logger.setVerbose(false);
+        logger.setEnabled(false);
+        logger.log('nothing');
+        expect(logger.buffer).toEqual([]);
+    });
+
+    it('keeps pending logs when simple logging is turned off while detailed is on', () => {
+        logger.setVerbose(true);
+        logger.buffer.push('pending');
+        logger.setEnabled(false);
+        expect(logger.buffer).toContain('pending');
+    });
+
+    it('info and warn also log when only detailed logging is enabled', () => {
+        logger.setVerbose(true);
+        logger.setEnabled(false);
+        const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        logger.info('hello');
+        logger.warn('careful');
+        expect(logSpy).toHaveBeenCalledWith('[LinkedinSponsorBlock] hello');
+        expect(warnSpy).toHaveBeenCalledWith('[LinkedinSponsorBlock] careful');
+        logSpy.mockRestore();
+        warnSpy.mockRestore();
     });
 });
 

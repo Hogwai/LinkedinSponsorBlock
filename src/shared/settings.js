@@ -16,6 +16,7 @@ export const SETTINGS_KEYS = {
     INSTALL_DATE: 'installDate',
     REVIEW_BANNER_DISMISSED: 'reviewBannerDismissed',
     LOGGING: 'logging',
+    VERBOSE_LOGGING: 'verboseLogging',
     HIDE_FLOATING_UI: 'hideFloatingUI',
 };
 
@@ -33,6 +34,7 @@ export const DEFAULT_SETTINGS = {
     [SETTINGS_KEYS.INSTALL_DATE]: 0,
     [SETTINGS_KEYS.REVIEW_BANNER_DISMISSED]: false,
     [SETTINGS_KEYS.LOGGING]: false,
+    [SETTINGS_KEYS.VERBOSE_LOGGING]: false,
     [SETTINGS_KEYS.HIDE_FLOATING_UI]: false,
 };
 
@@ -53,6 +55,7 @@ const extensionStorageKeys = [
     SETTINGS_KEYS.INSTALL_DATE,
     SETTINGS_KEYS.REVIEW_BANNER_DISMISSED,
     SETTINGS_KEYS.LOGGING,
+    SETTINGS_KEYS.VERBOSE_LOGGING,
 ];
 
 /**
