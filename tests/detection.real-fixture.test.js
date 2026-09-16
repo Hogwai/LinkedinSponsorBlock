@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { loadFixtureDOM } from './helpers.js';
+import { loadFixtureDOM, createTestState } from './helpers.js';
 
 let detection;
 let config;
@@ -50,7 +50,8 @@ describe('getUnscannedPosts: feed-real-sponsored', () => {
         const groups = detection.getUnscannedPosts(document.body);
         const sponsoredPost = groups.sponsored[0];
         // The outer wrapper has data-lazy-mount-id
-        const hasLazyMount = sponsoredPost.matches?.('[data-lazy-mount-id]') ||
+        const hasLazyMount =
+            sponsoredPost.matches?.('[data-lazy-mount-id]') ||
             sponsoredPost.querySelector('[data-lazy-mount-id]');
         expect(hasLazyMount).toBeTruthy();
     });
@@ -73,7 +74,12 @@ describe('getUnscannedPosts: feed-real-sponsored', () => {
         expect(total).toBe(2);
 
         // Each post should be counted exactly once: no duplicates
-        const posts = [...groups.sponsored, ...groups.suggested, ...groups.recommended, ...groups.content];
+        const posts = [
+            ...groups.sponsored,
+            ...groups.suggested,
+            ...groups.recommended,
+            ...groups.content,
+        ];
         const uniquePosts = new Set(posts);
         expect(uniquePosts.size).toBe(total);
     });
@@ -148,7 +154,12 @@ describe('getUnscannedPosts: feed-real-suggested', () => {
 
     it('nested containers are not double-counted', () => {
         const groups = detection.getUnscannedPosts(document.body);
-        const posts = [...groups.sponsored, ...groups.suggested, ...groups.recommended, ...groups.content];
+        const posts = [
+            ...groups.sponsored,
+            ...groups.suggested,
+            ...groups.recommended,
+            ...groups.content,
+        ];
         const uniquePosts = new Set(posts);
         expect(uniquePosts.size).toBe(2);
     });
@@ -187,8 +198,9 @@ describe('getUnscannedPosts: feed-real-suggestions', () => {
         const groups = detection.getUnscannedPosts(document.body);
         const suggestedPost = groups.suggested[0];
         // The "Suggestions" text should be present in the post
-        const hasSuggestions = Array.from(suggestedPost.querySelectorAll('*'))
-            .some(el => el.textContent.trim() === 'Suggestions');
+        const hasSuggestions = Array.from(suggestedPost.querySelectorAll('*')).some(
+            (el) => el.textContent.trim() === 'Suggestions',
+        );
         expect(hasSuggestions).toBe(true);
     });
 
@@ -236,8 +248,9 @@ describe('getUnscannedPosts: feed-real-legit', () => {
         // This should not trigger any detection
         const groups = detection.getUnscannedPosts(document.body);
         const legitPost = groups.content[0];
-        const hasSocialProof = Array.from(legitPost.querySelectorAll('[componentkey*="social"]'))
-            .some(el => el.textContent.toLowerCase().includes('aime ce contenu'));
+        const hasSocialProof = Array.from(
+            legitPost.querySelectorAll('[componentkey*="social"]'),
+        ).some((el) => el.textContent.toLowerCase().includes('aime ce contenu'));
         expect(hasSocialProof).toBe(true);
     });
 
@@ -282,10 +295,13 @@ describe('getUnscannedPosts: feed-real-from-your-activity', () => {
         const groups = detection.getUnscannedPosts(document.body);
         const firstSuggestedPost = groups.suggested[0];
         const secondSuggestedPost = groups.suggested[1];
-        const hasSuggestions = Array.from(firstSuggestedPost.querySelectorAll('*'))
-            .some(el => el.textContent.trim() === 'From your activity') &&
-            Array.from(secondSuggestedPost.querySelectorAll('*'))
-                .some(el => el.textContent.trim() === 'D’après votre activité');
+        const hasSuggestions =
+            Array.from(firstSuggestedPost.querySelectorAll('*')).some(
+                (el) => el.textContent.trim() === 'From your activity',
+            ) &&
+            Array.from(secondSuggestedPost.querySelectorAll('*')).some(
+                (el) => el.textContent.trim() === 'D’après votre activité',
+            );
 
         expect(hasSuggestions).toBe(true);
     });
@@ -295,5 +311,77 @@ describe('getUnscannedPosts: feed-real-from-your-activity', () => {
         const groups = detection.getUnscannedPosts(document.body);
         expect(groups.suggested).toHaveLength(2);
         expect(groups.sponsored).toHaveLength(0);
+    });
+});
+
+describe('getUnscannedPosts: feed-real-follow-button', () => {
+    let feed;
+
+    beforeEach(() => {
+        feed = loadFixtureDOM('feed-real-follow-button.html');
+        document.body.innerHTML = '';
+        document.body.appendChild(feed);
+    });
+
+    it('detects author-not-in-network suggestions via the structural markers', () => {
+        const groups = detection.getUnscannedPosts(document.body);
+        expect(groups.suggested).toHaveLength(3);
+        const ids = groups.suggested.map((p) => p.getAttribute('data-lazy-mount-id'));
+        expect(ids).toEqual(
+            expect.arrayContaining(['fixture-follow-1', 'fixture-follow-2', 'fixture-connect-1']),
+        );
+    });
+
+    it('keeps the "liked by a network member" post as content despite its author Follow button', () => {
+        const groups = detection.getUnscannedPosts(document.body);
+        const contentIds = groups.content.map((p) => p.getAttribute('data-lazy-mount-id'));
+        expect(contentIds).toContain('fixture-liked-by');
+        expect(contentIds).not.toContain('fixture-follow-1');
+        expect(contentIds).not.toContain('fixture-follow-2');
+    });
+
+    it('classifies the organic post as content and does NOT flag prose containing "suivre"', () => {
+        const groups = detection.getUnscannedPosts(document.body);
+        const organic = groups.content.find(
+            (p) => p.getAttribute('data-lazy-mount-id') === 'fixture-organic-1',
+        );
+        expect(organic).toBeTruthy();
+        expect(organic.querySelector('button[componentkey^="auto-component-"]')).toBeNull();
+    });
+
+    it('total posts = 5 (3 suggestions + 2 content)', () => {
+        const groups = detection.getUnscannedPosts(document.body);
+        const total =
+            groups.sponsored.length +
+            groups.suggested.length +
+            groups.recommended.length +
+            groups.content.length;
+        expect(total).toBe(5);
+        expect(groups.content).toHaveLength(2);
+    });
+
+    it('hides follow-button suggestions with the blocker, keeps context-header posts visible', async () => {
+        const { createBlocker } = await import('../src/shared/blocker.js');
+        const state = createTestState();
+        const blocker = createBlocker({ state });
+        const result = blocker.scanFeed(document.body);
+
+        expect(result.suggested).toBe(3);
+        expect(result.content).toBe(2);
+        expect(feed.querySelector('[data-lazy-mount-id="fixture-follow-1"]').style.display).toBe(
+            'none',
+        );
+        expect(feed.querySelector('[data-lazy-mount-id="fixture-follow-2"]').style.display).toBe(
+            'none',
+        );
+        expect(feed.querySelector('[data-lazy-mount-id="fixture-connect-1"]').style.display).toBe(
+            'none',
+        );
+        expect(
+            feed.querySelector('[data-lazy-mount-id="fixture-liked-by"]').style.display,
+        ).not.toBe('none');
+        expect(
+            feed.querySelector('[data-lazy-mount-id="fixture-organic-1"]').style.display,
+        ).not.toBe('none');
     });
 });

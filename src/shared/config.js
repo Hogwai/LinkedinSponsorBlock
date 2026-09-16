@@ -59,7 +59,10 @@ export const CONFIG = {
                         `p[componentkey]${PROSE_EXCLUSION}`,
                         `p[componentkey]${PROSE_EXCLUSION} > span`,
                     ],
-                    ['p[data-test-id="main-feed-card__header"]'],
+                    [
+                        'p[data-test-id="main-feed-card__header"]',
+                        'div[data-lazy-mount-id]:not(:has(hr[role="presentation"])) :is(button[componentkey^="auto-component-"], [componentkey^="ConnectButtonstate:"])',
+                    ],
                 ),
                 recommended: createDetection('recommended', [
                     `p[componentkey]${PROSE_EXCLUSION}`,

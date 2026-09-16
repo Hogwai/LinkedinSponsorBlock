@@ -97,7 +97,8 @@
                         "p[componentkey]:not([componentkey^=\"feed-commentary\"]):not([componentkey^=\"comment-commentary\"]) > span"
                     ],
                     "childSelectors": [
-                        "p[data-test-id=\"main-feed-card__header\"]"
+                        "p[data-test-id=\"main-feed-card__header\"]",
+                        "div[data-lazy-mount-id]:not(:has(hr[role=\"presentation\"])) :is(button[componentkey^=\"auto-component-\"], [componentkey^=\"ConnectButtonstate:\"])"
                     ],
                     "keywords": [
                         "suggestions",
