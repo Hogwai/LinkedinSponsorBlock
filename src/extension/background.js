@@ -83,7 +83,9 @@ api.runtime.onMessage.addListener((message, sender, sendResponse) => {
                         scanned: totalPostsScanned,
                     }),
                 )
-                .catch((err) => { logger.warn('Failed to broadcast counter update after blocked', err); });
+                .catch((err) => {
+                    logger.warn('Failed to broadcast counter update after blocked', err);
+                });
         })();
         return true;
     }
@@ -116,7 +118,9 @@ api.runtime.onMessage.addListener((message, sender, sendResponse) => {
                         scanned: 0,
                     }),
                 )
-                .catch((err) => { logger.warn('Failed to broadcast counter update after reset', err); });
+                .catch((err) => {
+                    logger.warn('Failed to broadcast counter update after reset', err);
+                });
         })();
         return true;
     }

@@ -17,6 +17,7 @@ const baseSettings = {
     filterSuggested: true,
     filterRecommended: true,
     logging: false,
+    verboseLogging: false,
     language: 'en',
     position: 'br',
     hideFloatingUI: false,
@@ -37,6 +38,7 @@ function makeUI(settings = {}, options = {}) {
         onToggleSuggested: vi.fn(),
         onToggleRecommended: vi.fn(),
         onToggleLogging: vi.fn(),
+        onToggleVerbose: vi.fn(),
         onLanguageChange: vi.fn(),
         onPositionChange: vi.fn(),
     };
@@ -445,6 +447,15 @@ describe('floating UI settings toggles', () => {
         expect(callbacks.onToggleLogging).toHaveBeenLastCalledWith(false);
         ui.destroy();
     });
+
+    it('propagates the verbose logging toggle', () => {
+        const { ui, callbacks } = makeUI();
+        change('lsb-verbose-logging', true);
+        expect(callbacks.onToggleVerbose).toHaveBeenCalledWith(true);
+        change('lsb-verbose-logging', false);
+        expect(callbacks.onToggleVerbose).toHaveBeenLastCalledWith(false);
+        ui.destroy();
+    });
 });
 
 describe('floating UI scan button', () => {
@@ -702,6 +713,7 @@ describe('floating UI public API', () => {
             filterSuggested: false,
             filterRecommended: false,
             logging: true,
+            verboseLogging: true,
         });
         expect(lastShadowRoot.getElementById('lsb-enabled').checked).toBe(false);
         expect(fab.classList.contains('disabled')).toBe(true);
@@ -709,6 +721,7 @@ describe('floating UI public API', () => {
         expect(lastShadowRoot.getElementById('lsb-filter-suggested').checked).toBe(false);
         expect(lastShadowRoot.getElementById('lsb-filter-recommended').checked).toBe(false);
         expect(lastShadowRoot.getElementById('lsb-logging').checked).toBe(true);
+        expect(lastShadowRoot.getElementById('lsb-verbose-logging').checked).toBe(true);
         ui.destroy();
     });
 
@@ -722,6 +735,7 @@ describe('floating UI public API', () => {
         expect(lastShadowRoot.getElementById('lsb-filter-suggested').checked).toBe(true);
         expect(lastShadowRoot.getElementById('lsb-filter-recommended').checked).toBe(true);
         expect(lastShadowRoot.getElementById('lsb-logging').checked).toBe(false);
+        expect(lastShadowRoot.getElementById('lsb-verbose-logging').checked).toBe(false);
         ui.destroy();
     });
 

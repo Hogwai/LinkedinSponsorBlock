@@ -181,7 +181,10 @@ function normalizeCollection(value) {
 
 function normalizeKeywordForValidation(text) {
     return typeof text === 'string'
-        ? text.toLowerCase().normalize('NFC').replace(/[\u00AD\u061C\u180E\u200B-\u200F\u202A-\u202E\u2060-\u2069\uFEFF]+/g, '')
+        ? text
+              .toLowerCase()
+              .normalize('NFC')
+              .replace(/[\u00AD\u061C\u180E\u200B-\u200F\u202A-\u202E\u2060-\u2069\uFEFF]+/g, '')
         : text;
 }
 

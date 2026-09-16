@@ -18,7 +18,7 @@ const setStored = settingsStorage.set;
 function getTotalCounters() {
     return {
         promoted: getStored(SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED, 0),
-        suggested: getStored(SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED, 0)
+        suggested: getStored(SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED, 0),
     };
 }
 
@@ -26,7 +26,7 @@ function addToTotalCounters(promoted, suggested) {
     const current = getTotalCounters();
     const updated = {
         promoted: current.promoted + promoted,
-        suggested: current.suggested + suggested
+        suggested: current.suggested + suggested,
     };
     setStored(SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED, updated.promoted);
     setStored(SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED, updated.suggested);
@@ -48,20 +48,48 @@ const state = {
     isObserverConnected: false,
     isCurrentlyFeedPage: false,
     settings: {
-        [SETTINGS_KEYS.ENABLED]: getStored(SETTINGS_KEYS.ENABLED, DEFAULT_SETTINGS[SETTINGS_KEYS.ENABLED]),
-        [SETTINGS_KEYS.DISCREET]: getStored(SETTINGS_KEYS.DISCREET, DEFAULT_SETTINGS[SETTINGS_KEYS.DISCREET]),
-        [SETTINGS_KEYS.FILTER_PROMOTED]: getStored(SETTINGS_KEYS.FILTER_PROMOTED, DEFAULT_SETTINGS[SETTINGS_KEYS.FILTER_PROMOTED]),
-        [SETTINGS_KEYS.FILTER_SUGGESTED]: getStored(SETTINGS_KEYS.FILTER_SUGGESTED, DEFAULT_SETTINGS[SETTINGS_KEYS.FILTER_SUGGESTED]),
-        [SETTINGS_KEYS.FILTER_RECOMMENDED]: getStored(SETTINGS_KEYS.FILTER_RECOMMENDED, DEFAULT_SETTINGS[SETTINGS_KEYS.FILTER_RECOMMENDED]),
-        [SETTINGS_KEYS.LANGUAGE]: getStored(SETTINGS_KEYS.LANGUAGE, DEFAULT_SETTINGS[SETTINGS_KEYS.LANGUAGE]),
-        [SETTINGS_KEYS.POSITION]: getStored(SETTINGS_KEYS.POSITION, DEFAULT_SETTINGS[SETTINGS_KEYS.POSITION]),
-        [SETTINGS_KEYS.LOGGING]: getStored(SETTINGS_KEYS.LOGGING, DEFAULT_SETTINGS[SETTINGS_KEYS.LOGGING]),
+        [SETTINGS_KEYS.ENABLED]: getStored(
+            SETTINGS_KEYS.ENABLED,
+            DEFAULT_SETTINGS[SETTINGS_KEYS.ENABLED],
+        ),
+        [SETTINGS_KEYS.DISCREET]: getStored(
+            SETTINGS_KEYS.DISCREET,
+            DEFAULT_SETTINGS[SETTINGS_KEYS.DISCREET],
+        ),
+        [SETTINGS_KEYS.FILTER_PROMOTED]: getStored(
+            SETTINGS_KEYS.FILTER_PROMOTED,
+            DEFAULT_SETTINGS[SETTINGS_KEYS.FILTER_PROMOTED],
+        ),
+        [SETTINGS_KEYS.FILTER_SUGGESTED]: getStored(
+            SETTINGS_KEYS.FILTER_SUGGESTED,
+            DEFAULT_SETTINGS[SETTINGS_KEYS.FILTER_SUGGESTED],
+        ),
+        [SETTINGS_KEYS.FILTER_RECOMMENDED]: getStored(
+            SETTINGS_KEYS.FILTER_RECOMMENDED,
+            DEFAULT_SETTINGS[SETTINGS_KEYS.FILTER_RECOMMENDED],
+        ),
+        [SETTINGS_KEYS.LANGUAGE]: getStored(
+            SETTINGS_KEYS.LANGUAGE,
+            DEFAULT_SETTINGS[SETTINGS_KEYS.LANGUAGE],
+        ),
+        [SETTINGS_KEYS.POSITION]: getStored(
+            SETTINGS_KEYS.POSITION,
+            DEFAULT_SETTINGS[SETTINGS_KEYS.POSITION],
+        ),
+        [SETTINGS_KEYS.LOGGING]: getStored(
+            SETTINGS_KEYS.LOGGING,
+            DEFAULT_SETTINGS[SETTINGS_KEYS.LOGGING],
+        ),
+        [SETTINGS_KEYS.VERBOSE_LOGGING]: getStored(
+            SETTINGS_KEYS.VERBOSE_LOGGING,
+            DEFAULT_SETTINGS[SETTINGS_KEYS.VERBOSE_LOGGING],
+        ),
         [SETTINGS_KEYS.HIDE_FLOATING_UI]: settingsStorage.getBoolean(
             SETTINGS_KEYS.HIDE_FLOATING_UI,
-            DEFAULT_SETTINGS[SETTINGS_KEYS.HIDE_FLOATING_UI]
-        )
+            DEFAULT_SETTINGS[SETTINGS_KEYS.HIDE_FLOATING_UI],
+        ),
     },
-    ui: null
+    ui: null,
 };
 
 // Record install date on first run
@@ -78,7 +106,7 @@ const blocker = createBlocker({
         if (state.ui) {
             state.ui.updateCounters(sessionTotal, totals.promoted, totals.suggested);
         }
-    }
+    },
 });
 const { scanFeed } = blocker;
 
@@ -106,7 +134,7 @@ function initUI() {
             reviewBannerDismissed: getStored(SETTINGS_KEYS.REVIEW_BANNER_DISMISSED, false),
             onDismissBanner() {
                 setStored(SETTINGS_KEYS.REVIEW_BANNER_DISMISSED, true);
-            }
+            },
         },
         counters: totals,
         onToggleEnabled(enabled) {
@@ -142,7 +170,7 @@ function initUI() {
             return {
                 sessionTotal: state.sessionPromotedRemoved + state.sessionSuggestedRemoved,
                 totalPromoted: totals.promoted,
-                totalSuggested: totals.suggested
+                totalSuggested: totals.suggested,
             };
         },
         onLanguageChange(lang) {
@@ -158,11 +186,16 @@ function initUI() {
             setStored(SETTINGS_KEYS.LOGGING, enabled);
             logger.setEnabled(enabled);
         },
+        onToggleVerbose(enabled) {
+            state.settings[SETTINGS_KEYS.VERBOSE_LOGGING] = enabled;
+            setStored(SETTINGS_KEYS.VERBOSE_LOGGING, enabled);
+            logger.setVerbose(enabled);
+        },
         onToggleHideFloatingUI(hidden) {
             state.settings[SETTINGS_KEYS.HIDE_FLOATING_UI] = hidden;
             setStored(SETTINGS_KEYS.HIDE_FLOATING_UI, hidden);
         },
-        isFeedPage: () => state.isCurrentlyFeedPage
+        isFeedPage: () => state.isCurrentlyFeedPage,
     });
 }
 
@@ -210,16 +243,20 @@ state.isCurrentlyFeedPage = isFeedPage();
 function setRemoteDebugStatus(status) {
     const payload = {
         ...status,
-        at: new Date().toISOString()
+        at: new Date().toISOString(),
     };
 
     try {
         localStorage.setItem('lsb_remote_status', JSON.stringify(payload));
-    } catch { /* ignored */ }
+    } catch {
+        /* ignored */
+    }
 
     try {
         pageWindow.__LinkedinSponsorBlockRemote = payload;
-    } catch { /* ignored */ }
+    } catch {
+        /* ignored */
+    }
 
     logger.info(`Remote status ${JSON.stringify(payload)}`);
 }
@@ -235,7 +272,9 @@ async function getUserscriptValue(key) {
     try {
         const raw = localStorage.getItem(key);
         return raw !== null ? JSON.parse(raw) : null;
-    } catch { return null; }
+    } catch {
+        return null;
+    }
 }
 
 async function setUserscriptValue(key, value) {
@@ -254,52 +293,60 @@ async function setUserscriptValue(key, value) {
 }
 
 function start() {
+    // Verbose first: either toggle alone must keep logging active, and this avoids
+    // the "logging is disabled" message when only detailed logging is enabled.
+    logger.setVerbose(state.settings[SETTINGS_KEYS.VERBOSE_LOGGING]);
     logger.setEnabled(state.settings[SETTINGS_KEYS.LOGGING]);
-    applyRemoteConfig({
-        async get(key) {
-            return await getUserscriptValue(key);
+    applyRemoteConfig(
+        {
+            async get(key) {
+                return await getUserscriptValue(key);
+            },
+            async set(key, value) {
+                await setUserscriptValue(key, value);
+                setRemoteDebugStatus({ phase: 'stored', key });
+            },
         },
-        async set(key, value) {
-            await setUserscriptValue(key, value);
-            setRemoteDebugStatus({ phase: 'stored', key });
-        }
-    }, () => new Promise((resolve, reject) => {
-        const request = (typeof GM_xmlhttpRequest !== 'undefined' && GM_xmlhttpRequest)
-            || (typeof GM !== 'undefined' && GM.xmlHttpRequest);
+        () =>
+            new Promise((resolve, reject) => {
+                const request =
+                    (typeof GM_xmlhttpRequest !== 'undefined' && GM_xmlhttpRequest) ||
+                    (typeof GM !== 'undefined' && GM.xmlHttpRequest);
 
-        if (!request) {
-            setRemoteDebugStatus({ phase: 'no-request-api' });
-            reject(new Error('No userscript HTTP request API available'));
-            return;
-        }
-
-        setRemoteDebugStatus({ phase: 'fetching', url: REMOTE_CONFIG_URL });
-        logger.info(`Fetching remote config: ${REMOTE_CONFIG_URL}`);
-        request({
-            method: 'GET',
-            url: REMOTE_CONFIG_URL,
-            timeout: 5000,
-            onload(res) {
-                setRemoteDebugStatus({ phase: 'response', status: res.status });
-                logger.info(`Remote config response status: ${res.status}`);
-                try {
-                    resolve(res.status === 200 ? JSON.parse(res.responseText) : null);
-                } catch (err) {
-                    setRemoteDebugStatus({ phase: 'parse-failed', error: String(err) });
-                    logger.warn('Remote config response JSON parse failed', err);
-                    resolve(null);
+                if (!request) {
+                    setRemoteDebugStatus({ phase: 'no-request-api' });
+                    reject(new Error('No userscript HTTP request API available'));
+                    return;
                 }
-            },
-            onerror() {
-                setRemoteDebugStatus({ phase: 'request-error' });
-                reject(new Error('GM_xmlhttpRequest failed'));
-            },
-            ontimeout() {
-                setRemoteDebugStatus({ phase: 'request-timeout' });
-                reject(new Error('GM_xmlhttpRequest timeout'));
-            }
-        });
-    }));
+
+                setRemoteDebugStatus({ phase: 'fetching', url: REMOTE_CONFIG_URL });
+                logger.info(`Fetching remote config: ${REMOTE_CONFIG_URL}`);
+                request({
+                    method: 'GET',
+                    url: REMOTE_CONFIG_URL,
+                    timeout: 5000,
+                    onload(res) {
+                        setRemoteDebugStatus({ phase: 'response', status: res.status });
+                        logger.info(`Remote config response status: ${res.status}`);
+                        try {
+                            resolve(res.status === 200 ? JSON.parse(res.responseText) : null);
+                        } catch (err) {
+                            setRemoteDebugStatus({ phase: 'parse-failed', error: String(err) });
+                            logger.warn('Remote config response JSON parse failed', err);
+                            resolve(null);
+                        }
+                    },
+                    onerror() {
+                        setRemoteDebugStatus({ phase: 'request-error' });
+                        reject(new Error('GM_xmlhttpRequest failed'));
+                    },
+                    ontimeout() {
+                        setRemoteDebugStatus({ phase: 'request-timeout' });
+                        reject(new Error('GM_xmlhttpRequest timeout'));
+                    },
+                });
+            }),
+    );
     initUI();
     if (state.isCurrentlyFeedPage) {
         if (state.settings[SETTINGS_KEYS.ENABLED]) observer.start();

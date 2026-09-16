@@ -16,6 +16,7 @@ const filterPromoted = document.getElementById('filterPromoted');
 const filterSuggested = document.getElementById('filterSuggested');
 const filterRecommended = document.getElementById('filterRecommended');
 const loggingToggle = document.getElementById('loggingToggle');
+const verboseLoggingToggle = document.getElementById('verboseLoggingToggle');
 const languageSelect = document.getElementById('languageSelect');
 const container = document.querySelector('.container');
 const openStatsBtn = document.getElementById('openStats');
@@ -112,6 +113,7 @@ async function loadSettings() {
     filterSuggested.checked = result.filterSuggested;
     filterRecommended.checked = result.filterRecommended;
     loggingToggle.checked = result.logging || false;
+    verboseLoggingToggle.checked = result.verboseLogging || false;
     languageSelect.value = result.language || detectLanguage();
 
     updateDisabledState(result.enabled);
@@ -261,6 +263,14 @@ filterRecommended.addEventListener('change', async () => {
 loggingToggle.addEventListener('change', async () => {
     await saveSettings({ logging: loggingToggle.checked });
     notifyContentScript(createSettingsChangedMessage({ logging: loggingToggle.checked }));
+});
+
+// Verbose logging toggle
+verboseLoggingToggle.addEventListener('change', async () => {
+    await saveSettings({ verboseLogging: verboseLoggingToggle.checked });
+    notifyContentScript(
+        createSettingsChangedMessage({ verboseLogging: verboseLoggingToggle.checked }),
+    );
 });
 
 // Language selector change

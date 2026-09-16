@@ -23,9 +23,14 @@ const DEFAULT_FEED_WRAPPER = {
     mobile: 'ol.feed-container',
 };
 
+/**
+ * Generic container markers that LinkedIn also uses outside posts (nav bar, side rails, feed modules)
+ */
+export const GENERIC_POST_CONTAINERS = ['div[data-display-contents="true"]'];
+
 const DEFAULT_POST_CONTAINERS = [
     'div[data-lazy-mount-id]',
-    'div[data-display-contents="true"]',
+    ...GENERIC_POST_CONTAINERS,
     '.ember-view.occludable-update',
     '[class*="ember-view"][class*="occludable-update"]',
     'div[class*="feed-shared-update-v2"][id*="ember"]',
@@ -36,8 +41,10 @@ const DEFAULT_POST_CONTAINERS = [
 ];
 
 // Exclude post/commentary prose containers from keyword scanning.
+// SDUI prose lives inside [data-testid="expandable-text-box"]; excluding it stops the
+// substring fallback from matching keywords inside long prose (false positives).
 const PROSE_EXCLUSION =
-    ':not([componentkey^="feed-commentary"]):not([componentkey^="comment-commentary"])';
+    ':not([componentkey^="feed-commentary"]):not([componentkey^="comment-commentary"]):not(:has([data-testid="expandable-text-box"]))';
 
 export const CONFIG = {
     activeProfile: 'modern',
@@ -46,24 +53,28 @@ export const CONFIG = {
             feedWrapper: DEFAULT_FEED_WRAPPER,
             postContainers: DEFAULT_POST_CONTAINERS,
             detection: {
-                sponsored: createDetection('sponsored', [
-                    `p[componentkey]${PROSE_EXCLUSION}`,
-                    `p[componentkey]${PROSE_EXCLUSION} > span`,
-                    `p[class]${PROSE_EXCLUSION}`,
-                    `p[class]${PROSE_EXCLUSION} > span`,
-                ], 
-                ['article[data-sponsored-tracking-url]']),
+                sponsored: createDetection(
+                    'sponsored',
+                    [
+                        `p[componentkey]${PROSE_EXCLUSION}`,
+                        `p[componentkey]${PROSE_EXCLUSION} > span`,
+                        `p[class]${PROSE_EXCLUSION}`,
+                        `p[class]${PROSE_EXCLUSION} > span`,
+                    ],
+                    ['article[data-sponsored-tracking-url]'],
+                ),
                 suggested: createDetection(
                     'suggested',
                     [
                         `p[componentkey]${PROSE_EXCLUSION}`,
                         `p[componentkey]${PROSE_EXCLUSION} > span`,
                     ],
-                    ['p[data-test-id="main-feed-card__header"]'],
+                    [
+                        'p[data-test-id="main-feed-card__header"]',
+                        'div[data-lazy-mount-id]:not(:has(hr[role="presentation"])) h2 + div :is(button[componentkey^="auto-component-"], [componentkey^="ConnectButtonstate:"])',
+                    ],
                 ),
-                recommended: createDetection('recommended', [
-                    `p[componentkey]${PROSE_EXCLUSION}`,
-                ]),
+                recommended: createDetection('recommended', [`p[componentkey]${PROSE_EXCLUSION}`]),
             },
         }),
         legacy: createProfile({

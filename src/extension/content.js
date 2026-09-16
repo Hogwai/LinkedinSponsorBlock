@@ -27,6 +27,7 @@ const state = {
         [SETTINGS_KEYS.FILTER_SUGGESTED]: true,
         [SETTINGS_KEYS.FILTER_RECOMMENDED]: true,
         [SETTINGS_KEYS.LOGGING]: false,
+        [SETTINGS_KEYS.VERBOSE_LOGGING]: false,
     },
 };
 
@@ -60,7 +61,12 @@ const notifier = {
                                             scanned: newScanned,
                                         }),
                                     )
-                                    .catch((err) => { logger.warn('Failed to send blocked message to background', err); });
+                                    .catch((err) => {
+                                        logger.warn(
+                                            'Failed to send blocked message to background',
+                                            err,
+                                        );
+                                    });
                                 this.lastNotifiedPromoted = state.sessionPromotedRemoved;
                                 this.lastNotifiedSuggested = state.sessionSuggestedRemoved;
                                 this.lastNotifiedScanned = state.sessionPostsScanned;
@@ -107,8 +113,10 @@ async function loadSettings() {
         [SETTINGS_KEYS.FILTER_SUGGESTED]: true,
         [SETTINGS_KEYS.FILTER_RECOMMENDED]: true,
         [SETTINGS_KEYS.LOGGING]: false,
+        [SETTINGS_KEYS.VERBOSE_LOGGING]: false,
     });
     state.settings = result;
+    logger.setVerbose(result[SETTINGS_KEYS.VERBOSE_LOGGING] || false);
     logger.setEnabled(result[SETTINGS_KEYS.LOGGING] || false);
 }
 
@@ -135,6 +143,10 @@ function updateSettings(newSettings) {
     if (newSettings[SETTINGS_KEYS.LOGGING] !== undefined) {
         state.settings[SETTINGS_KEYS.LOGGING] = newSettings[SETTINGS_KEYS.LOGGING];
         logger.setEnabled(newSettings[SETTINGS_KEYS.LOGGING]);
+    }
+    if (newSettings[SETTINGS_KEYS.VERBOSE_LOGGING] !== undefined) {
+        state.settings[SETTINGS_KEYS.VERBOSE_LOGGING] = newSettings[SETTINGS_KEYS.VERBOSE_LOGGING];
+        logger.setVerbose(newSettings[SETTINGS_KEYS.VERBOSE_LOGGING]);
     }
 }
 

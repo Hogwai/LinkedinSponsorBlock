@@ -60,10 +60,16 @@ describe('page.js', () => {
             let stopped = false;
             let resetCalled = false;
             const observer = {
-                start: () => { started = true; },
-                stop: () => { stopped = true; }
+                start: () => {
+                    started = true;
+                },
+                stop: () => {
+                    stopped = true;
+                },
             };
-            const pm = createPageManager(state, observer, () => { resetCalled = true; });
+            const pm = createPageManager(state, observer, () => {
+                resetCalled = true;
+            });
             window.location.pathname = '/';
             pm.handleUrlChange();
             expect(stopped).toBe(true);
@@ -75,7 +81,12 @@ describe('page.js', () => {
             const { createPageManager } = await import('../src/shared/page.js');
             const state = { isCurrentlyFeedPage: true };
             let stopped = false;
-            const observer = { start: () => {}, stop: () => { stopped = true; } };
+            const observer = {
+                start: () => {},
+                stop: () => {
+                    stopped = true;
+                },
+            };
             const pm = createPageManager(state, observer, () => {});
             window.location.pathname = '/messaging/';
             pm.handleUrlChange();
@@ -90,10 +101,16 @@ describe('page.js', () => {
             let stopped = false;
             let resetCalled = false;
             const observer = {
-                start: () => { started = true; },
-                stop: () => { stopped = true; }
+                start: () => {
+                    started = true;
+                },
+                stop: () => {
+                    stopped = true;
+                },
             };
-            const pm = createPageManager(state, observer, () => { resetCalled = true; });
+            const pm = createPageManager(state, observer, () => {
+                resetCalled = true;
+            });
             window.location.pathname = '/feed/';
             pm.handleUrlChange();
             expect(stopped).toBe(true);

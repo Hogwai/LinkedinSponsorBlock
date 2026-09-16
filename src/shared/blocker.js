@@ -1,18 +1,42 @@
-import { getUnscannedPosts, scannedPosts } from './detection.js';
+import {
+    getUnscannedPosts,
+    isPrimaryPostContainer,
+    matchReason,
+    scannedPosts,
+} from './detection.js';
+import { getActiveProfile } from './config.js';
 import { logger } from './logger.js';
 import { SETTINGS_KEYS } from './settings.js';
 
-const HIDDEN_POST_TEXT_LENGTH = 100;
+const LOG_PREVIEW_LENGTH = 100;
 
-function getPostPreview(post) {
-    return post?.textContent?.replace(/\s+/g, ' ').trim().slice(0, HIDDEN_POST_TEXT_LENGTH);
+function getPostPreview(post, length = LOG_PREVIEW_LENGTH) {
+    return post?.textContent?.replace(/\s+/g, ' ').trim().slice(0, length) ?? '';
 }
 
-function hidePost(post, label, incrementCounter) {
+/** Compact, human-readable description of why a post matched. */
+function formatReason(reason) {
+    if (!reason) return 'no-match';
+    if (reason.kind === 'child-selector') return `child-selector ${reason.selector}`;
+    return `${reason.kind} kw="${reason.keyword}" el="${reason.text}"`;
+}
+
+/** Why did this post match this category? (single source of truth: detection.js) */
+function reasonFor(post, category) {
+    return matchReason(post, getActiveProfile()?.detection?.[category]);
+}
+
+function hidePost(post, label, category, incrementCounter) {
     post.style.display = 'none';
     scannedPosts.add(post);
     incrementCounter();
-    logger.log(`${label} post hidden: "${getPostPreview(post)}"`);
+    if (logger.verbose) {
+        logger.log(
+            `${label} post hidden [${formatReason(reasonFor(post, category))}]: "${getPostPreview(post)}"`,
+        );
+    } else {
+        logger.log(`${label} post hidden: "${getPostPreview(post)}"`);
+    }
 }
 
 export function createBlocker({ state, onBlocked } = {}) {
@@ -21,13 +45,13 @@ export function createBlocker({ state, onBlocked } = {}) {
     }
 
     function hidePromotedPost(post) {
-        return hidePost(post, 'Promoted', () => {
+        return hidePost(post, 'Promoted', 'sponsored', () => {
             state.sessionPromotedRemoved++;
         });
     }
 
     function hideSuggestedPost(post) {
-        return hidePost(post, 'Suggested', () => {
+        return hidePost(post, 'Suggested', 'suggested', () => {
             state.sessionSuggestedRemoved++;
         });
     }
@@ -37,7 +61,7 @@ export function createBlocker({ state, onBlocked } = {}) {
      * The UI presents both categories as non-promoted feed recommendations.
      */
     function hideRecommendedPost(post) {
-        return hidePost(post, 'Recommended', () => {
+        return hidePost(post, 'Recommended', 'recommended', () => {
             state.sessionSuggestedRemoved++;
         });
     }
@@ -80,10 +104,16 @@ export function createBlocker({ state, onBlocked } = {}) {
             }
         }
 
-        // Mark content (organic) posts as scanned so they aren't re-processed
+        // Mark content (organic) posts as scanned so they aren't re-processed.
+        // Maintainer debug mode also logs kept posts, answering
+        // "why is this post NOT hidden?". Generic containers (nav bar, side rails, feed modules)
+        // are still scanned for detection, but they are not posts, so they are not logged.
         const contentCount = groupedPosts.content.length;
         for (const post of groupedPosts.content) {
             scannedPosts.add(post);
+            if (logger.verbose && isPrimaryPostContainer(post)) {
+                logger.log(`Content post kept [no-match]: "${getPostPreview(post)}"`);
+            }
         }
 
         if (scanned > 0) {

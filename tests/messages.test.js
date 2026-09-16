@@ -30,7 +30,7 @@ describe('messages.js', () => {
             const msg = createUrlChangedMessage('https://linkedin.com/feed/');
             expect(msg).toEqual({
                 type: MESSAGE_TYPES.URL_CHANGED,
-                url: 'https://linkedin.com/feed/'
+                url: 'https://linkedin.com/feed/',
             });
         });
     });

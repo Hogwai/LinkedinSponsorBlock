@@ -108,7 +108,11 @@ const chromeBundles = [
     {
         input: 'src/extension/popup.js',
         output: { file: 'dist/chrome/popup.js', format: 'iife' },
-        plugins: [jsonPlugin(), copySharedAssets('dist/chrome'), manifestWithVersion('static/chrome/manifest.json', 'dist/chrome')],
+        plugins: [
+            jsonPlugin(),
+            copySharedAssets('dist/chrome'),
+            manifestWithVersion('static/chrome/manifest.json', 'dist/chrome'),
+        ],
     },
 ];
 
@@ -130,7 +134,11 @@ const firefoxBundles = [
     {
         input: 'src/extension/popup.js',
         output: { file: 'dist/firefox/popup.js', format: 'iife' },
-        plugins: [jsonPlugin(), copySharedAssets('dist/firefox'), manifestWithVersion('static/firefox/manifest.json', 'dist/firefox')],
+        plugins: [
+            jsonPlugin(),
+            copySharedAssets('dist/firefox'),
+            manifestWithVersion('static/firefox/manifest.json', 'dist/firefox'),
+        ],
     },
 ];
 

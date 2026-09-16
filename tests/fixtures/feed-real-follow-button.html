@@ -1,0 +1,207 @@
+<!--
+  Realistic fixture: unlabeled "suggested" feed posts.
+  Detection = author row (h2 + div) contains a Follow/Connect action, and the post
+  has no context header (<hr role="presentation"> = liked/commented/followed-by bar).
+  Data anonymized, SVGs removed, structure preserved.
+-->
+<div data-testid="mainFeed">
+    <!-- [0] Suggestion (FR): "Suivre" in the author row -> suggested -->
+    <div data-lazy-mount-id="fixture-follow-1" style="display: contents">
+        <div class="_1a41feae _16300375" data-display-contents="true">
+            <div class="_56dda7f7 _11cd2a0a cbc8545e _16300375">
+                <div
+                    class="f4a40daa aa56821a _16300375"
+                    componentkey="expandable-focus-fixture-follow-1"
+                    role="listitem"
+                >
+                    <h2><span>Post du fil d’actualité</span></h2>
+                    <div class="_90ecec7c a68abec2 _1376f190 d84b0e9e f852cf51">
+                        <a
+                            href="https://www.linkedin.com/in/anonymized-author-one/"
+                            aria-label="Voir le profil de Author One"
+                        >
+                            <span>Author One</span>
+                        </a>
+                        <span>• 2e</span>
+                        <button
+                            type="button"
+                            componentkey="auto-component-fixture-follow-1"
+                            aria-label="Suivre Author One"
+                        >
+                            <span><span>Suivre</span></span>
+                        </button>
+                    </div>
+                    <div data-display-contents="true">
+                        <p componentkey="commentary-fixture-follow-1">
+                            Une réflexion sur la latence en production et les architectures
+                            distribuées.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- [1] Organic post whose prose mentions "suivre" but has NO follow button -> content -->
+    <div data-lazy-mount-id="fixture-organic-1" style="display: contents">
+        <div class="_1a41feae _16300375" data-display-contents="true">
+            <div class="_56dda7f7 _11cd2a0a cbc8545e _16300375">
+                <div
+                    class="f4a40daa aa56821a _16300375"
+                    componentkey="expandable-focus-fixture-organic-1"
+                    role="listitem"
+                >
+                    <h2><span>Post du fil d’actualité</span></h2>
+                    <div class="_90ecec7c a68abec2 _1376f190 d84b0e9e f852cf51">
+                        <a
+                            href="https://www.linkedin.com/in/anonymized-author-two/"
+                            aria-label="Voir le profil de Author Two"
+                        >
+                            <span>Author Two</span>
+                        </a>
+                    </div>
+                    <div data-display-contents="true">
+                        <p componentkey="commentary-fixture-organic-1">
+                            Merci à toutes les personnes qui me suivent : n’hésitez pas à me suivre
+                            pour d’autres articles sur le sujet.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- [2] Suggestion (non-connection): "Se connecter" in the author row -> suggested -->
+    <div data-lazy-mount-id="fixture-connect-1" style="display: contents">
+        <div class="_1a41feae _16300375" data-display-contents="true">
+            <div class="_56dda7f7 _11cd2a0a cbc8545e _16300375">
+                <div
+                    class="f4a40daa aa56821a _16300375"
+                    componentkey="expandable-focus-fixture-connect-1"
+                    role="listitem"
+                >
+                    <h2><span>Post du fil d’actualité</span></h2>
+                    <div class="_90ecec7c a68abec2 _1376f190 d84b0e9e f852cf51">
+                        <a
+                            href="https://www.linkedin.com/in/anonymized-author-three/"
+                            aria-label="Voir le profil de Author Three"
+                        >
+                            <span>Author Three</span>
+                        </a>
+                        <span>• 2e</span>
+                        <a
+                            class="_70c057cd"
+                            aria-disabled="false"
+                            href="https://www.linkedin.com/feed/"
+                            componentkey="ConnectButtonstate:invitation:urn:li:member:1053359566_connect"
+                            aria-label="Inviter Author Three à rejoindre votre réseau"
+                        >
+                            <span><span>Se connecter</span></span>
+                        </a>
+                    </div>
+                    <div data-display-contents="true">
+                        <p componentkey="commentary-fixture-connect-1">
+                            Java 27 is here, with new JEPs and post-quantum key exchange.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- [3] "Liked by a network member": context bar + hr -> content despite the author Follow button -->
+    <div data-lazy-mount-id="fixture-liked-by" style="display: contents">
+        <div class="_1a41feae _16300375" data-display-contents="true">
+            <div class="_56dda7f7 _11cd2a0a cbc8545e _16300375">
+                <div
+                    class="f4a40daa aa56821a _16300375"
+                    componentkey="expandable-focus-fixture-liked-by"
+                    role="listitem"
+                >
+                    <h2><span>Post du fil d’actualité</span></h2>
+                    <div componentkey="social-proof-fixture-liked-by">
+                        <a
+                            href="https://www.linkedin.com/in/anonymized-liker/"
+                            aria-label="Voir le profil de Liker One"
+                        >
+                            <span>Liker One</span>
+                        </a>
+                        <p componentkey="social-text-fixture-liked-by">
+                            <span>
+                                <a href="https://www.linkedin.com/in/anonymized-liker/">
+                                    <strong>Liker One</strong>
+                                </a>
+                                aime ce contenu
+                            </span>
+                        </p>
+                    </div>
+                    <hr role="presentation" class="_99a839d2 _652639ce" />
+                    <div class="_90ecec7c a68abec2 _1376f190 d84b0e9e f852cf51">
+                        <a
+                            href="https://www.linkedin.com/in/anonymized-author-four/"
+                            aria-label="Voir le profil de Author Four"
+                        >
+                            <span>Author Four</span>
+                        </a>
+                        <button
+                            type="button"
+                            componentkey="auto-component-fixture-liked-by"
+                            aria-label="Suivre Author Four"
+                        >
+                            <span><span>Suivre</span></span>
+                        </button>
+                    </div>
+                    <div data-display-contents="true">
+                        <p componentkey="commentary-fixture-liked-by">
+                            Une place se libère dans notre équipe, n’hésitez pas à partager.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- [4] Followed author + embedded "Suivre Other Person" (repost/shared card), no hr -> content (false-positive guard) -->
+    <div data-lazy-mount-id="fixture-embedded-follow" style="display: contents">
+        <div class="_1a41feae _16300375" data-display-contents="true">
+            <div class="_56dda7f7 _11cd2a0a cbc8545e _16300375">
+                <div
+                    class="f4a40daa aa56821a _16300375"
+                    componentkey="expandable-focus-fixture-embedded"
+                    role="listitem"
+                >
+                    <h2><span>Post du fil d’actualité</span></h2>
+                    <div class="_90ecec7c a68abec2 _1376f190 d84b0e9e f852cf51">
+                        <a
+                            href="https://www.linkedin.com/in/anonymized-author-five/"
+                            aria-label="Voir le profil de Author Five"
+                        >
+                            <span>Author Five</span>
+                        </a>
+                        <span>• Suivi</span>
+                    </div>
+                    <div class="_0dec5920 _90ecec7c a68abec2">
+                        <div class="_56dda7f7">
+                            <a
+                                href="https://www.linkedin.com/in/anonymized-other/"
+                                aria-label="Voir le profil de Other Person"
+                            >
+                                <span>Other Person</span>
+                            </a>
+                            <button
+                                type="button"
+                                componentkey="auto-component-fixture-embedded"
+                                aria-label="Suivre Other Person"
+                            >
+                                <span><span>Suivre</span></span>
+                            </button>
+                        </div>
+                        <p componentkey="commentary-fixture-embedded">
+                            Je relaie ici le contenu de quelqu’un d’autre.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
