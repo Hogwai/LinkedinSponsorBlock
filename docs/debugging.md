@@ -87,7 +87,20 @@ localStorage.removeItem('lsb_debug');   // verbose off, then reload the page
 
 The flag forces verbose mode on even when the popup toggle is off. It is deliberately not exposed in the UI.
 
-## 5. Two traps to know before digging
+## 5. Traps to know before digging
+
+### A rebuilt extension does not re-scan an already loaded page
+
+This is the trap that wastes the most time. After a detection change, two things must both happen:
+
+1. rebuild, then reload the extension in `chrome://extensions`;
+2. hard reload the LinkedIn tab (Ctrl+Shift+R).
+
+Reloading the extension alone is not enough. The content script already injected in the open page keeps
+running with its old config, and `scannedPosts` is a `WeakSet` that keeps every post marked as "already
+scanned" for the lifetime of the page, including the posts classified as `content`. A page opened before
+your change therefore keeps the previous classification of its posts, and the new code can look like it
+does nothing at all.
 
 ### The remote config overrides the local one
 
