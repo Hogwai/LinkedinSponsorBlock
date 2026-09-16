@@ -1,4 +1,9 @@
-import { getUnscannedPosts, isPrimaryPostContainer, matchReason, scannedPosts } from './detection.js';
+import {
+    getUnscannedPosts,
+    isPrimaryPostContainer,
+    matchReason,
+    scannedPosts,
+} from './detection.js';
 import { getActiveProfile } from './config.js';
 import { logger } from './logger.js';
 import { SETTINGS_KEYS } from './settings.js';

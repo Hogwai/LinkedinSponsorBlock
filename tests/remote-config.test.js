@@ -85,7 +85,7 @@ function makeProfile(overrides = {}) {
         ...omitUndefined({ ...overrides }),
         feedWrapper: omitUndefined({
             ...validProfile.feedWrapper,
-            ...(omitUndefined({ ...(overrides.feedWrapper || {}) })),
+            ...omitUndefined({ ...(overrides.feedWrapper || {}) }),
         }),
         postContainers:
             overrides.postContainers === undefined
@@ -125,16 +125,10 @@ describe('applyRemoteOverrides', () => {
 
         remoteConfig.applyRemoteOverrides('desktop');
 
-        expect(logger.info).toHaveBeenCalledWith(
-            'Remote config applied for profile: desktop',
-        );
+        expect(logger.info).toHaveBeenCalledWith('Remote config applied for profile: desktop');
         // Verify merge: keywords converted to Set
-        expect(
-            CONFIG.profiles.desktop.detection.sponsored.keywords,
-        ).toBeInstanceOf(Set);
-        expect(
-            CONFIG.profiles.desktop.detection.sponsored.keywords.has('promoted'),
-        ).toBe(true);
+        expect(CONFIG.profiles.desktop.detection.sponsored.keywords).toBeInstanceOf(Set);
+        expect(CONFIG.profiles.desktop.detection.sponsored.keywords.has('promoted')).toBe(true);
     });
 
     it('logs warning when profile does not exist in stored config', async () => {
@@ -142,9 +136,7 @@ describe('applyRemoteOverrides', () => {
 
         remoteConfig.applyRemoteOverrides('nonexistent');
 
-        expect(logger.warn).toHaveBeenCalledWith(
-            'Remote config has no profile named: nonexistent',
-        );
+        expect(logger.warn).toHaveBeenCalledWith('Remote config has no profile named: nonexistent');
     });
 });
 
@@ -178,9 +170,7 @@ describe('fetchRemoteConfigJSON', () => {
         const result = await remoteConfig.fetchRemoteConfigJSON();
 
         expect(result).toBeNull();
-        expect(logger.warn).toHaveBeenCalledWith(
-            'Remote config request failed with status 404',
-        );
+        expect(logger.warn).toHaveBeenCalledWith('Remote config request failed with status 404');
     });
 });
 
@@ -212,9 +202,7 @@ describe('applyRemoteConfig', () => {
             expect(CONFIG.profiles.desktop).toBeDefined();
         });
 
-        expect(
-            CONFIG.profiles.desktop.detection.sponsored.keywords,
-        ).toBeInstanceOf(Set);
+        expect(CONFIG.profiles.desktop.detection.sponsored.keywords).toBeInstanceOf(Set);
     });
 
     it('logs warning when cache is present but invalid', async () => {
@@ -279,7 +267,9 @@ describe('applyRemoteConfig', () => {
 
     it('logs warning when cache read fails', async () => {
         const storage = {
-            get: async () => { throw new Error('Storage error'); },
+            get: async () => {
+                throw new Error('Storage error');
+            },
             set: vi.fn(),
         };
         await remoteConfig.applyRemoteConfig(storage, vi.fn());
@@ -330,9 +320,7 @@ describe('applyRemoteConfig', () => {
         // Phase 2 (fetchRemoteConfig) is fire-and-forget: flush all pending work
         await new Promise((r) => setTimeout(r, 100));
 
-        expect(logger.warn).toHaveBeenCalledWith(
-            'Remote config has no profile named: mobile',
-        );
+        expect(logger.warn).toHaveBeenCalledWith('Remote config has no profile named: mobile');
     });
 
     it('logs warning when fetcher returns null', async () => {
@@ -342,9 +330,7 @@ describe('applyRemoteConfig', () => {
         await remoteConfig.applyRemoteConfig(storage, fetcher);
 
         await vi.waitFor(() => {
-            expect(logger.warn).toHaveBeenCalledWith(
-                'Remote config fetch returned no config',
-            );
+            expect(logger.warn).toHaveBeenCalledWith('Remote config fetch returned no config');
         });
     });
 
@@ -356,9 +342,7 @@ describe('applyRemoteConfig', () => {
         await remoteConfig.applyRemoteConfig(storage, fetcher);
 
         await vi.waitFor(() => {
-            expect(logger.warn).toHaveBeenCalledWith(
-                'Remote config fetch returned invalid config',
-            );
+            expect(logger.warn).toHaveBeenCalledWith('Remote config fetch returned invalid config');
         });
     });
 
@@ -423,22 +407,43 @@ describe('isValidProfile validation fallbacks', () => {
     it.each([
         ['profile is null', null],
         ['feedWrapper is missing', { feedWrapper: undefined }],
-        ['feedWrapper value is a non-string non-null', makeProfile({ feedWrapper: { mobile: 123 } })],
+        [
+            'feedWrapper value is a non-string non-null',
+            makeProfile({ feedWrapper: { mobile: 123 } }),
+        ],
         ['feedWrapper value is an empty string', makeProfile({ feedWrapper: { desktop: '' } })],
-        ['feedWrapper value is an invalid CSS selector', makeProfile({ feedWrapper: { newFeed: '[[' } })],
+        [
+            'feedWrapper value is an invalid CSS selector',
+            makeProfile({ feedWrapper: { newFeed: '[[' } }),
+        ],
         ['postContainers is missing', { postContainers: undefined }],
         ['postContainers is empty', makeProfile({ postContainers: [] })],
         ['postContainers contains a non-string', makeProfile({ postContainers: [123] })],
-        ['detection entry is missing', (() => {
-            const p = makeProfile();
-            delete p.detection.sponsored;
-            return p;
-        })()],
-        ['keywordSelectors is empty', makeProfile({ detection: { sponsored: { keywordSelectors: [] } } })],
-        ['keywordSelectors has an invalid selector', makeProfile({ detection: { sponsored: { keywordSelectors: ['['] } } })],
+        [
+            'detection entry is missing',
+            (() => {
+                const p = makeProfile();
+                delete p.detection.sponsored;
+                return p;
+            })(),
+        ],
+        [
+            'keywordSelectors is empty',
+            makeProfile({ detection: { sponsored: { keywordSelectors: [] } } }),
+        ],
+        [
+            'keywordSelectors has an invalid selector',
+            makeProfile({ detection: { sponsored: { keywordSelectors: ['['] } } }),
+        ],
         ['keywords is empty', makeProfile({ detection: { sponsored: { keywords: [] } } })],
-        ['childSelectors is not an array', makeProfile({ detection: { suggested: { childSelectors: 'x' } } })],
-        ['childSelectors has an invalid selector', makeProfile({ detection: { recommended: { childSelectors: ['['] } } })],
+        [
+            'childSelectors is not an array',
+            makeProfile({ detection: { suggested: { childSelectors: 'x' } } }),
+        ],
+        [
+            'childSelectors has an invalid selector',
+            makeProfile({ detection: { recommended: { childSelectors: ['['] } } }),
+        ],
     ])('rejects cached config when %s', async (_label, profile) => {
         const storage = makeStorage({
             version: 2,
@@ -450,9 +455,7 @@ describe('isValidProfile validation fallbacks', () => {
         expect(logger.warn).toHaveBeenCalledWith(
             'Cached remote config is invalid; using embedded config',
         );
-        expect(logger.info).not.toHaveBeenCalledWith(
-            'Remote config fetched and applied',
-        );
+        expect(logger.info).not.toHaveBeenCalledWith('Remote config fetched and applied');
     });
 });
 
@@ -481,8 +484,11 @@ describe('__NO_REMOTE_CONFIG__ disabled mode', () => {
     });
 
     it('short-circuits applyRemoteOverrides and applyRemoteConfig when flag is true', async () => {
-        const { remoteConfig: fresh, CONFIG: freshConfig, logger: freshLogger } =
-            await importWithFlag(true);
+        const {
+            remoteConfig: fresh,
+            CONFIG: freshConfig,
+            logger: freshLogger,
+        } = await importWithFlag(true);
 
         const fetcher = vi.fn();
         const storage = makeStorage(validConfig);
@@ -504,8 +510,7 @@ describe('__NO_REMOTE_CONFIG__ disabled mode', () => {
     });
 
     it('behaves normally when flag is explicitly false', async () => {
-        const { remoteConfig: fresh, logger: freshLogger } =
-            await importWithFlag(false);
+        const { remoteConfig: fresh, logger: freshLogger } = await importWithFlag(false);
 
         const fetcher = vi.fn().mockResolvedValue(validConfig);
         const storage = makeStorage(null);
@@ -515,9 +520,7 @@ describe('__NO_REMOTE_CONFIG__ disabled mode', () => {
         await vi.waitFor(() => {
             expect(storage.set).toHaveBeenCalled();
         });
-        expect(freshLogger.info).toHaveBeenCalledWith(
-            'Remote config fetched and applied',
-        );
+        expect(freshLogger.info).toHaveBeenCalledWith('Remote config fetched and applied');
     });
 });
 
@@ -537,12 +540,8 @@ describe('fetch phase merge and failures', () => {
             expect(storage.set).toHaveBeenCalled();
         });
 
-        expect(logger.warn).not.toHaveBeenCalledWith(
-            'Remote config has no profile named: desktop',
-        );
-        expect(
-            CONFIG.profiles.desktop.detection.sponsored.keywords,
-        ).toBeInstanceOf(Set);
+        expect(logger.warn).not.toHaveBeenCalledWith('Remote config has no profile named: desktop');
+        expect(CONFIG.profiles.desktop.detection.sponsored.keywords).toBeInstanceOf(Set);
     });
 
     it('logs fetch-failed warning when storage.set rejects after a valid fetch', async () => {
@@ -576,18 +575,12 @@ describe('fetchRemoteConfigJSON error paths', () => {
             },
         });
 
-        await expect(remoteConfig.fetchRemoteConfigJSON()).rejects.toThrow(
-            SyntaxError,
-        );
+        await expect(remoteConfig.fetchRemoteConfigJSON()).rejects.toThrow(SyntaxError);
     });
 
     it('rejects when the network request itself fails', async () => {
-        globalThis.fetch = vi
-            .fn()
-            .mockRejectedValue(new TypeError('Failed to fetch'));
+        globalThis.fetch = vi.fn().mockRejectedValue(new TypeError('Failed to fetch'));
 
-        await expect(remoteConfig.fetchRemoteConfigJSON()).rejects.toThrow(
-            'Failed to fetch',
-        );
+        await expect(remoteConfig.fetchRemoteConfigJSON()).rejects.toThrow('Failed to fetch');
     });
 });

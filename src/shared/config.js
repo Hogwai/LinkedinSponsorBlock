@@ -53,13 +53,16 @@ export const CONFIG = {
             feedWrapper: DEFAULT_FEED_WRAPPER,
             postContainers: DEFAULT_POST_CONTAINERS,
             detection: {
-                sponsored: createDetection('sponsored', [
-                    `p[componentkey]${PROSE_EXCLUSION}`,
-                    `p[componentkey]${PROSE_EXCLUSION} > span`,
-                    `p[class]${PROSE_EXCLUSION}`,
-                    `p[class]${PROSE_EXCLUSION} > span`,
-                ], 
-                ['article[data-sponsored-tracking-url]']),
+                sponsored: createDetection(
+                    'sponsored',
+                    [
+                        `p[componentkey]${PROSE_EXCLUSION}`,
+                        `p[componentkey]${PROSE_EXCLUSION} > span`,
+                        `p[class]${PROSE_EXCLUSION}`,
+                        `p[class]${PROSE_EXCLUSION} > span`,
+                    ],
+                    ['article[data-sponsored-tracking-url]'],
+                ),
                 suggested: createDetection(
                     'suggested',
                     [
@@ -71,9 +74,7 @@ export const CONFIG = {
                         'div[data-lazy-mount-id]:not(:has(hr[role="presentation"])) h2 + div :is(button[componentkey^="auto-component-"], [componentkey^="ConnectButtonstate:"])',
                     ],
                 ),
-                recommended: createDetection('recommended', [
-                    `p[componentkey]${PROSE_EXCLUSION}`,
-                ]),
+                recommended: createDetection('recommended', [`p[componentkey]${PROSE_EXCLUSION}`]),
             },
         }),
         legacy: createProfile({

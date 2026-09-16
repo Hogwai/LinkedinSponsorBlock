@@ -1,8 +1,8 @@
 blank_issues_enabled: true
 contact_links:
-  - name: 📖 Documentation
-    url: https://github.com/Hogwai/LinkedinSponsorBlock/blob/main/README.md
-    about: Check the README for usage instructions and FAQs
-  - name: 💬 Discussions
-    url: https://github.com/Hogwai/LinkedinSponsorBlock/discussions
-    about: Ask questions and discuss ideas with the community
+    - name: 📖 Documentation
+      url: https://github.com/Hogwai/LinkedinSponsorBlock/blob/main/README.md
+      about: Check the README for usage instructions and FAQs
+    - name: 💬 Discussions
+      url: https://github.com/Hogwai/LinkedinSponsorBlock/discussions
+      about: Ask questions and discuss ideas with the community

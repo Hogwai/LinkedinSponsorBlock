@@ -140,8 +140,6 @@ describe('getUnscannedPosts: feed-empty', () => {
     });
 });
 
-
-
 describe('Unicode normalization', () => {
     // LinkedIn may serve Gurmukhi/Punjabi in precomposed Unicode form (U+0A5E, U+0A36)
     // while the keyword source uses decomposed form (U+0A2B+U+0A3C, U+0A38+U+0A3C).
@@ -158,13 +156,23 @@ describe('Unicode normalization', () => {
         label.setAttribute('componentkey', 'test');
         // Precomposed form: 17 code points
         label.textContent = String.fromCodePoint(
-            0x0A24, 0x0A41, 0x0A39, 0x0A3E, 0x0A21, 0x0A47, // ਤੁਹਾਡੇ
+            0x0a24,
+            0x0a41,
+            0x0a39,
+            0x0a3e,
+            0x0a21,
+            0x0a47, // ਤੁਹਾਡੇ
             0x0020, // space
-            0x0A32, 0x0A08, // ਲਈ
+            0x0a32,
+            0x0a08, // ਲਈ
             0x0020, // space
-            0x0A38, 0x0A3F, // ਸਿ
-            0x0A5E, 0x0A3E, 0x0A30, // ਫ਼ਾਰ (precomposed)
-            0x0A36, 0x0A40, // ਸ਼ੀ (precomposed)
+            0x0a38,
+            0x0a3f, // ਸਿ
+            0x0a5e,
+            0x0a3e,
+            0x0a30, // ਫ਼ਾਰ (precomposed)
+            0x0a36,
+            0x0a40, // ਸ਼ੀ (precomposed)
         );
         post.appendChild(label);
 

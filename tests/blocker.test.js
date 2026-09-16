@@ -58,12 +58,8 @@ describe('scanFeed: feed-real-mixed', () => {
     it('hides both sponsored posts (display: none)', () => {
         blocker.scanFeed(document.body);
 
-        const sponsored1 = document.querySelector(
-            '[data-lazy-mount-id="fixture-sponsored-1"]',
-        );
-        const sponsored2 = document.querySelector(
-            '[data-lazy-mount-id="fixture-sponsored-2"]',
-        );
+        const sponsored1 = document.querySelector('[data-lazy-mount-id="fixture-sponsored-1"]');
+        const sponsored2 = document.querySelector('[data-lazy-mount-id="fixture-sponsored-2"]');
         expect(sponsored1.style.display).toBe('none');
         expect(sponsored2.style.display).toBe('none');
     });
@@ -74,9 +70,7 @@ describe('scanFeed: feed-real-mixed', () => {
         const suggested1 = document.querySelector(
             '[data-lazy-mount-id="fixture-suggested-follow-1"]',
         );
-        const suggested2 = document.querySelector(
-            '[data-lazy-mount-id="fixture-suggestions-1"]',
-        );
+        const suggested2 = document.querySelector('[data-lazy-mount-id="fixture-suggestions-1"]');
         expect(suggested1.style.display).toBe('none');
         expect(suggested2.style.display).toBe('none');
     });
@@ -84,18 +78,14 @@ describe('scanFeed: feed-real-mixed', () => {
     it('hides the recommended post (display: none)', () => {
         blocker.scanFeed(document.body);
 
-        const recommended = document.querySelector(
-            '[data-lazy-mount-id="fixture-recommended-1"]',
-        );
+        const recommended = document.querySelector('[data-lazy-mount-id="fixture-recommended-1"]');
         expect(recommended.style.display).toBe('none');
     });
 
     it('does not hide organic posts', () => {
         blocker.scanFeed(document.body);
 
-        const legit = document.querySelector(
-            '[data-lazy-mount-id="fixture-legit-1"]',
-        );
+        const legit = document.querySelector('[data-lazy-mount-id="fixture-legit-1"]');
         const marie = document.getElementById('ember-100');
         const sophie = document.getElementById('ember-101');
         const pierre = document.getElementById('ember-102');
@@ -150,12 +140,8 @@ describe('scanFeed: filter toggles', () => {
 
         blocker.scanFeed(document.body);
 
-        const sponsored1 = document.querySelector(
-            '[data-lazy-mount-id="fixture-sponsored-1"]',
-        );
-        const sponsored2 = document.querySelector(
-            '[data-lazy-mount-id="fixture-sponsored-2"]',
-        );
+        const sponsored1 = document.querySelector('[data-lazy-mount-id="fixture-sponsored-1"]');
+        const sponsored2 = document.querySelector('[data-lazy-mount-id="fixture-sponsored-2"]');
         expect(sponsored1.style.display).not.toBe('none');
         expect(sponsored2.style.display).not.toBe('none');
         expect(state.sessionPromotedRemoved).toBe(0);

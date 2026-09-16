@@ -172,9 +172,7 @@ describe('log', () => {
         // Fire the callback manually
         idleCb({ didTimeout: false, timeRemaining: () => 0 });
 
-        expect(groupCollapsed).toHaveBeenCalledWith(
-            '[LinkedinSponsorBlock] 2 hidden',
-        );
+        expect(groupCollapsed).toHaveBeenCalledWith('[LinkedinSponsorBlock] 2 hidden');
         expect(debug).toHaveBeenCalledWith('msg1');
         expect(debug).toHaveBeenCalledWith('msg2');
         expect(groupEnd).toHaveBeenCalled();
@@ -218,9 +216,7 @@ describe('warn', () => {
         const spy = vi.spyOn(console, 'warn').mockImplementation(() => {});
         logger.setEnabled(true);
         logger.warn('something went wrong');
-        expect(spy).toHaveBeenCalledWith(
-            '[LinkedinSponsorBlock] something went wrong',
-        );
+        expect(spy).toHaveBeenCalledWith('[LinkedinSponsorBlock] something went wrong');
         spy.mockRestore();
     });
 
@@ -229,10 +225,7 @@ describe('warn', () => {
         const err = new Error('test error');
         logger.setEnabled(true);
         logger.warn('error occurred', err);
-        expect(spy).toHaveBeenCalledWith(
-            '[LinkedinSponsorBlock] error occurred',
-            err,
-        );
+        expect(spy).toHaveBeenCalledWith('[LinkedinSponsorBlock] error occurred', err);
         spy.mockRestore();
     });
 });

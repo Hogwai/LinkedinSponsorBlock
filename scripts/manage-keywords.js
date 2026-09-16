@@ -50,7 +50,9 @@ function updateRemoteConfig(allKeywords) {
 
     for (const profile of ['modern', 'legacy']) {
         for (const cat of CATEGORIES) {
-            config.profiles[profile].detection[cat].keywords = allKeywords[cat].map((k) => k.toLowerCase().normalize('NFC'));
+            config.profiles[profile].detection[cat].keywords = allKeywords[cat].map((k) =>
+                k.toLowerCase().normalize('NFC'),
+            );
         }
     }
 
@@ -87,7 +89,9 @@ function checkKeyword(keyword, category) {
     }
 
     if (!found) {
-        console.log(`✗ Not found${category ? ` in ${category}` : ' in any category'}: "${keyword}"`);
+        console.log(
+            `✗ Not found${category ? ` in ${category}` : ' in any category'}: "${keyword}"`,
+        );
         process.exit(1);
     }
 }
@@ -104,7 +108,9 @@ if (command === 'sync') {
 } else if (command === 'check') {
     const keyword = args[1];
     if (!keyword) {
-        console.error('Usage: node scripts/manage-keywords.js check <keyword> [--category <category>]');
+        console.error(
+            'Usage: node scripts/manage-keywords.js check <keyword> [--category <category>]',
+        );
         process.exit(1);
     }
     const catIdx = args.indexOf('--category');
@@ -112,7 +118,9 @@ if (command === 'sync') {
     checkKeyword(keyword, category);
 } else {
     console.error('Usage:');
-    console.error('  node scripts/manage-keywords.js sync              # sync keywords/*.json -> remote-config.json');
+    console.error(
+        '  node scripts/manage-keywords.js sync              # sync keywords/*.json -> remote-config.json',
+    );
     console.error('  node scripts/manage-keywords.js check <keyword>   # check if keyword exists');
     console.error('  node scripts/manage-keywords.js check <keyword> --category sponsored');
     process.exit(1);

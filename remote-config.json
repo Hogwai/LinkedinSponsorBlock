@@ -26,9 +26,7 @@
                         "p[class]:not([componentkey^=\"feed-commentary\"]):not([componentkey^=\"comment-commentary\"]):not(:has([data-testid=\"expandable-text-box\"]))",
                         "p[class]:not([componentkey^=\"feed-commentary\"]):not([componentkey^=\"comment-commentary\"]):not(:has([data-testid=\"expandable-text-box\"])) > span"
                     ],
-                    "childSelectors": [
-                        "article[data-sponsored-tracking-url]"
-                    ],
+                    "childSelectors": ["article[data-sponsored-tracking-url]"],
                     "keywords": [
                         "post sponsorisé",
                         "sponsorisé",
@@ -270,9 +268,7 @@
                     ]
                 },
                 "suggested": {
-                    "keywordSelectors": [
-                        "span.update-components-header__text-view"
-                    ],
+                    "keywordSelectors": ["span.update-components-header__text-view"],
                     "childSelectors": [],
                     "keywords": [
                         "suggestions",
@@ -310,9 +306,7 @@
                     ]
                 },
                 "recommended": {
-                    "keywordSelectors": [
-                        "span.update-components-header__text-view"
-                    ],
+                    "keywordSelectors": ["span.update-components-header__text-view"],
                     "childSelectors": [],
                     "keywords": [
                         "recommended for you",
