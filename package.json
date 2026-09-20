@@ -28,7 +28,7 @@
         "husky": "^9.1.7",
         "jsdom": "^30.0.1",
         "prettier": "^3.9.6",
-        "rollup": "^4.63.1",
+        "rollup": "^4.63.3",
         "rollup-plugin-copy": "^3.5.0",
         "vitest": "^5.0.0"
     }
