@@ -24,7 +24,7 @@
     },
     "devDependencies": {
         "@vitest/coverage-istanbul": "^5.0.0",
-        "@vitest/coverage-v8": "^5.0.0",
+        "@vitest/coverage-v8": "^5.0.1",
         "husky": "^9.1.7",
         "jsdom": "^30.0.1",
         "prettier": "^3.9.7",
