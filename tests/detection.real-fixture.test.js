@@ -393,3 +393,42 @@ describe('getUnscannedPosts: feed-real-follow-button', () => {
         ).not.toBe('none');
     });
 });
+
+describe('getUnscannedPosts: feed-real-sdui-follow', () => {
+    let feed;
+    const modern = (category) => config.CONFIG.profiles.modern.detection[category];
+
+    beforeEach(() => {
+        feed = loadFixtureDOM('feed-real-sdui-follow.html');
+        document.body.innerHTML = '';
+        document.body.appendChild(feed);
+    });
+
+    it('detects the new-shape author-row Follow suggestion', () => {
+        const groups = detection.getUnscannedPosts(document.body);
+        expect(groups.suggested).toHaveLength(1);
+    });
+
+    it('keeps the organic and hr-guarded posts as content', () => {
+        const groups = detection.getUnscannedPosts(document.body);
+        expect(groups.content).toHaveLength(2);
+    });
+
+    it('total posts = 3 (1 suggestion + 2 content)', () => {
+        const groups = detection.getUnscannedPosts(document.body);
+        const total =
+            groups.sponsored.length +
+            groups.suggested.length +
+            groups.recommended.length +
+            groups.content.length;
+        expect(total).toBe(3);
+    });
+
+    it('matches the suggestion via the structural childSelector', () => {
+        const groups = detection.getUnscannedPosts(document.body);
+        const suggestedPost = groups.suggested[0];
+        expect(detection.matchReason(suggestedPost, modern('suggested')).kind).toBe(
+            'child-selector',
+        );
+    });
+});

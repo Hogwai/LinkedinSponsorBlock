@@ -71,7 +71,7 @@ export const CONFIG = {
                     ],
                     [
                         'p[data-test-id="main-feed-card__header"]',
-                        'div[data-lazy-mount-id]:not(:has(hr[role="presentation"])) h2 + div :is(button[componentkey^="auto-component-"], [componentkey^="ConnectButtonstate:"])',
+                        ':scope:not(:has(hr[role="presentation"])) h2 + div :is(button[componentkey^="auto-component-"], [componentkey^="ConnectButtonstate:"])',
                     ],
                 ),
                 recommended: createDetection('recommended', [`p[componentkey]${PROSE_EXCLUSION}`]),
