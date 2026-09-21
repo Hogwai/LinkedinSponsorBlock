@@ -1,0 +1,129 @@
+<!--
+  Realistic fixture: new (SDUI) feed DOM shape without div[data-lazy-mount-id].
+  The outermost post container is div[data-display-contents="true"] and the post card is
+  div[componentkey^="update-card-focus"], so the structural "author row" rule must anchor
+  on the matched post itself (:scope) rather than on a specific wrapper attribute.
+  Detection = author row (h2 + div) contains a Follow/Connect action, and the post
+  has no context header (<hr role="presentation"> = liked/commented/followed-by bar).
+  Data anonymized, SVGs removed, structure preserved.
+-->
+<div data-testid="mainFeed">
+    <!-- [0] Suggestion (FR), new shape: "Suivre" in the author row -> suggested -->
+    <div data-display-contents="true">
+        <div class="_1a41feae _16300375" data-display-contents="true">
+            <div class="_56dda7f7 _11cd2a0a cbc8545e _16300375">
+                <div
+                    class="f4a40daa aa56821a _16300375"
+                    componentkey="update-card-focus-fixture-sdui-follow-1"
+                    role="listitem"
+                >
+                    <h2><span>Post du fil d’actualité</span></h2>
+                    <div class="_90ecec7c a68abec2 _1376f190 d84b0e9e f852cf51">
+                        <a
+                            href="https://www.linkedin.com/in/anonymized-author-one/"
+                            aria-label="Voir le profil de Author One"
+                        >
+                            <span>Author One</span>
+                        </a>
+                        <span>• 3e et +</span>
+                        <button
+                            type="button"
+                            componentkey="auto-component-fixture-sdui-follow-1"
+                            aria-label="Suivre Author One"
+                        >
+                            <span><span>Suivre</span></span>
+                        </button>
+                    </div>
+                    <div data-display-contents="true">
+                        <p componentkey="commentary-fixture-sdui-follow-1">
+                            Une réflexion sur la latence en production et les architectures
+                            distribuées.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- [1] Organic post, new shape, followed author -> content (no Follow/Connect action) -->
+    <div data-display-contents="true">
+        <div class="_1a41feae _16300375" data-display-contents="true">
+            <div class="_56dda7f7 _11cd2a0a cbc8545e _16300375">
+                <div
+                    class="f4a40daa aa56821a _16300375"
+                    componentkey="update-card-focus-fixture-sdui-organic-1"
+                    role="listitem"
+                >
+                    <h2><span>Post du fil d’actualité</span></h2>
+                    <div class="_90ecec7c a68abec2 _1376f190 d84b0e9e f852cf51">
+                        <a
+                            href="https://www.linkedin.com/in/anonymized-author-two/"
+                            aria-label="Voir le profil de Author Two"
+                        >
+                            <span>Author Two</span>
+                        </a>
+                        <span>• Suivi</span>
+                    </div>
+                    <div data-display-contents="true">
+                        <p componentkey="commentary-fixture-sdui-organic-1">
+                            Merci à toutes les personnes qui me suivent : n’hésitez pas à me suivre
+                            pour d’autres articles sur le sujet.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- [2] "Liked by a network member", new shape: context bar + hr -> content despite the author Follow button -->
+    <div data-display-contents="true">
+        <div class="_1a41feae _16300375" data-display-contents="true">
+            <div class="_56dda7f7 _11cd2a0a cbc8545e _16300375">
+                <div
+                    class="f4a40daa aa56821a _16300375"
+                    componentkey="update-card-focus-fixture-sdui-guarded-1"
+                    role="listitem"
+                >
+                    <h2><span>Post du fil d’actualité</span></h2>
+                    <div componentkey="social-proof-fixture-sdui-guarded-1">
+                        <a
+                            href="https://www.linkedin.com/in/anonymized-liker/"
+                            aria-label="Voir le profil de Liker One"
+                        >
+                            <span>Liker One</span>
+                        </a>
+                        <p componentkey="social-text-fixture-sdui-guarded-1">
+                            <span>
+                                <a href="https://www.linkedin.com/in/anonymized-liker/">
+                                    <strong>Liker One</strong>
+                                </a>
+                                aime ce contenu
+                            </span>
+                        </p>
+                    </div>
+                    <hr role="presentation" class="_99a839d2 _652639ce" />
+                    <div class="_90ecec7c a68abec2 _1376f190 d84b0e9e f852cf51">
+                        <a
+                            href="https://www.linkedin.com/in/anonymized-author-three/"
+                            aria-label="Voir le profil de Author Three"
+                        >
+                            <span>Author Three</span>
+                        </a>
+                        <button
+                            type="button"
+                            componentkey="auto-component-fixture-sdui-guarded-1"
+                            aria-label="Suivre Author Three"
+                        >
+                            <span><span>Suivre</span></span>
+                        </button>
+                    </div>
+                    <div data-display-contents="true">
+                        <p componentkey="commentary-fixture-sdui-guarded-1">
+                            Une place se libère dans notre équipe, n’hésitez pas à partager.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
