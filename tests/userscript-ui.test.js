@@ -262,6 +262,10 @@ describe('floating UI shortcut guards', () => {
 
     it('ignores a shortcut while an editable control inside the shadow DOM is focused', () => {
         const { ui, onToggleHideFloatingUI } = makeUI();
+        // jsdom >= 30.1.2 refuses focus() on controls inside a `display: none`
+        // ancestor, matching browsers: open the panel so the checkbox is
+        // rendered, exactly as a user must do before focusing it.
+        lastShadowRoot.getElementById('lsb-fab').click();
         const input = lastShadowRoot.getElementById('lsb-hide-floating-ui');
         input.focus();
         expect(lastShadowRoot.activeElement).toBe(input);
