@@ -33,11 +33,6 @@ function addToTotalCounters(promoted, suggested) {
     return updated;
 }
 
-function resetTotalCounters() {
-    setStored(SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED, 0);
-    setStored(SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED, 0);
-}
-
 // ==================== STATE ====================
 const state = {
     observer: null,
@@ -123,7 +118,6 @@ const pageManager = createPageManager(state, observer, () => {
 
 // ==================== UI ====================
 function initUI() {
-    const totals = getTotalCounters();
     state.ui = createFloatingUI({
         settings: {
             ...state.settings,
@@ -136,7 +130,6 @@ function initUI() {
                 setStored(SETTINGS_KEYS.REVIEW_BANNER_DISMISSED, true);
             },
         },
-        counters: totals,
         onToggleEnabled(enabled) {
             state.settings[SETTINGS_KEYS.ENABLED] = enabled;
             setStored(SETTINGS_KEYS.ENABLED, enabled);
@@ -203,7 +196,8 @@ function initUI() {
 document.addEventListener('visibilitychange', () => {
     if (!state.isCurrentlyFeedPage) return;
     if (!state.settings[SETTINGS_KEYS.ENABLED]) return;
-    document.hidden ? observer.stop() : observer.start();
+    if (document.hidden) observer.stop();
+    else observer.start();
 });
 
 // URL change detection (SPA-compatible)
@@ -215,7 +209,8 @@ function handleUrlChange() {
         lastUrl = currentUrl;
         pageManager.handleUrlChange();
         if (state.ui) {
-            state.isCurrentlyFeedPage ? state.ui.show() : state.ui.hide();
+            if (state.isCurrentlyFeedPage) state.ui.show();
+            else state.ui.hide();
         }
     }
 }

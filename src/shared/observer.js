@@ -45,7 +45,7 @@ export function createObserver(scanFn, state) {
         return feed;
     }
 
-    function connect(root) {
+    function connect() {
         let debounceTimeout = null;
 
         state.observer = new MutationObserver((mutations) => {
@@ -87,7 +87,7 @@ export function createObserver(scanFn, state) {
         const feed = findFeed();
 
         if (feed) {
-            connect(feed);
+            connect();
             return;
         }
 
@@ -98,7 +98,7 @@ export function createObserver(scanFn, state) {
         }
 
         // Feed wrapper not found after retries, start anyway with document
-        connect(document);
+        connect();
     }
 
     function stop() {

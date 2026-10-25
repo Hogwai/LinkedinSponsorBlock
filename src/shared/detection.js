@@ -33,25 +33,36 @@ export function matchReason(post, detection) {
     const candidates = keywordSelectors.flatMap((sel) => Array.from(post.querySelectorAll(sel)));
 
     for (const el of candidates) {
-        const text = normalizeKeyword(el.textContent.trim());
-        const snippet = el.textContent.replace(/\s+/g, ' ').trim().slice(0, REASON_TEXT_MAX);
+        const rawText = el.textContent;
+        const text = normalizeKeyword(rawText.trim());
 
         if (keywords.has(text)) {
-            return { kind: 'keyword-exact', keyword: text, text: snippet };
+            return {
+                kind: 'keyword-exact',
+                keyword: text,
+                text: rawText.replace(/\s+/g, ' ').trim().slice(0, REASON_TEXT_MAX),
+            };
         }
 
-        const directText = Array.from(el.childNodes)
-            .filter((n) => n.nodeType === Node.TEXT_NODE)
-            .map((n) => normalizeKeyword(n.textContent.trim()))
-            .filter((t) => t.length > 0);
-        const directHit = directText.find((t) => keywords.has(t));
-        if (directHit) {
-            return { kind: 'keyword-text-node', keyword: directHit, text: snippet };
+        for (const node of el.childNodes) {
+            if (node.nodeType !== Node.TEXT_NODE) continue;
+            const directText = normalizeKeyword(node.textContent.trim());
+            if (directText.length > 0 && keywords.has(directText)) {
+                return {
+                    kind: 'keyword-text-node',
+                    keyword: directText,
+                    text: rawText.replace(/\s+/g, ' ').trim().slice(0, REASON_TEXT_MAX),
+                };
+            }
         }
 
         for (const kw of keywords) {
             if (text.includes(kw)) {
-                return { kind: 'keyword-substring', keyword: kw, text: snippet };
+                return {
+                    kind: 'keyword-substring',
+                    keyword: kw,
+                    text: rawText.replace(/\s+/g, ' ').trim().slice(0, REASON_TEXT_MAX),
+                };
             }
         }
     }
@@ -79,6 +90,15 @@ function isRecommended(post, profile) {
     return matchesByKeyword(post, profile.detection.recommended);
 }
 
+function hasMatchingAncestor(post, matched) {
+    let node = post.parentElement;
+    while (node) {
+        if (matched.has(node)) return true;
+        node = node.parentElement;
+    }
+    return false;
+}
+
 export function getUnscannedPosts(root) {
     const profile = getActiveProfile();
     const selector = profile.postContainers.join(',');
@@ -87,10 +107,10 @@ export function getUnscannedPosts(root) {
         posts.push(root);
     }
     posts.push(...root.querySelectorAll(selector));
-    posts = posts.filter((post) => !scannedPosts.has(post));
 
-    // Only first level elements (posts)
-    posts = posts.filter((post) => !post.parentElement?.closest(selector));
+    // Keep the ones with no matching ancestor and drop already-scanned posts in the same pass
+    const matched = new Set(posts);
+    posts = posts.filter((post) => !scannedPosts.has(post) && !hasMatchingAncestor(post, matched));
 
     const groups = {
         sponsored: [],

@@ -94,7 +94,7 @@ function prefixStream(stream, tag) {
 }
 
 function startWatchAndDeploy(version, deviceId) {
-    return new Promise((resolvePromise, reject) => {
+    return new Promise(() => {
         let cleaning = false;
         const children = [];
 

@@ -67,7 +67,7 @@ describe('applyLayout', () => {
         const profile = getActiveProfile();
         const { detection } = profile;
 
-        for (const [key, det] of Object.entries(detection)) {
+        for (const det of Object.values(detection)) {
             expect(det).toHaveProperty('keywordSelectors');
             expect(Array.isArray(det.keywordSelectors)).toBe(true);
             expect(det.keywordSelectors.length).toBeGreaterThan(0);

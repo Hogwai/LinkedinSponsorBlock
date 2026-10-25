@@ -30,6 +30,7 @@ function hidePost(post, label, category, incrementCounter) {
     post.style.display = 'none';
     scannedPosts.add(post);
     incrementCounter();
+    if (!logger.isActive()) return;
     if (logger.verbose) {
         logger.log(
             `${label} post hidden [${formatReason(reasonFor(post, category))}]: "${getPostPreview(post)}"`,

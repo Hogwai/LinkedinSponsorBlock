@@ -1,0 +1,37 @@
+{
+    "$schema": "./node_modules/oxlint/configuration_schema.json",
+    "plugins": [],
+    "env": {
+        "browser": true,
+        "es2024": true,
+        "node": true,
+        "webextensions": true
+    },
+    "globals": {
+        "__NO_REMOTE_CONFIG__": "readonly",
+        "__VERSION__": "readonly"
+    },
+    "categories": {
+        "correctness": "error"
+    },
+    "rules": {
+        "no-undef": "error",
+        "no-unused-expressions": "error",
+        "no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }]
+    },
+    "overrides": [
+        {
+            "files": ["tests/**"],
+            "env": {
+                "vitest": true
+            }
+        },
+        {
+            "files": ["src/userscript/**"],
+            "env": {
+                "greasemonkey": true
+            }
+        }
+    ],
+    "ignorePatterns": ["coverage/**", "dist/**"]
+}

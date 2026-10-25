@@ -154,7 +154,8 @@ function updateSettings(newSettings) {
 document.addEventListener('visibilitychange', () => {
     if (!state.isCurrentlyFeedPage) return;
     if (!state.settings[SETTINGS_KEYS.ENABLED]) return;
-    document.hidden ? observer.stop() : observer.start();
+    if (document.hidden) observer.stop();
+    else observer.start();
 });
 
 api.runtime.onMessage.addListener((message, _sender, sendResponse) => {

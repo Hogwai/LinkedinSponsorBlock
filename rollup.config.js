@@ -4,12 +4,6 @@ import copy from 'rollup-plugin-copy';
 function jsonPlugin() {
     return {
         name: 'json',
-        resolveId(source, importer) {
-            if (source.endsWith('.json')) {
-                return null;
-            }
-            return null;
-        },
         load(id) {
             const cleanId = id.split('?')[0];
             if (cleanId.endsWith('.json')) {
