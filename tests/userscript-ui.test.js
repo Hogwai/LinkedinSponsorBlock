@@ -408,7 +408,7 @@ describe('floating UI settings toggles', () => {
     });
 
     it('propagates the discreet toggle and updates FAB styling', () => {
-        const { ui, host, callbacks } = makeUI();
+        const { ui, callbacks } = makeUI();
         const fab = lastShadowRoot.getElementById('lsb-fab');
         expect(fab.classList.contains('discreet')).toBe(false);
         change('lsb-discreet', true);

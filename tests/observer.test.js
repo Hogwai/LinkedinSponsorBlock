@@ -1,9 +1,8 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import { loadFixtureDOM, createTestState } from './helpers.js';
+import { createTestState } from './helpers.js';
 
 let CONFIG;
 let createObserver;
-let getActiveProfile;
 let applyLayout;
 
 afterEach(() => {
@@ -19,7 +18,6 @@ beforeEach(async () => {
     vi.resetModules();
     const config = await import('../src/shared/config.js');
     CONFIG = config.CONFIG;
-    getActiveProfile = config.getActiveProfile;
     applyLayout = config.applyLayout;
     const observerMod = await import('../src/shared/observer.js');
     createObserver = observerMod.createObserver;

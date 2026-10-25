@@ -785,7 +785,6 @@ function createDOM() {
 // ==================== FLOATING UI ====================
 export function createFloatingUI({
     settings,
-    counters,
     onToggleEnabled,
     onToggleDiscreet,
     onTogglePromoted,
@@ -1073,7 +1072,7 @@ export function createFloatingUI({
 
     // Public API
     return {
-        updateCounters(sessionTotal, totalPromoted, totalSuggested) {
+        updateCounters(sessionTotal, _totalPromoted, _totalSuggested) {
             badge.textContent = sessionTotal;
             badge.classList.toggle('visible', sessionTotal > 0);
         },
