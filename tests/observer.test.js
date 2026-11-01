@@ -2,10 +2,19 @@ import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { createTestState } from './helpers.js';
 
 let CONFIG;
-let createObserver;
+let createObserverImpl;
 let applyLayout;
+let activeObservers = [];
+
+function createObserver(scanFn, state) {
+    const observer = createObserverImpl(scanFn, state);
+    activeObservers.push(observer);
+    return observer;
+}
 
 afterEach(() => {
+    for (const observer of activeObservers) observer.stop();
+    activeObservers = [];
     vi.useRealTimers();
 });
 
@@ -20,7 +29,7 @@ beforeEach(async () => {
     CONFIG = config.CONFIG;
     applyLayout = config.applyLayout;
     const observerMod = await import('../src/shared/observer.js');
-    createObserver = observerMod.createObserver;
+    createObserverImpl = observerMod.createObserver;
 
     // Reset DOM
     document.body.innerHTML = '';
@@ -228,5 +237,44 @@ describe('stop', () => {
         expect(state.observer).toBeNull();
 
         vi.useRealTimers();
+    });
+
+    it('cancels a pending debounce scan', async () => {
+        document.body.setAttribute('data-rehydrated', '');
+        const feed = document.createElement('div');
+        feed.setAttribute('data-testid', 'mainFeed');
+        document.body.appendChild(feed);
+
+        const scanFn = vi.fn();
+        const state = createTestState();
+        const observer = createObserver(scanFn, state);
+
+        observer.start();
+        scanFn.mockClear();
+
+        feed.appendChild(document.createElement('div'));
+        await new Promise((r) => setTimeout(r, 0));
+
+        observer.stop();
+        await new Promise((r) => setTimeout(r, CONFIG.DELAYS.OBSERVER_RETRY + 20));
+
+        expect(scanFn).not.toHaveBeenCalled();
+    });
+
+    it('cancels a pending retry', async () => {
+        document.body.setAttribute('data-rehydrated', '');
+
+        const scanFn = vi.fn();
+        const state = createTestState();
+        const observer = createObserver(scanFn, state);
+
+        observer.start();
+        expect(state.isObserverConnected).toBe(false);
+
+        observer.stop();
+        await new Promise((r) => setTimeout(r, CONFIG.DELAYS.OBSERVER_RETRY + 20));
+
+        expect(state.isObserverConnected).toBe(false);
+        expect(state.observer).toBeNull();
     });
 });

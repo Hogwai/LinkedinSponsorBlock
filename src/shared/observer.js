@@ -29,6 +29,8 @@ function findFeedWrapper(profile) {
 export function createObserver(scanFn, state) {
     let retryCount = 0;
     let layoutApplied = false;
+    let debounceTimeout = null;
+    let retryTimeout = null;
 
     function findFeed() {
         if (!layoutApplied) {
@@ -46,8 +48,6 @@ export function createObserver(scanFn, state) {
     }
 
     function connect() {
-        let debounceTimeout = null;
-
         state.observer = new MutationObserver((mutations) => {
             let hasNewElement = false;
 
@@ -65,6 +65,7 @@ export function createObserver(scanFn, state) {
 
             clearTimeout(debounceTimeout);
             debounceTimeout = setTimeout(() => {
+                debounceTimeout = null;
                 scanFn(document);
             }, CONFIG.DELAYS.OBSERVER_RETRY);
         });
@@ -93,7 +94,7 @@ export function createObserver(scanFn, state) {
 
         if (retryCount < CONFIG.DELAYS.MAX_OBSERVER_RETRIES) {
             retryCount++;
-            setTimeout(start, CONFIG.DELAYS.OBSERVER_RETRY);
+            retryTimeout = setTimeout(start, CONFIG.DELAYS.OBSERVER_RETRY);
             return;
         }
 
@@ -102,6 +103,11 @@ export function createObserver(scanFn, state) {
     }
 
     function stop() {
+        clearTimeout(debounceTimeout);
+        debounceTimeout = null;
+        clearTimeout(retryTimeout);
+        retryTimeout = null;
+
         if (state.observer) {
             state.observer.disconnect();
             state.observer = null;
