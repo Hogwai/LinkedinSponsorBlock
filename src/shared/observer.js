@@ -81,7 +81,7 @@ export function createObserver(scanFn, state) {
     }
 
     function start() {
-        if (state.isObserverConnected) {
+        if (state.isObserverConnected || retryTimeout !== null) {
             return;
         }
 
@@ -94,7 +94,10 @@ export function createObserver(scanFn, state) {
 
         if (retryCount < CONFIG.DELAYS.MAX_OBSERVER_RETRIES) {
             retryCount++;
-            retryTimeout = setTimeout(start, CONFIG.DELAYS.OBSERVER_RETRY);
+            retryTimeout = setTimeout(() => {
+                retryTimeout = null;
+                start();
+            }, CONFIG.DELAYS.OBSERVER_RETRY);
             return;
         }
 
