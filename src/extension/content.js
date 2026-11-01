@@ -1,4 +1,3 @@
-import { CONFIG } from '../shared/config.js';
 import { logger } from '../shared/logger.js';
 import { createObserver } from '../shared/observer.js';
 import { isFeedPage, createPageManager } from '../shared/page.js';
@@ -6,11 +5,8 @@ import { SETTINGS_KEYS } from '../shared/settings.js';
 import api from './browser-api.js';
 import { applyRemoteConfig } from '../shared/remote-config.js';
 import { createBlocker } from '../shared/blocker.js';
-import {
-    MESSAGE_TYPES,
-    createBlockedMessage,
-    createFetchRemoteConfigMessage,
-} from '../shared/messages.js';
+import { createNotifier } from './notifier.js';
+import { MESSAGE_TYPES, createFetchRemoteConfigMessage } from '../shared/messages.js';
 
 // ==================== STATE ====================
 const state = {
@@ -32,61 +28,10 @@ const state = {
 };
 
 // ==================== NOTIFIER ====================
-const notifier = {
-    pending: false,
-    scheduled: false,
-    lastNotifiedPromoted: 0,
-    lastNotifiedSuggested: 0,
-    lastNotifiedScanned: 0,
-    queue() {
-        this.pending = true;
-        if (!this.scheduled) {
-            this.scheduled = true;
-            setTimeout(() => {
-                requestIdleCallback(
-                    () => {
-                        if (this.pending) {
-                            const newPromoted =
-                                state.sessionPromotedRemoved - this.lastNotifiedPromoted;
-                            const newSuggested =
-                                state.sessionSuggestedRemoved - this.lastNotifiedSuggested;
-                            const newScanned = state.sessionPostsScanned - this.lastNotifiedScanned;
-
-                            if (newPromoted > 0 || newSuggested > 0 || newScanned > 0) {
-                                api.runtime
-                                    .sendMessage(
-                                        createBlockedMessage({
-                                            promoted: newPromoted,
-                                            suggested: newSuggested,
-                                            scanned: newScanned,
-                                        }),
-                                    )
-                                    .catch((err) => {
-                                        logger.warn(
-                                            'Failed to send blocked message to background',
-                                            err,
-                                        );
-                                    });
-                                this.lastNotifiedPromoted = state.sessionPromotedRemoved;
-                                this.lastNotifiedSuggested = state.sessionSuggestedRemoved;
-                                this.lastNotifiedScanned = state.sessionPostsScanned;
-                            }
-
-                            this.pending = false;
-                        }
-                        this.scheduled = false;
-                    },
-                    { timeout: 500 },
-                );
-            }, CONFIG.DELAYS.NOTIFICATION);
-        }
-    },
-    reset() {
-        this.lastNotifiedPromoted = 0;
-        this.lastNotifiedSuggested = 0;
-        this.lastNotifiedScanned = 0;
-    },
-};
+const notifier = createNotifier({
+    state,
+    sendMessage: (message) => api.runtime.sendMessage(message),
+});
 
 // ==================== BLOCKER ====================
 const blocker = createBlocker({
@@ -125,6 +70,7 @@ function updateSettings(newSettings) {
         state.settings[SETTINGS_KEYS.ENABLED] = newSettings[SETTINGS_KEYS.ENABLED];
         if (!state.settings[SETTINGS_KEYS.ENABLED]) {
             observer.stop();
+            notifier.cancel();
         } else if (state.isCurrentlyFeedPage) {
             observer.start();
         }
@@ -156,6 +102,10 @@ document.addEventListener('visibilitychange', () => {
     if (!state.settings[SETTINGS_KEYS.ENABLED]) return;
     if (document.hidden) observer.stop();
     else observer.start();
+});
+
+window.addEventListener('pagehide', () => {
+    notifier.cancel();
 });
 
 api.runtime.onMessage.addListener((message, _sender, sendResponse) => {

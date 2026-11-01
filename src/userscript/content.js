@@ -5,6 +5,7 @@ import { isFeedPage, createPageManager } from '../shared/page.js';
 import { SETTINGS_KEYS, DEFAULT_SETTINGS } from '../shared/settings.js';
 import { createFloatingUI } from './ui.js';
 import { createUserscriptStorage } from './storage.js';
+import { createUrlWatcher } from './url-watcher.js';
 import { REMOTE_CONFIG_URL, applyRemoteConfig } from '../shared/remote-config.js';
 import { createBlocker } from '../shared/blocker.js';
 
@@ -37,7 +38,6 @@ function addToTotalCounters(promoted, suggested) {
 const state = {
     observer: null,
     waiter: null,
-    pollingInterval: null,
     sessionPromotedRemoved: 0,
     sessionSuggestedRemoved: 0,
     isObserverConnected: false,
@@ -193,47 +193,37 @@ function initUI() {
 }
 
 // ==================== INIT ====================
-document.addEventListener('visibilitychange', () => {
+// With @grant, Tampermonkey runs in a sandbox: use unsafeWindow to patch the page's real history
+const pageWindow = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window;
+
+function onVisibilityChange() {
     if (!state.isCurrentlyFeedPage) return;
     if (!state.settings[SETTINGS_KEYS.ENABLED]) return;
     if (document.hidden) observer.stop();
     else observer.start();
-});
-
-// URL change detection (SPA-compatible)
-let lastUrl = location.href;
+}
 
 function handleUrlChange() {
-    const currentUrl = location.href;
-    if (currentUrl !== lastUrl) {
-        lastUrl = currentUrl;
-        pageManager.handleUrlChange();
-        if (state.ui) {
-            if (state.isCurrentlyFeedPage) state.ui.show();
-            else state.ui.hide();
-        }
+    pageManager.handleUrlChange();
+    if (state.ui) {
+        if (state.isCurrentlyFeedPage) state.ui.show();
+        else state.ui.hide();
     }
 }
 
-// Listen to history changes (SPA navigation)
-// With @grant, Tampermonkey runs in a sandbox: use unsafeWindow to patch the page's real history
-const pageWindow = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window;
-const originalPushState = pageWindow.history.pushState;
-const originalReplaceState = pageWindow.history.replaceState;
+const urlWatcher = createUrlWatcher({
+    pageWindow,
+    intervalMs: 1000,
+    onChange: handleUrlChange,
+});
 
-pageWindow.history.pushState = function (...args) {
-    originalPushState.apply(this, args);
-    handleUrlChange();
-};
+function attachVisibilityListener() {
+    document.addEventListener('visibilitychange', onVisibilityChange);
+}
 
-pageWindow.history.replaceState = function (...args) {
-    originalReplaceState.apply(this, args);
-    handleUrlChange();
-};
-
-pageWindow.addEventListener('popstate', handleUrlChange);
-
-state.isCurrentlyFeedPage = isFeedPage();
+function detachVisibilityListener() {
+    document.removeEventListener('visibilitychange', onVisibilityChange);
+}
 
 function setRemoteDebugStatus(status) {
     const payload = {
@@ -342,14 +332,39 @@ function start() {
                 });
             }),
     );
+    if (state.ui) {
+        state.ui.destroy();
+        state.ui = null;
+    }
     initUI();
+    attachVisibilityListener();
+    urlWatcher.start();
+    state.isCurrentlyFeedPage = isFeedPage();
     if (state.isCurrentlyFeedPage) {
         if (state.settings[SETTINGS_KEYS.ENABLED]) observer.start();
     } else {
         state.ui.hide();
     }
-    state.pollingInterval = setInterval(handleUrlChange, 1000);
 }
+
+function teardown() {
+    if (state.waiter) {
+        state.waiter.disconnect();
+        state.waiter = null;
+    }
+    observer.stop();
+    urlWatcher.stop();
+    detachVisibilityListener();
+    if (state.ui) {
+        state.ui.destroy();
+        state.ui = null;
+    }
+}
+
+pageWindow.addEventListener('pagehide', teardown);
+pageWindow.addEventListener('pageshow', (event) => {
+    if (event.persisted) start();
+});
 
 if (document.body) {
     start();

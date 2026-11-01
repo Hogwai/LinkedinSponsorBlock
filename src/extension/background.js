@@ -152,4 +152,6 @@ async function recordInstallDate() {
     }
 }
 
-recordInstallDate();
+recordInstallDate().catch((err) => {
+    logger.warn('Failed to record install date', err);
+});

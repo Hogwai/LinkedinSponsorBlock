@@ -9,7 +9,11 @@ beforeEach(async () => {
 });
 
 afterEach(() => {
+    if (logger._idleCallbackId !== null) {
+        cancelIdleCallback(logger._idleCallbackId);
+    }
     globalThis.localStorage?.removeItem('lsb_debug');
+    vi.restoreAllMocks();
 });
 
 describe('initial state', () => {
@@ -73,6 +77,23 @@ describe('setVerbose', () => {
         globalThis.localStorage.setItem('lsb_debug', '1');
         logger.setVerbose(false);
         expect(logger.verbose).toBe(true);
+    });
+
+    it('cancels a pending flush when verbose was the last active toggle', () => {
+        const cancelSpy = vi.spyOn(globalThis, 'cancelIdleCallback');
+
+        logger.setVerbose(true);
+        logger.log('pending');
+        const idleCallbackId = logger._idleCallbackId;
+
+        logger.setVerbose(false);
+
+        expect(cancelSpy).toHaveBeenCalledWith(idleCallbackId);
+        expect(logger.buffer).toEqual([]);
+        expect(logger.scheduled).toBe(false);
+        expect(logger._idleCallbackId).toBe(null);
+
+        cancelSpy.mockRestore();
     });
 });
 
@@ -160,11 +181,10 @@ describe('log', () => {
 
         // Intercept requestIdleCallback to control when it fires
         let idleCb;
-        const origRaf = globalThis.requestIdleCallback;
-        globalThis.requestIdleCallback = (cb) => {
+        const idleSpy = vi.spyOn(globalThis, 'requestIdleCallback').mockImplementation((cb) => {
             idleCb = cb;
             return 999;
-        };
+        });
 
         logger.log('msg1');
         logger.log('msg2');
@@ -180,7 +200,7 @@ describe('log', () => {
         expect(logger.scheduled).toBe(false);
         expect(logger._idleCallbackId).toBe(null);
 
-        globalThis.requestIdleCallback = origRaf;
+        idleSpy.mockRestore();
         groupCollapsed.mockRestore();
         debug.mockRestore();
         groupEnd.mockRestore();

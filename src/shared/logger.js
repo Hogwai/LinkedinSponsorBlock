@@ -30,16 +30,19 @@ export const logger = {
         return this.enabled || this.verbose;
     },
 
+    _clearPending() {
+        if (this._idleCallbackId !== null) {
+            cancelIdleCallback(this._idleCallbackId);
+            this._idleCallbackId = null;
+        }
+        this.buffer = [];
+        this.scheduled = false;
+    },
+
     setEnabled(value) {
         this.enabled = value;
         if (!this.isActive()) {
-            // Clear pending buffered logs
-            if (this._idleCallbackId !== null) {
-                cancelIdleCallback(this._idleCallbackId);
-                this._idleCallbackId = null;
-            }
-            this.buffer = [];
-            this.scheduled = false;
+            this._clearPending();
 
             // Show startup message once
             if (!this._startupMessageShown) {
@@ -53,6 +56,9 @@ export const logger = {
 
     setVerbose(value) {
         this.verbose = Boolean(value) || readVerboseFlag();
+        if (!this.isActive()) {
+            this._clearPending();
+        }
     },
 
     log(message) {

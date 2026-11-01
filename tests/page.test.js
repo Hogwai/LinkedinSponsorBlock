@@ -3,43 +3,43 @@ import { describe, it, expect, beforeEach } from 'vitest';
 describe('page.js', () => {
     beforeEach(() => {
         // Reset location between tests
-        window.location = new URL('https://www.linkedin.com/');
+        window.history.replaceState({}, '', '/');
     });
 
     describe('isFeedPage', () => {
         it('returns true for root path', async () => {
             const { isFeedPage } = await import('../src/shared/page.js');
-            window.location.pathname = '/';
+            window.history.replaceState({}, '', '/');
             expect(isFeedPage()).toBe(true);
         });
 
         it('returns true for /feed paths', async () => {
             const { isFeedPage } = await import('../src/shared/page.js');
-            window.location.pathname = '/feed/';
+            window.history.replaceState({}, '', '/feed/');
             expect(isFeedPage()).toBe(true);
         });
 
         it('returns true for /preload paths', async () => {
             const { isFeedPage } = await import('../src/shared/page.js');
-            window.location.pathname = '/preload/';
+            window.history.replaceState({}, '', '/preload/');
             expect(isFeedPage()).toBe(true);
         });
 
         it('returns false for non-feed paths', async () => {
             const { isFeedPage } = await import('../src/shared/page.js');
-            window.location.pathname = '/messaging/';
+            window.history.replaceState({}, '', '/messaging/');
             expect(isFeedPage()).toBe(false);
         });
 
         it('returns false for /jobs paths', async () => {
             const { isFeedPage } = await import('../src/shared/page.js');
-            window.location.pathname = '/jobs/';
+            window.history.replaceState({}, '', '/jobs/');
             expect(isFeedPage()).toBe(false);
         });
 
         it('returns false for /notifications paths', async () => {
             const { isFeedPage } = await import('../src/shared/page.js');
-            window.location.pathname = '/notifications/';
+            window.history.replaceState({}, '', '/notifications/');
             expect(isFeedPage()).toBe(false);
         });
     });
@@ -70,7 +70,7 @@ describe('page.js', () => {
             const pm = createPageManager(state, observer, () => {
                 resetCalled = true;
             });
-            window.location.pathname = '/';
+            window.history.replaceState({}, '', '/');
             pm.handleUrlChange();
             expect(stopped).toBe(true);
             expect(resetCalled).toBe(true);
@@ -88,7 +88,7 @@ describe('page.js', () => {
                 },
             };
             const pm = createPageManager(state, observer, () => {});
-            window.location.pathname = '/messaging/';
+            window.history.replaceState({}, '', '/messaging/');
             pm.handleUrlChange();
             expect(stopped).toBe(true);
             expect(state.isCurrentlyFeedPage).toBe(false);
@@ -111,7 +111,7 @@ describe('page.js', () => {
             const pm = createPageManager(state, observer, () => {
                 resetCalled = true;
             });
-            window.location.pathname = '/feed/';
+            window.history.replaceState({}, '', '/feed/');
             pm.handleUrlChange();
             expect(stopped).toBe(true);
             expect(started).toBe(true);

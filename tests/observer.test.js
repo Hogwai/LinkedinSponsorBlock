@@ -213,6 +213,24 @@ describe('start: retry logic', () => {
 
         vi.useRealTimers();
     });
+
+    it('does not keep an untracked retry when start is called twice', () => {
+        document.body.setAttribute('data-rehydrated', '');
+
+        const scanFn = vi.fn();
+        const state = createTestState();
+        const observer = createObserver(scanFn, state);
+
+        vi.useFakeTimers();
+        observer.start();
+        observer.start();
+        observer.stop();
+
+        vi.runAllTimers();
+
+        expect(state.isObserverConnected).toBe(false);
+        expect(state.observer).toBeNull();
+    });
 });
 
 describe('stop', () => {
