@@ -2,6 +2,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
 import { CONFIG } from '../src/shared/config.js';
+import { isSafeSelectorShape } from '../src/shared/remote-config.js';
+
+const MAX_SELECTORS_PER_LIST = 50;
+const MAX_KEYWORDS_PER_CATEGORY = 2000;
 
 const CONFIG_PATH = path.resolve('remote-config.json');
 const SUPPORTED_VERSION = 2;
@@ -83,14 +87,22 @@ function hasBalancedDelimiters(selector) {
 
 function isPlausibleSelector(selector) {
     if (!isNonEmptyString(selector)) return false;
-    if (/[,>+~]$/.test(selector.trim())) return false;
-    if (!hasBalancedDelimiters(selector)) return false;
+    const trimmed = selector.trim();
+    if (/[,>+~]$/.test(trimmed)) return false;
+    if (!isSafeSelectorShape(trimmed)) return false;
+    if (!hasBalancedDelimiters(trimmed)) return false;
     return true;
 }
 
 function validateSelectors(selectors, pathParts, { allowEmpty = false } = {}) {
     validateStringArray(selectors, pathParts, { allowEmpty });
     if (!Array.isArray(selectors)) return;
+
+    if (selectors.length > MAX_SELECTORS_PER_LIST) {
+        addError(
+            `${label(pathParts)} must not contain more than ${MAX_SELECTORS_PER_LIST} selectors`,
+        );
+    }
 
     selectors.forEach((selector, index) => {
         if (typeof selector === 'string' && !isPlausibleSelector(selector)) {
@@ -128,6 +140,11 @@ function validateDetectionEntry(entry, pathParts) {
     validateSelectors(entry.keywordSelectors, [...pathParts, 'keywordSelectors']);
     validateSelectors(entry.childSelectors, [...pathParts, 'childSelectors'], { allowEmpty: true });
     validateStringArray(entry.keywords, [...pathParts, 'keywords']);
+    if (Array.isArray(entry.keywords) && entry.keywords.length > MAX_KEYWORDS_PER_CATEGORY) {
+        addError(
+            `${label([...pathParts, 'keywords'])} must not contain more than ${MAX_KEYWORDS_PER_CATEGORY} keywords`,
+        );
+    }
 }
 
 function validateProfile(profile, pathParts) {

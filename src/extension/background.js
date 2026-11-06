@@ -166,6 +166,13 @@ api.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 });
 
+// Keep the badge in sync when the setting is changed from another context.
+api.storage.onChanged.addListener((changes, areaName) => {
+    if (areaName !== 'local' || !changes[SETTINGS_KEYS.ENABLED]) return;
+    isEnabled = changes[SETTINGS_KEYS.ENABLED].newValue;
+    updateBadge(isEnabled);
+});
+
 // Record install date on first run
 async function recordInstallDate() {
     const result = await api.storage.local.get({ [SETTINGS_KEYS.INSTALL_DATE]: 0 });

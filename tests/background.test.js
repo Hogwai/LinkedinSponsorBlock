@@ -12,6 +12,11 @@ const h = vi.hoisted(() => {
                     Object.assign(storage, values);
                 }),
             },
+            onChanged: {
+                addListener: vi.fn((fn) => {
+                    listeners.storageChanged = fn;
+                }),
+            },
         },
         action: {
             setBadgeText: vi.fn(async () => {}),
@@ -66,6 +71,7 @@ beforeEach(() => {
     for (const key of Object.keys(h.storage)) delete h.storage[key];
     delete h.listeners.onMessage;
     delete h.listeners.onHistoryStateUpdated;
+    delete h.listeners.storageChanged;
 });
 
 describe('updateBadge', () => {
@@ -147,6 +153,25 @@ describe('GET_COUNTERS messages', () => {
             suggested: 0,
             totalPostsScanned: 0,
         });
+    });
+});
+
+describe('storage sync', () => {
+    it('updates the badge when enabled changes in another context', async () => {
+        await loadBackground();
+
+        h.listeners.storageChanged({ enabled: { newValue: false } }, 'local');
+
+        expect(h.api.action.setBadgeText).toHaveBeenLastCalledWith({ text: 'OFF' });
+    });
+
+    it('ignores changes from other storage areas', async () => {
+        await loadBackground();
+        h.api.action.setBadgeText.mockClear();
+
+        h.listeners.storageChanged({ enabled: { newValue: false } }, 'sync');
+
+        expect(h.api.action.setBadgeText).not.toHaveBeenCalled();
     });
 });
 
