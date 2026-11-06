@@ -383,7 +383,7 @@ scanBtn.addEventListener('click', async () => {
         if (parts.length > 0) {
             setStatus(`${parts.join(', ')} ${t('postsHidden')}`, 'success');
         } else {
-            setStatus(t('noPostsFound'), 'success');
+            setStatus(t('noNewPosts'), 'success');
         }
     } catch {
         setStatus(t('error'), 'error');

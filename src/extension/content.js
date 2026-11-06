@@ -112,13 +112,8 @@ api.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     if (message.type === MESSAGE_TYPES.URL_CHANGED) {
         pageManager.handleUrlChange();
     } else if (message.type === MESSAGE_TYPES.MANUAL_SCAN) {
-        // Scan the posts added since the last automatic pass, then report what
-        // is hidden on the page (previously hidden posts are never restored).
-        scanFeed();
-        sendResponse({
-            promoted: state.sessionPromotedRemoved,
-            suggested: state.sessionSuggestedRemoved,
-        });
+        // Report what this scan blocked
+        sendResponse(scanFeed());
         return true;
     } else if (message.type === MESSAGE_TYPES.SETTINGS_CHANGED) {
         updateSettings(message);

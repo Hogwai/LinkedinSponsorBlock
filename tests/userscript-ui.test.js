@@ -506,7 +506,7 @@ describe('floating UI scan button', () => {
         ui.destroy();
     });
 
-    it('reports no posts found when the scan result is empty or missing', () => {
+    it('reports no new posts when the scan result is empty or missing', () => {
         const { ui } = makeUI(
             { reviewBannerDismissed: true },
             {
@@ -514,7 +514,7 @@ describe('floating UI scan button', () => {
             },
         );
         clickScan();
-        expect(statusEl().textContent).toBe('No posts found');
+        expect(statusEl().textContent).toBe('No new posts found');
         expect(statusEl().className).toBe('lsb-status');
 
         ui.destroy();
@@ -526,7 +526,7 @@ describe('floating UI scan button', () => {
             },
         );
         clickScan();
-        expect(statusEl().textContent).toBe('No posts found');
+        expect(statusEl().textContent).toBe('No new posts found');
         second.ui.destroy();
     });
 

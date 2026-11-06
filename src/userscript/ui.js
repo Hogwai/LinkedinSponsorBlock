@@ -1049,7 +1049,7 @@ export function createFloatingUI({
             showStatus(`${parts.join(', ')} ${t('postsHidden')}`, 'success');
             refreshCounters();
         } else {
-            showStatus(t('noPostsFound'));
+            showStatus(t('noNewPosts'));
         }
     });
 

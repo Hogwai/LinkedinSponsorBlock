@@ -36,6 +36,8 @@ export function matchReason(post, detection) {
         const rawText = el.textContent;
         const text = normalizeKeyword(rawText.trim());
 
+        if (text.length === 0) continue;
+
         if (keywords.has(text)) {
             return {
                 kind: 'keyword-exact',
@@ -99,18 +101,41 @@ function hasMatchingAncestor(post, matched) {
     return false;
 }
 
+/**
+ * Collect post containers from one root or a batch of newly added elements.
+ * For an element added inside an existing post (e.g. the sponsored label), the
+ * closest post container is used so the whole post is re-evaluated instead of
+ * just the new fragment.
+ */
+function collectPostCandidates(roots, selector) {
+    const candidates = new Set();
+
+    for (const root of roots) {
+        if (!root) continue;
+
+        if (root.nodeType === Node.ELEMENT_NODE) {
+            const container = root.closest(selector);
+            if (container) candidates.add(container);
+        }
+
+        if (typeof root.querySelectorAll === 'function') {
+            for (const el of root.querySelectorAll(selector)) candidates.add(el);
+        }
+    }
+
+    return candidates;
+}
+
 export function getUnscannedPosts(root) {
+    const roots = Array.isArray(root) ? root : [root];
     const profile = getActiveProfile();
     const selector = profile.postContainers.join(',');
-    let posts = [];
-    if (root.matches?.(selector)) {
-        posts.push(root);
-    }
-    posts.push(...root.querySelectorAll(selector));
+    const matched = collectPostCandidates(roots, selector);
 
     // Keep the ones with no matching ancestor and drop already-scanned posts in the same pass
-    const matched = new Set(posts);
-    posts = posts.filter((post) => !scannedPosts.has(post) && !hasMatchingAncestor(post, matched));
+    const posts = [...matched].filter(
+        (post) => !scannedPosts.has(post) && !hasMatchingAncestor(post, matched),
+    );
 
     const groups = {
         sponsored: [],

@@ -156,13 +156,8 @@ function initUI() {
             setStored(SETTINGS_KEYS.FILTER_RECOMMENDED, enabled);
         },
         onScan() {
-            // Scan new posts, then report what is currently hidden. A hidden
-            // post is never restored.
-            scanFeed();
-            return {
-                promoted: state.sessionPromotedRemoved,
-                suggested: state.sessionSuggestedRemoved,
-            };
+            // Report what this scan blocked
+            return scanFeed();
         },
         getCounters() {
             const totals = getTotalCounters();

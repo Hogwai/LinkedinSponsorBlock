@@ -31,6 +31,17 @@ export function createObserver(scanFn, state) {
     let layoutApplied = false;
     let debounceTimeout = null;
     let retryTimeout = null;
+    // Added elements accumulated between two debounced scans. Scanning only
+    // these subtrees keeps the cost proportional to new content instead of the
+    // whole (ever-growing) feed.
+    const pendingRoots = new Set();
+
+    function flush() {
+        debounceTimeout = null;
+        const roots = [...pendingRoots].filter((node) => node.isConnected);
+        pendingRoots.clear();
+        if (roots.length > 0) scanFn(roots);
+    }
 
     function findFeed() {
         if (!layoutApplied) {
@@ -49,25 +60,16 @@ export function createObserver(scanFn, state) {
 
     function connect() {
         state.observer = new MutationObserver((mutations) => {
-            let hasNewElement = false;
-
             for (const m of mutations) {
                 for (const node of m.addedNodes) {
-                    if (node.nodeType === Node.ELEMENT_NODE) {
-                        hasNewElement = true;
-                        break;
-                    }
+                    if (node.nodeType === Node.ELEMENT_NODE) pendingRoots.add(node);
                 }
-                if (hasNewElement) break;
             }
 
-            if (!hasNewElement) return;
+            if (pendingRoots.size === 0) return;
 
             clearTimeout(debounceTimeout);
-            debounceTimeout = setTimeout(() => {
-                debounceTimeout = null;
-                scanFn(document);
-            }, CONFIG.DELAYS.OBSERVER_RETRY);
+            debounceTimeout = setTimeout(flush, CONFIG.DELAYS.OBSERVER_RETRY);
         });
 
         state.observer.observe(document.body, {
@@ -108,6 +110,7 @@ export function createObserver(scanFn, state) {
     function stop() {
         clearTimeout(debounceTimeout);
         debounceTimeout = null;
+        pendingRoots.clear();
         clearTimeout(retryTimeout);
         retryTimeout = null;
 
