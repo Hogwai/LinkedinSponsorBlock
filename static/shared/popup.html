@@ -32,7 +32,12 @@
                     <h1>Linkedin Sponsor Block</h1>
                 </div>
                 <div class="header-btns">
-                    <button id="openSettings" class="settings-btn-icon" title="Settings">
+                    <button
+                        id="openSettings"
+                        class="settings-btn-icon"
+                        title="Settings"
+                        data-translate-aria="settingsTitle"
+                    >
                         <svg
                             width="20"
                             height="20"
@@ -56,7 +61,12 @@
                             />
                         </svg>
                     </button>
-                    <button id="openStats" class="settings-btn-icon" title="Statistics">
+                    <button
+                        id="openStats"
+                        class="settings-btn-icon"
+                        title="Statistics"
+                        data-translate-aria="statsTitle"
+                    >
                         <svg
                             width="20"
                             height="20"
@@ -87,7 +97,7 @@
             </div>
 
             <div id="reviewBanner" class="review-banner" style="display: none">
-                <button id="dismissBanner" class="banner-close-btn" aria-label="Dismiss">
+                <button id="dismissBanner" class="banner-close-btn" data-translate-aria="dismiss">
                     <svg
                         width="14"
                         height="14"
@@ -197,7 +207,7 @@
                 <span class="btn-text">Scan now</span>
             </button>
 
-            <div id="status"></div>
+            <div id="status" role="status" aria-live="polite"></div>
 
             <footer class="footer">
                 <span data-translate="madeBy">Made by</span>
@@ -210,7 +220,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h3 data-translate="settingsTitle">Settings</h3>
-                    <button id="closeSettings" class="close-btn">
+                    <button id="closeSettings" class="close-btn" data-translate-aria="dismiss">
                         <svg
                             width="20"
                             height="20"
@@ -398,7 +408,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h3 data-translate="statsTitle">Statistics</h3>
-                    <button id="closeStats" class="close-btn">
+                    <button id="closeStats" class="close-btn" data-translate-aria="dismiss">
                         <svg
                             width="20"
                             height="20"

@@ -77,10 +77,7 @@ const state = {
             SETTINGS_KEYS.FILTER_RECOMMENDED,
             DEFAULT_SETTINGS[SETTINGS_KEYS.FILTER_RECOMMENDED],
         ),
-        [SETTINGS_KEYS.LANGUAGE]: getStored(
-            SETTINGS_KEYS.LANGUAGE,
-            DEFAULT_SETTINGS[SETTINGS_KEYS.LANGUAGE],
-        ),
+        [SETTINGS_KEYS.LANGUAGE]: getStored(SETTINGS_KEYS.LANGUAGE, null),
         [SETTINGS_KEYS.POSITION]: getStored(
             SETTINGS_KEYS.POSITION,
             DEFAULT_SETTINGS[SETTINGS_KEYS.POSITION],
@@ -137,7 +134,7 @@ const pageManager = createPageManager(state, observer, () => {
 });
 
 // ==================== SETTINGS ====================
-// Behaviour settings shared across tabs. 
+// Behaviour settings shared across tabs.
 // UI-only preferences (language, position, discreet mode, floating icon) stay local to each tab.
 const SYNCED_SETTINGS_KEYS = [
     SETTINGS_KEYS.ENABLED,

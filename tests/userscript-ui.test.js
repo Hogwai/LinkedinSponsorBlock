@@ -583,6 +583,48 @@ describe('floating UI language and position', () => {
         ui.destroy();
     });
 
+    it('keeps the language class when the position changes', () => {
+        const { ui } = makeUI({ language: 'ja', reviewBannerDismissed: true });
+        const host = document.getElementById('linkedin-sponsor-block');
+        expect(host.classList.contains('lang-ja')).toBe(true);
+
+        const posSelect = lastShadowRoot.getElementById('lsb-position');
+        posSelect.value = POSITIONS.TOP_LEFT;
+        posSelect.dispatchEvent(new Event('change', { bubbles: true }));
+
+        expect(host.classList.contains('lang-ja')).toBe(true);
+        expect(host.classList.contains('pos-tl')).toBe(true);
+        ui.destroy();
+    });
+
+    it('sets dir=rtl for Arabic', () => {
+        const { ui } = makeUI({ language: 'ar', reviewBannerDismissed: true });
+
+        expect(document.getElementById('linkedin-sponsor-block').getAttribute('dir')).toBe('rtl');
+        ui.destroy();
+    });
+
+    it('exposes the status as an aria-live region', () => {
+        const { ui } = makeUI({ reviewBannerDismissed: true });
+        const status = lastShadowRoot.getElementById('lsb-status');
+
+        expect(status.getAttribute('role')).toBe('status');
+        expect(status.getAttribute('aria-live')).toBe('polite');
+        ui.destroy();
+    });
+
+    it('labels icon-only buttons for assistive tech', () => {
+        const { ui } = makeUI({ language: 'fr', reviewBannerDismissed: true });
+
+        expect(lastShadowRoot.getElementById('lsb-close').getAttribute('aria-label')).toBe(
+            'Masquer',
+        );
+        expect(lastShadowRoot.getElementById('lsb-fab').getAttribute('aria-label')).toBe(
+            'Linkedin Sponsor Block',
+        );
+        ui.destroy();
+    });
+
     it('falls back to the bottom-right position when none is configured', () => {
         const { ui } = makeUI({ position: undefined });
         expect(document.getElementById('linkedin-sponsor-block').classList.contains('pos-br')).toBe(

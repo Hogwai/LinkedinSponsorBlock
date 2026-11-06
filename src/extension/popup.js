@@ -29,6 +29,7 @@ const pieLegend = document.getElementById('pieLegend');
 const openSettingsBtn = document.getElementById('openSettings');
 const settingsModal = document.getElementById('settingsModal');
 const closeSettingsBtn = document.getElementById('closeSettings');
+const resetCountersWrapper = document.getElementById('resetCountersWrapper');
 const resetCountersBtn = document.getElementById('resetCounters');
 const resetConfirm = document.getElementById('resetConfirm');
 const confirmResetBtn = document.getElementById('confirmReset');
@@ -70,6 +71,11 @@ function updateUILanguage() {
     document.body.className = document.body.className.replace(/\blang-\w+\b/g, '').trim();
     document.body.classList.add(`lang-${lang}`);
     document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+
+    document.querySelectorAll('[data-translate-aria]').forEach((el) => {
+        el.setAttribute('aria-label', t(el.getAttribute('data-translate-aria')));
+    });
 
     const elements = [...document.querySelectorAll('[data-translate]')];
     const btnText = scanBtn.querySelector('.btn-text');
@@ -106,7 +112,11 @@ function updateUILanguage() {
 
 // Load settings from storage
 async function loadSettings() {
-    const result = await api.storage.local.get(EXTENSION_STORAGE_DEFAULTS);
+    const [result, languageResult] = await Promise.all([
+        api.storage.local.get(EXTENSION_STORAGE_DEFAULTS),
+        // Read the language separately
+        api.storage.local.get({ [SETTINGS_KEYS.LANGUAGE]: null }),
+    ]);
 
     extensionToggle.checked = result.enabled;
     filterPromoted.checked = result.filterPromoted;
@@ -114,10 +124,11 @@ async function loadSettings() {
     filterRecommended.checked = result.filterRecommended;
     loggingToggle.checked = result.logging || false;
     verboseLoggingToggle.checked = result.verboseLogging || false;
-    languageSelect.value = result.language || detectLanguage();
+    languageSelect.value = languageResult[SETTINGS_KEYS.LANGUAGE] || detectLanguage();
 
     updateDisabledState(result.enabled);
     updateUILanguage();
+    updateFeedbackLink();
 }
 
 // Render SVG pie chart
@@ -285,6 +296,9 @@ languageSelect.addEventListener('change', async () => {
 openSettingsBtn.addEventListener('click', () => {
     settingsModal.classList.add('active');
     languageSelect.value = getCurrentLanguage();
+    // Do not reopen on a half-finished reset confirmation.
+    resetCountersWrapper.classList.remove('hidden');
+    resetConfirm.classList.add('hidden');
 });
 
 // Close settings modal
@@ -301,24 +315,18 @@ settingsModal.addEventListener('click', (e) => {
 
 // Show reset confirmation
 resetCountersBtn.addEventListener('click', () => {
-    resetCountersBtn.classList.add('hidden');
+    resetCountersWrapper.classList.add('hidden');
     resetConfirm.classList.remove('hidden');
 });
 
 // Cancel reset
 cancelResetBtn.addEventListener('click', () => {
     resetConfirm.classList.add('hidden');
-    resetCountersBtn.classList.remove('hidden');
+    resetCountersWrapper.classList.remove('hidden');
 });
 
 // Confirm reset
-confirmResetBtn.addEventListener('click', async () => {
-    await saveSettings({
-        [SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED]: 0,
-        [SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED]: 0,
-        [SETTINGS_KEYS.TOTAL_POSTS_SCANNED]: 0,
-    });
-
+confirmResetBtn.addEventListener('click', () => {
     statsScannedCount.textContent = '0';
     promotedCountEl.textContent = '0';
     suggestedCountEl.textContent = '0';
@@ -327,7 +335,7 @@ confirmResetBtn.addEventListener('click', async () => {
     api.runtime.sendMessage(createResetCountersMessage()).catch(() => {});
 
     resetConfirm.classList.add('hidden');
-    resetCountersBtn.classList.remove('hidden');
+    resetCountersWrapper.classList.remove('hidden');
 
     settingsModal.classList.remove('active');
 
