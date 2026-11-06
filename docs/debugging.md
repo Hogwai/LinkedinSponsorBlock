@@ -196,8 +196,8 @@ The build with the bypass is the one to load when you want to test a detection c
 
 The userscript writes the remote-config fetch status to two places:
 
-- `localStorage.getItem('lsb_remote_status')` — JSON payload with the phase, the HTTP status or error, and a timestamp;
-- `window.__LinkedinSponsorBlockRemote` — the same payload on the page window.
+- `localStorage.getItem('lsb_remote_status')`: JSON payload with the phase, the HTTP status or error, and a timestamp;
+- `window.__LinkedinSponsorBlockRemote`: the same payload on the page window.
 
 The `phase` field tells you where it stopped: `fetching`, `response`, `stored`, `parse-failed`, `request-error`, `request-timeout`, `no-request-api`, or `local-storage-set-failed`.
 
