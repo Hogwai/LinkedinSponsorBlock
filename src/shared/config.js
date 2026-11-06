@@ -40,11 +40,30 @@ const DEFAULT_POST_CONTAINERS = [
     'li.feed-item',
 ];
 
+// `:has()` only landed in Firefox 121 / Chrome 105. Older browsers throw a
+// SyntaxError on the whole selector, which would break detection entirely, so
+// detect the capability and fall back to the `componentkey` exclusions only.
+function supportsHasSelector() {
+    if (typeof document === 'undefined' || typeof document.querySelector !== 'function') {
+        // Background service worker: selectors are not used there.
+        return true;
+    }
+    try {
+        document.querySelector(':has(*)');
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+const SUPPORTS_HAS = supportsHasSelector();
+
 // Exclude post/commentary prose containers from keyword scanning.
 // SDUI prose lives inside [data-testid="expandable-text-box"]; excluding it stops the
 // substring fallback from matching keywords inside long prose (false positives).
 const PROSE_EXCLUSION =
-    ':not([componentkey^="feed-commentary"]):not([componentkey^="comment-commentary"]):not(:has([data-testid="expandable-text-box"]))';
+    ':not([componentkey^="feed-commentary"]):not([componentkey^="comment-commentary"])' +
+    (SUPPORTS_HAS ? ':not(:has([data-testid="expandable-text-box"]))' : '');
 
 export const CONFIG = {
     activeProfile: 'modern',
@@ -71,7 +90,11 @@ export const CONFIG = {
                     ],
                     [
                         'p[data-test-id="main-feed-card__header"]',
-                        ':scope:not(:has(hr[role="presentation"])) h2 + div :is(button[componentkey^="auto-component-"], [componentkey^="ConnectButtonstate:"])',
+                        ...(SUPPORTS_HAS
+                            ? [
+                                  ':scope:not(:has(hr[role="presentation"])) h2 + div :is(button[componentkey^="auto-component-"], [componentkey^="ConnectButtonstate:"])',
+                              ]
+                            : []),
                     ],
                 ),
                 recommended: createDetection('recommended', [`p[componentkey]${PROSE_EXCLUSION}`]),

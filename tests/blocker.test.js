@@ -204,3 +204,51 @@ describe('resetSessionCounters', () => {
         expect(state.sessionPostsScanned).toBe(0);
     });
 });
+
+describe('scanFeed: logging', () => {
+    it('logs the match reason in detailed mode and the kept posts', async () => {
+        const { logger } = await import('../src/shared/logger.js');
+        const logSpy = vi.spyOn(logger, 'log').mockImplementation(() => {});
+        logger.enabled = true;
+        logger.verbose = true;
+
+        try {
+            const state = createTestState();
+            const blocker = createBlocker({ state });
+            const feed = loadFixtureDOM('feed-real-mixed.html');
+            document.body.innerHTML = '';
+            document.body.appendChild(feed);
+
+            blocker.scanFeed(document.body);
+
+            expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('keyword-substring'));
+            expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('Content post kept'));
+        } finally {
+            logSpy.mockRestore();
+            logger.enabled = false;
+            logger.verbose = false;
+        }
+    });
+});
+
+describe('hidden posts are never restored', () => {
+    it('keeps display:none when the extension is disabled and re-enabled', () => {
+        const state = createTestState();
+        const blocker = createBlocker({ state });
+        const feed = loadFixtureDOM('feed-real-mixed.html');
+        document.body.innerHTML = '';
+        document.body.appendChild(feed);
+
+        blocker.scanFeed(document.body);
+        const sponsored = document.querySelector('[data-lazy-mount-id="fixture-sponsored-1"]');
+        expect(sponsored.style.display).toBe('none');
+
+        // The extension only stops scanning; the blocker never unhides.
+        state.settings.enabled = false;
+        blocker.scanFeed(document.body);
+        state.settings.enabled = true;
+        blocker.scanFeed(document.body);
+
+        expect(sponsored.style.display).toBe('none');
+    });
+});

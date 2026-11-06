@@ -231,9 +231,9 @@ extensionToggle.addEventListener('change', async () => {
 
     const [tab] = await api.tabs.query({ active: true, currentWindow: true });
     if (tab?.url?.includes('linkedin.com')) {
-        api.tabs.sendMessage(tab.id, createSettingsChangedMessage({ enabled }));
+        api.tabs.sendMessage(tab.id, createSettingsChangedMessage({ enabled })).catch(() => {});
     }
-    api.runtime.sendMessage(createSettingsChangedMessage({ enabled }));
+    api.runtime.sendMessage(createSettingsChangedMessage({ enabled })).catch(() => {});
 
     setStatus(enabled ? t('extensionEnabled') : t('extensionDisabled'), 'success');
     setTimeout(() => setStatus(''), 2000);
@@ -324,7 +324,7 @@ confirmResetBtn.addEventListener('click', async () => {
     suggestedCountEl.textContent = '0';
     renderPieChart(0, 0, 0);
 
-    api.runtime.sendMessage(createResetCountersMessage());
+    api.runtime.sendMessage(createResetCountersMessage()).catch(() => {});
 
     resetConfirm.classList.add('hidden');
     resetCountersBtn.classList.remove('hidden');
@@ -355,7 +355,7 @@ statsModal.addEventListener('click', (e) => {
 async function notifyContentScript(message) {
     const [tab] = await api.tabs.query({ active: true, currentWindow: true });
     if (tab?.url?.includes('linkedin.com')) {
-        api.tabs.sendMessage(tab.id, message);
+        api.tabs.sendMessage(tab.id, message).catch(() => {});
     }
 }
 
@@ -371,24 +371,26 @@ scanBtn.addEventListener('click', async () => {
     setStatus(t('scanning'), 'pending');
     scanBtn.disabled = true;
 
-    api.tabs.sendMessage(tab.id, createManualScanMessage(), (response) => {
-        if (api.runtime.lastError) {
-            setStatus(t('error'), 'error');
-        } else if (response) {
-            const msg = [];
-            if (response.promoted > 0) msg.push(`${response.promoted} promoted post`);
-            if (response.suggested > 0) msg.push(`${response.suggested} suggested post`);
-            if (msg.length > 0) {
-                setStatus(`${msg.join(', ')} hidden`, 'success');
-            } else {
-                setStatus(t('noPostsFound'), 'success');
-            }
+    try {
+        // Promise form works on both `chrome` (MV3) and `browser` (Firefox).
+        const response = await api.tabs.sendMessage(tab.id, createManualScanMessage());
+        const promoted = response?.promoted || 0;
+        const suggested = response?.suggested || 0;
+        const parts = [];
+        if (promoted > 0) parts.push(`${promoted} ${t('promotedLabel')}`);
+        if (suggested > 0) parts.push(`${suggested} ${t('suggestedLabel')}`);
+
+        if (parts.length > 0) {
+            setStatus(`${parts.join(', ')} ${t('postsHidden')}`, 'success');
         } else {
             setStatus(t('noPostsFound'), 'success');
         }
+    } catch {
+        setStatus(t('error'), 'error');
+    } finally {
         scanBtn.disabled = false;
         setTimeout(() => setStatus(''), 3000);
-    });
+    }
 });
 
 // Listen for counter updates from background

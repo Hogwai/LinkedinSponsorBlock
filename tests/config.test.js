@@ -115,3 +115,23 @@ describe('SHARED_KEYWORDS: detection keywords', () => {
         expect(suggested.childSelectors.length).toBeGreaterThan(0);
     });
 });
+
+describe('browsers without :has() support (Firefox < 121)', () => {
+    it('drops :has() selectors instead of throwing on every scan', async () => {
+        vi.resetModules();
+        const spy = vi.spyOn(document, 'querySelector').mockImplementation(() => {
+            throw new SyntaxError(':has() is not supported');
+        });
+
+        try {
+            const mod = await import('../src/shared/config.js');
+            const { sponsored, suggested } = mod.CONFIG.profiles.modern.detection;
+
+            expect(sponsored.keywordSelectors.length).toBeGreaterThan(0);
+            expect(sponsored.keywordSelectors.every((sel) => !sel.includes(':has('))).toBe(true);
+            expect(suggested.childSelectors.every((sel) => !sel.includes(':has('))).toBe(true);
+        } finally {
+            spy.mockRestore();
+        }
+    });
+});
