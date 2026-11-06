@@ -141,6 +141,34 @@ describe('MutationObserver triggers scan', () => {
         expect(scanFn).toHaveBeenCalledTimes(1);
     });
 
+    it('passes the added elements (not the whole document) to scanFn', async () => {
+        document.body.setAttribute('data-rehydrated', '');
+        const feed = document.createElement('div');
+        feed.setAttribute('data-testid', 'mainFeed');
+        document.body.appendChild(feed);
+
+        const scanFn = vi.fn();
+        const state = createTestState();
+        const observer = createObserver(scanFn, state);
+
+        observer.start();
+        await waitForObserver();
+        scanFn.mockClear();
+
+        const first = document.createElement('div');
+        const second = document.createElement('div');
+        feed.appendChild(first);
+        feed.appendChild(second);
+
+        await waitForObserver();
+
+        expect(scanFn).toHaveBeenCalledTimes(1);
+        const [roots] = scanFn.mock.calls[0];
+        expect(roots).toContain(first);
+        expect(roots).toContain(second);
+        expect(roots).not.toContain(document);
+    });
+
     it('does not call scanFn for non-element mutations', async () => {
         document.body.setAttribute('data-rehydrated', '');
         const feed = document.createElement('div');

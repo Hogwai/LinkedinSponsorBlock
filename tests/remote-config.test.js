@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
 let remoteConfig;
@@ -419,6 +420,20 @@ describe('isValidProfile validation fallbacks', () => {
         ['postContainers is missing', { postContainers: undefined }],
         ['postContainers is empty', makeProfile({ postContainers: [] })],
         ['postContainers contains a non-string', makeProfile({ postContainers: [123] })],
+        ['postContainers has a universal selector', makeProfile({ postContainers: ['*'] })],
+        ['postContainers has a bare type selector', makeProfile({ postContainers: ['div'] })],
+        [
+            'postContainers targets the body',
+            makeProfile({ postContainers: ['body[data-rehydrated]'] }),
+        ],
+        [
+            'postContainers contains a universal descendant',
+            makeProfile({ postContainers: ['div *'] }),
+        ],
+        [
+            'postContainers has too many entries',
+            makeProfile({ postContainers: Array(51).fill('.x') }),
+        ],
         [
             'detection entry is missing',
             (() => {
@@ -436,6 +451,32 @@ describe('isValidProfile validation fallbacks', () => {
             makeProfile({ detection: { sponsored: { keywordSelectors: ['['] } } }),
         ],
         ['keywords is empty', makeProfile({ detection: { sponsored: { keywords: [] } } })],
+        [
+            'keywords contains an empty string',
+            makeProfile({ detection: { sponsored: { keywords: [''] } } }),
+        ],
+        [
+            'keywords contains a whitespace-only string',
+            makeProfile({ detection: { sponsored: { keywords: ['   '] } } }),
+        ],
+        [
+            'keywords has too many entries',
+            makeProfile({
+                detection: {
+                    sponsored: { keywords: Array.from({ length: 2001 }, (_, i) => `kw-${i}`) },
+                },
+            }),
+        ],
+        [
+            'keywordSelectors has too many entries',
+            makeProfile({
+                detection: {
+                    sponsored: {
+                        keywordSelectors: Array.from({ length: 51 }, (_, i) => `.sel-${i}`),
+                    },
+                },
+            }),
+        ],
         [
             'childSelectors is not an array',
             makeProfile({ detection: { suggested: { childSelectors: 'x' } } }),
@@ -582,5 +623,20 @@ describe('fetchRemoteConfigJSON error paths', () => {
         globalThis.fetch = vi.fn().mockRejectedValue(new TypeError('Failed to fetch'));
 
         await expect(remoteConfig.fetchRemoteConfigJSON()).rejects.toThrow('Failed to fetch');
+    });
+});
+
+describe('published remote config', () => {
+    it('passes runtime validation and is applied', async () => {
+        const raw = JSON.parse(readFileSync('remote-config.json', 'utf8'));
+        const storage = makeStorage(raw);
+
+        await remoteConfig.applyRemoteConfig(storage, vi.fn().mockResolvedValue(null));
+        remoteConfig.applyRemoteOverrides('modern');
+
+        expect(CONFIG.profiles.modern.postContainers).toEqual(raw.profiles.modern.postContainers);
+        expect(logger.warn).not.toHaveBeenCalledWith(
+            expect.stringContaining('Cached remote config is invalid'),
+        );
     });
 });

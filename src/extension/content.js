@@ -51,6 +51,15 @@ const pageManager = createPageManager(state, observer, () => {
 });
 
 // ==================== SETTINGS ====================
+const SYNCED_SETTINGS_KEYS = [
+    SETTINGS_KEYS.ENABLED,
+    SETTINGS_KEYS.FILTER_PROMOTED,
+    SETTINGS_KEYS.FILTER_SUGGESTED,
+    SETTINGS_KEYS.FILTER_RECOMMENDED,
+    SETTINGS_KEYS.LOGGING,
+    SETTINGS_KEYS.VERBOSE_LOGGING,
+];
+
 async function loadSettings() {
     const result = await api.storage.local.get({
         [SETTINGS_KEYS.ENABLED]: true,
@@ -112,14 +121,24 @@ api.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     if (message.type === MESSAGE_TYPES.URL_CHANGED) {
         pageManager.handleUrlChange();
     } else if (message.type === MESSAGE_TYPES.MANUAL_SCAN) {
-        const result = scanFeed();
-        sendResponse(result);
-        observer.stop();
-        observer.start();
+        // Report what this scan blocked
+        sendResponse(scanFeed());
         return true;
     } else if (message.type === MESSAGE_TYPES.SETTINGS_CHANGED) {
         updateSettings(message);
     }
+});
+
+// Keep every LinkedIn tab in sync: the popup writes settings to storage and
+// only messages the active tab.
+api.storage.onChanged.addListener((changes, areaName) => {
+    if (areaName !== 'local') return;
+
+    const next = {};
+    for (const key of SYNCED_SETTINGS_KEYS) {
+        if (changes[key]) next[key] = changes[key].newValue;
+    }
+    if (Object.keys(next).length > 0) updateSettings(next);
 });
 
 async function init() {

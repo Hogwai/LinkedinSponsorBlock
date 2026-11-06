@@ -4,7 +4,7 @@ import { createObserver } from '../shared/observer.js';
 import { isFeedPage, createPageManager } from '../shared/page.js';
 import { SETTINGS_KEYS, DEFAULT_SETTINGS } from '../shared/settings.js';
 import { createFloatingUI } from './ui.js';
-import { createUserscriptStorage } from './storage.js';
+import { createUserscriptStorage, STORAGE_PREFIX } from './storage.js';
 import { createUrlWatcher } from './url-watcher.js';
 import { REMOTE_CONFIG_URL, applyRemoteConfig } from '../shared/remote-config.js';
 import { createBlocker } from '../shared/blocker.js';
@@ -23,15 +23,29 @@ function getTotalCounters() {
     };
 }
 
-function addToTotalCounters(promoted, suggested) {
-    const current = getTotalCounters();
-    const updated = {
-        promoted: current.promoted + promoted,
-        suggested: current.suggested + suggested,
+async function addToTotalCounters(promoted, suggested) {
+    const apply = () => {
+        const current = getTotalCounters();
+        const updated = {
+            promoted: current.promoted + promoted,
+            suggested: current.suggested + suggested,
+        };
+        setStored(SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED, updated.promoted);
+        setStored(SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED, updated.suggested);
+        return updated;
     };
-    setStored(SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED, updated.promoted);
-    setStored(SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED, updated.suggested);
-    return updated;
+
+    // Serialize the read-modify-write across tabs when Web Locks is available;
+    // two tabs hiding posts at the same time must not lose an increment.
+    if (typeof navigator !== 'undefined' && navigator.locks?.request) {
+        try {
+            return await navigator.locks.request('lsb-counters', apply);
+        } catch {
+            // Lock unavailable (e.g. document not fully active): best effort.
+            return apply();
+        }
+    }
+    return apply();
 }
 
 // ==================== STATE ====================
@@ -63,10 +77,7 @@ const state = {
             SETTINGS_KEYS.FILTER_RECOMMENDED,
             DEFAULT_SETTINGS[SETTINGS_KEYS.FILTER_RECOMMENDED],
         ),
-        [SETTINGS_KEYS.LANGUAGE]: getStored(
-            SETTINGS_KEYS.LANGUAGE,
-            DEFAULT_SETTINGS[SETTINGS_KEYS.LANGUAGE],
-        ),
+        [SETTINGS_KEYS.LANGUAGE]: getStored(SETTINGS_KEYS.LANGUAGE, null),
         [SETTINGS_KEYS.POSITION]: getStored(
             SETTINGS_KEYS.POSITION,
             DEFAULT_SETTINGS[SETTINGS_KEYS.POSITION],
@@ -96,11 +107,17 @@ if (!getStored(SETTINGS_KEYS.INSTALL_DATE, 0)) {
 const blocker = createBlocker({
     state,
     onBlocked({ promoted, suggested }) {
-        const totals = addToTotalCounters(promoted, suggested);
+        if (promoted === 0 && suggested === 0) return;
+
         const sessionTotal = state.sessionPromotedRemoved + state.sessionSuggestedRemoved;
-        if (state.ui) {
-            state.ui.updateCounters(sessionTotal, totals.promoted, totals.suggested);
-        }
+        addToTotalCounters(promoted, suggested)
+            .then((totals) => {
+                state.ui?.updateCounters(sessionTotal, totals.promoted, totals.suggested);
+            })
+            .catch(() => {
+                const totals = getTotalCounters();
+                state.ui?.updateCounters(sessionTotal, totals.promoted, totals.suggested);
+            });
     },
 });
 const { scanFeed } = blocker;
@@ -115,6 +132,59 @@ const pageManager = createPageManager(state, observer, () => {
         state.ui.updateCounters(0, totals.promoted, totals.suggested);
     }
 });
+
+// ==================== SETTINGS ====================
+// Behaviour settings shared across tabs.
+// UI-only preferences (language, position, discreet mode, floating icon) stay local to each tab.
+const SYNCED_SETTINGS_KEYS = [
+    SETTINGS_KEYS.ENABLED,
+    SETTINGS_KEYS.FILTER_PROMOTED,
+    SETTINGS_KEYS.FILTER_SUGGESTED,
+    SETTINGS_KEYS.FILTER_RECOMMENDED,
+    SETTINGS_KEYS.LOGGING,
+    SETTINGS_KEYS.VERBOSE_LOGGING,
+];
+
+/**
+ * Apply a settings change to the in-memory state and its side effects.
+ */
+function applySettingsChange(next) {
+    if (next[SETTINGS_KEYS.ENABLED] !== undefined) {
+        const enabled = next[SETTINGS_KEYS.ENABLED];
+        const wasEnabled = state.settings[SETTINGS_KEYS.ENABLED];
+        state.settings[SETTINGS_KEYS.ENABLED] = enabled;
+
+        if (!enabled) {
+            if (wasEnabled) observer.stop();
+        } else if (!wasEnabled && state.isCurrentlyFeedPage) {
+            observer.start();
+        }
+    }
+
+    for (const key of [
+        SETTINGS_KEYS.FILTER_PROMOTED,
+        SETTINGS_KEYS.FILTER_SUGGESTED,
+        SETTINGS_KEYS.FILTER_RECOMMENDED,
+    ]) {
+        if (next[key] !== undefined) state.settings[key] = next[key];
+    }
+
+    if (next[SETTINGS_KEYS.LOGGING] !== undefined) {
+        state.settings[SETTINGS_KEYS.LOGGING] = next[SETTINGS_KEYS.LOGGING];
+        logger.setEnabled(next[SETTINGS_KEYS.LOGGING]);
+    }
+    if (next[SETTINGS_KEYS.VERBOSE_LOGGING] !== undefined) {
+        state.settings[SETTINGS_KEYS.VERBOSE_LOGGING] = next[SETTINGS_KEYS.VERBOSE_LOGGING];
+        logger.setVerbose(next[SETTINGS_KEYS.VERBOSE_LOGGING]);
+    }
+
+    state.ui?.updateSettings(next);
+}
+
+function setSetting(key, value) {
+    setStored(key, value);
+    applySettingsChange({ [key]: value });
+}
 
 // ==================== UI ====================
 function initUI() {
@@ -131,31 +201,23 @@ function initUI() {
             },
         },
         onToggleEnabled(enabled) {
-            state.settings[SETTINGS_KEYS.ENABLED] = enabled;
-            setStored(SETTINGS_KEYS.ENABLED, enabled);
-            if (!enabled) {
-                observer.stop();
-            } else if (state.isCurrentlyFeedPage) {
-                observer.start();
-            }
+            setSetting(SETTINGS_KEYS.ENABLED, enabled);
         },
         onToggleDiscreet(discreet) {
             state.settings[SETTINGS_KEYS.DISCREET] = discreet;
             setStored(SETTINGS_KEYS.DISCREET, discreet);
         },
         onTogglePromoted(enabled) {
-            state.settings[SETTINGS_KEYS.FILTER_PROMOTED] = enabled;
-            setStored(SETTINGS_KEYS.FILTER_PROMOTED, enabled);
+            setSetting(SETTINGS_KEYS.FILTER_PROMOTED, enabled);
         },
         onToggleSuggested(enabled) {
-            state.settings[SETTINGS_KEYS.FILTER_SUGGESTED] = enabled;
-            setStored(SETTINGS_KEYS.FILTER_SUGGESTED, enabled);
+            setSetting(SETTINGS_KEYS.FILTER_SUGGESTED, enabled);
         },
         onToggleRecommended(enabled) {
-            state.settings[SETTINGS_KEYS.FILTER_RECOMMENDED] = enabled;
-            setStored(SETTINGS_KEYS.FILTER_RECOMMENDED, enabled);
+            setSetting(SETTINGS_KEYS.FILTER_RECOMMENDED, enabled);
         },
         onScan() {
+            // Report what this scan blocked
             return scanFeed();
         },
         getCounters() {
@@ -175,14 +237,10 @@ function initUI() {
             setStored(SETTINGS_KEYS.POSITION, pos);
         },
         onToggleLogging(enabled) {
-            state.settings[SETTINGS_KEYS.LOGGING] = enabled;
-            setStored(SETTINGS_KEYS.LOGGING, enabled);
-            logger.setEnabled(enabled);
+            setSetting(SETTINGS_KEYS.LOGGING, enabled);
         },
         onToggleVerbose(enabled) {
-            state.settings[SETTINGS_KEYS.VERBOSE_LOGGING] = enabled;
-            setStored(SETTINGS_KEYS.VERBOSE_LOGGING, enabled);
-            logger.setVerbose(enabled);
+            setSetting(SETTINGS_KEYS.VERBOSE_LOGGING, enabled);
         },
         onToggleHideFloatingUI(hidden) {
             state.settings[SETTINGS_KEYS.HIDE_FLOATING_UI] = hidden;
@@ -225,6 +283,36 @@ function detachVisibilityListener() {
     document.removeEventListener('visibilitychange', onVisibilityChange);
 }
 
+/**
+ * `storage` events fire in the other tabs only: sync behaviour settings that
+ * were changed from another LinkedIn tab.
+ */
+function onStorageChange(event) {
+    if (!event.key || !event.key.startsWith(STORAGE_PREFIX)) return;
+
+    const key = event.key.slice(STORAGE_PREFIX.length);
+    if (!SYNCED_SETTINGS_KEYS.includes(key)) return;
+
+    let value;
+    try {
+        value = JSON.parse(event.newValue);
+    } catch {
+        return;
+    }
+    if (typeof value !== 'boolean') return;
+
+    applySettingsChange({ [key]: value });
+}
+
+function attachStorageListener() {
+    pageWindow.removeEventListener('storage', onStorageChange);
+    pageWindow.addEventListener('storage', onStorageChange);
+}
+
+function detachStorageListener() {
+    pageWindow.removeEventListener('storage', onStorageChange);
+}
+
 function setRemoteDebugStatus(status) {
     const payload = {
         ...status,
@@ -246,14 +334,9 @@ function setRemoteDebugStatus(status) {
     logger.info(`Remote status ${JSON.stringify(payload)}`);
 }
 
+// The userscript banner only grants GM_xmlhttpRequest and unsafeWindow, so the
+// remote-config cache uses localStorage like every other userscript setting.
 async function getUserscriptValue(key) {
-    try {
-        if (typeof GM_getValue !== 'undefined') return GM_getValue(key, null);
-        if (typeof GM !== 'undefined' && GM.getValue) return await GM.getValue(key, null);
-    } catch (err) {
-        setRemoteDebugStatus({ phase: 'storage-get-failed', error: String(err) });
-    }
-
     try {
         const raw = localStorage.getItem(key);
         return raw !== null ? JSON.parse(raw) : null;
@@ -263,13 +346,6 @@ async function getUserscriptValue(key) {
 }
 
 async function setUserscriptValue(key, value) {
-    try {
-        if (typeof GM_setValue !== 'undefined') GM_setValue(key, value);
-        else if (typeof GM !== 'undefined' && GM.setValue) await GM.setValue(key, value);
-    } catch (err) {
-        setRemoteDebugStatus({ phase: 'gm-storage-set-failed', error: String(err) });
-    }
-
     try {
         localStorage.setItem(key, JSON.stringify(value));
     } catch (err) {
@@ -338,6 +414,7 @@ function start() {
     }
     initUI();
     attachVisibilityListener();
+    attachStorageListener();
     urlWatcher.start();
     state.isCurrentlyFeedPage = isFeedPage();
     if (state.isCurrentlyFeedPage) {
@@ -355,6 +432,7 @@ function teardown() {
     observer.stop();
     urlWatcher.stop();
     detachVisibilityListener();
+    detachStorageListener();
     if (state.ui) {
         state.ui.destroy();
         state.ui = null;

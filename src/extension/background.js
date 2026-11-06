@@ -29,7 +29,25 @@ function updateBadge(enabled) {
         api.action.setBadgeText({ text: '' });
     } else {
         api.action.setBadgeBackgroundColor({ color: '#d72828' });
+        api.action.setBadgeText({ text: 'OFF' });
     }
+}
+
+function respond(sendResponse, payload) {
+    try {
+        sendResponse(payload);
+    } catch {
+        // The tab/message channel may already be gone; nothing to do.
+    }
+}
+
+function notifyUrlChange(details) {
+    if (details.tabId < 0 || !details.url?.includes('linkedin.com')) return;
+    Promise.resolve(
+        api.tabs.sendMessage(details.tabId, createUrlChangedMessage(details.url)),
+    ).catch(() => {
+        // No content script in that tab (or tab closed): ignore.
+    });
 }
 
 // Load counters from storage on startup
@@ -57,35 +75,35 @@ async function saveCounters() {
 }
 
 // Emit on URL change
-api.webNavigation.onHistoryStateUpdated.addListener((details) => {
-    api.tabs.sendMessage(details.tabId, createUrlChangedMessage(details.url));
-});
-
-api.webNavigation.onReferenceFragmentUpdated.addListener((details) => {
-    api.tabs.sendMessage(details.tabId, createUrlChangedMessage(details.url));
-});
+api.webNavigation.onHistoryStateUpdated.addListener(notifyUrlChange);
+api.webNavigation.onReferenceFragmentUpdated.addListener(notifyUrlChange);
 
 // Handle messages from content script and popup
 api.runtime.onMessage.addListener((message, sender, sendResponse) => {
     // Handle blocked posts from content script
     if (message.type === MESSAGE_TYPES.BLOCKED && sender.tab?.id) {
         (async () => {
-            await countersReady;
-            totalPromotedBlocked += message.promoted || 0;
-            totalSuggestedBlocked += message.suggested || 0;
-            totalPostsScanned += message.scanned || 0;
-            await saveCounters();
-            api.runtime
-                .sendMessage(
-                    createCounterUpdateMessage({
-                        promoted: totalPromotedBlocked,
-                        suggested: totalSuggestedBlocked,
-                        scanned: totalPostsScanned,
-                    }),
-                )
-                .catch((err) => {
-                    logger.warn('Failed to broadcast counter update after blocked', err);
-                });
+            try {
+                await countersReady;
+                totalPromotedBlocked += message.promoted || 0;
+                totalSuggestedBlocked += message.suggested || 0;
+                totalPostsScanned += message.scanned || 0;
+                await saveCounters();
+                await api.runtime
+                    .sendMessage(
+                        createCounterUpdateMessage({
+                            promoted: totalPromotedBlocked,
+                            suggested: totalSuggestedBlocked,
+                            scanned: totalPostsScanned,
+                        }),
+                    )
+                    .catch((err) => {
+                        logger.warn('Failed to broadcast counter update after blocked', err);
+                    });
+            } finally {
+                // Always settle the sender's promise (return true opened a channel).
+                respond(sendResponse, { ok: true });
+            }
         })();
         return true;
     }
@@ -105,22 +123,26 @@ api.runtime.onMessage.addListener((message, sender, sendResponse) => {
     // Handle reset counters
     if (message.type === MESSAGE_TYPES.RESET_COUNTERS) {
         (async () => {
-            await countersReady;
-            totalPromotedBlocked = 0;
-            totalSuggestedBlocked = 0;
-            totalPostsScanned = 0;
-            await saveCounters();
-            api.runtime
-                .sendMessage(
-                    createCounterUpdateMessage({
-                        promoted: 0,
-                        suggested: 0,
-                        scanned: 0,
-                    }),
-                )
-                .catch((err) => {
-                    logger.warn('Failed to broadcast counter update after reset', err);
-                });
+            try {
+                await countersReady;
+                totalPromotedBlocked = 0;
+                totalSuggestedBlocked = 0;
+                totalPostsScanned = 0;
+                await saveCounters();
+                await api.runtime
+                    .sendMessage(
+                        createCounterUpdateMessage({
+                            promoted: 0,
+                            suggested: 0,
+                            scanned: 0,
+                        }),
+                    )
+                    .catch((err) => {
+                        logger.warn('Failed to broadcast counter update after reset', err);
+                    });
+            } finally {
+                respond(sendResponse, { ok: true });
+            }
         })();
         return true;
     }
@@ -142,6 +164,13 @@ api.runtime.onMessage.addListener((message, sender, sendResponse) => {
         isEnabled = message.enabled;
         updateBadge(isEnabled);
     }
+});
+
+// Keep the badge in sync when the setting is changed from another context.
+api.storage.onChanged.addListener((changes, areaName) => {
+    if (areaName !== 'local' || !changes[SETTINGS_KEYS.ENABLED]) return;
+    isEnabled = changes[SETTINGS_KEYS.ENABLED].newValue;
+    updateBadge(isEnabled);
 });
 
 // Record install date on first run

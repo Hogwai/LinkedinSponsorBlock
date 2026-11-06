@@ -38,52 +38,6 @@ body {
     color: #212529;
 }
 
-/* Toggle Switch */
-.toggle {
-    position: relative;
-    display: inline-block;
-    width: 48px;
-    height: 26px;
-}
-
-.toggle input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.toggle-slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #4a4a6a;
-    transition: 0.3s;
-    border-radius: 26px;
-}
-
-.toggle-slider:before {
-    position: absolute;
-    content: '';
-    height: 20px;
-    width: 20px;
-    left: 3px;
-    bottom: 3px;
-    background-color: white;
-    transition: 0.3s;
-    border-radius: 50%;
-}
-
-.toggle input:checked + .toggle-slider {
-    background: linear-gradient(135deg, #0a66c2 0%, #0077b5 100%);
-}
-
-.toggle input:checked + .toggle-slider:before {
-    transform: translateX(22px);
-}
-
 /* Stats */
 .stats {
     display: flex;
@@ -810,13 +764,6 @@ body.lang-hi {
     min-width: 30px;
 }
 
-.pie-empty {
-    text-align: center;
-    color: #adb5bd;
-    font-size: 13px;
-    padding: 20px 0;
-}
-
 /* Mobile responsive, popup opens in a separate tab on Firefox Android */
 .tab-mode .container {
     padding: 24px 20px;
@@ -917,11 +864,6 @@ body.lang-hi {
     border-radius: 10px;
     margin-bottom: 20px;
 }
-.tab-mode .dismiss-banner-btn {
-    padding: 6px 14px;
-    font-size: 13px;
-}
-
 /* Footer */
 .tab-mode .footer {
     font-size: 13px;
@@ -1035,9 +977,4 @@ body.lang-hi {
 .tab-mode .pie-legend-pct {
     font-size: 13px;
     min-width: 42px;
-}
-
-.tab-mode .pie-empty {
-    font-size: 15px;
-    padding: 24px 0;
 }

@@ -506,7 +506,7 @@ describe('floating UI scan button', () => {
         ui.destroy();
     });
 
-    it('reports no posts found when the scan result is empty or missing', () => {
+    it('reports no new posts when the scan result is empty or missing', () => {
         const { ui } = makeUI(
             { reviewBannerDismissed: true },
             {
@@ -514,7 +514,7 @@ describe('floating UI scan button', () => {
             },
         );
         clickScan();
-        expect(statusEl().textContent).toBe('No posts found');
+        expect(statusEl().textContent).toBe('No new posts found');
         expect(statusEl().className).toBe('lsb-status');
 
         ui.destroy();
@@ -526,7 +526,7 @@ describe('floating UI scan button', () => {
             },
         );
         clickScan();
-        expect(statusEl().textContent).toBe('No posts found');
+        expect(statusEl().textContent).toBe('No new posts found');
         second.ui.destroy();
     });
 
@@ -579,6 +579,48 @@ describe('floating UI language and position', () => {
         expect(callbacks.onPositionChange).toHaveBeenCalledWith(POSITIONS.TOP_LEFT);
         expect(document.getElementById('linkedin-sponsor-block').classList.contains('pos-tl')).toBe(
             true,
+        );
+        ui.destroy();
+    });
+
+    it('keeps the language class when the position changes', () => {
+        const { ui } = makeUI({ language: 'ja', reviewBannerDismissed: true });
+        const host = document.getElementById('linkedin-sponsor-block');
+        expect(host.classList.contains('lang-ja')).toBe(true);
+
+        const posSelect = lastShadowRoot.getElementById('lsb-position');
+        posSelect.value = POSITIONS.TOP_LEFT;
+        posSelect.dispatchEvent(new Event('change', { bubbles: true }));
+
+        expect(host.classList.contains('lang-ja')).toBe(true);
+        expect(host.classList.contains('pos-tl')).toBe(true);
+        ui.destroy();
+    });
+
+    it('sets dir=rtl for Arabic', () => {
+        const { ui } = makeUI({ language: 'ar', reviewBannerDismissed: true });
+
+        expect(document.getElementById('linkedin-sponsor-block').getAttribute('dir')).toBe('rtl');
+        ui.destroy();
+    });
+
+    it('exposes the status as an aria-live region', () => {
+        const { ui } = makeUI({ reviewBannerDismissed: true });
+        const status = lastShadowRoot.getElementById('lsb-status');
+
+        expect(status.getAttribute('role')).toBe('status');
+        expect(status.getAttribute('aria-live')).toBe('polite');
+        ui.destroy();
+    });
+
+    it('labels icon-only buttons for assistive tech', () => {
+        const { ui } = makeUI({ language: 'fr', reviewBannerDismissed: true });
+
+        expect(lastShadowRoot.getElementById('lsb-close').getAttribute('aria-label')).toBe(
+            'Masquer',
+        );
+        expect(lastShadowRoot.getElementById('lsb-fab').getAttribute('aria-label')).toBe(
+            'Linkedin Sponsor Block',
         );
         ui.destroy();
     });

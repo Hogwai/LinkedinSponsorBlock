@@ -13,6 +13,51 @@ beforeEach(async () => {
     config.applyLayout('modern');
 });
 
+describe('getUnscannedPosts: batched roots', () => {
+    let feed;
+
+    beforeEach(() => {
+        feed = loadFixtureDOM('feed-real-mixed.html');
+        document.body.innerHTML = '';
+        document.body.appendChild(feed);
+    });
+
+    it('deduplicates a post passed twice', () => {
+        const post = feed.querySelector('[data-lazy-mount-id="fixture-sponsored-1"]');
+        const groups = detection.getUnscannedPosts([post, post]);
+        const total =
+            groups.sponsored.length +
+            groups.suggested.length +
+            groups.recommended.length +
+            groups.content.length;
+
+        expect(total).toBe(1);
+        expect(groups.sponsored).toHaveLength(1);
+    });
+
+    it('finds the enclosing post when only a label is added', () => {
+        const label = [...feed.querySelectorAll('p[componentkey]')].find((p) =>
+            p.textContent.includes('Post sponsorisé'),
+        );
+        expect(label).toBeTruthy();
+
+        const groups = detection.getUnscannedPosts([label]);
+
+        expect(groups.sponsored).toHaveLength(1);
+    });
+
+    it('handles a batch of several added posts', () => {
+        const posts = [
+            feed.querySelector('[data-lazy-mount-id="fixture-sponsored-1"]'),
+            feed.querySelector('[data-lazy-mount-id="fixture-sponsored-2"]'),
+        ];
+
+        const groups = detection.getUnscannedPosts(posts);
+
+        expect(groups.sponsored).toHaveLength(2);
+    });
+});
+
 describe('getUnscannedPosts: feed-real-mixed', () => {
     let feed;
 

@@ -11,6 +11,13 @@ export const REMOTE_CONFIG_URL =
 const STORAGE_KEY = 'lsb_remote_config';
 const SUPPORTED_VERSION = 2;
 const CATEGORIES = ['sponsored', 'suggested', 'recommended'];
+// A remote config must never be able to hide the whole page or exhaust memory.
+const MAX_SELECTORS_PER_LIST = 50;
+const MAX_KEYWORDS_PER_CATEGORY = 2000;
+// Bare type/universal selectors ("*", "div", "body"...) are rejected: they are
+// valid CSS but would match the page itself instead of a post.
+const BARE_TYPE_SELECTOR = /^[a-z][a-z0-9-]*$/i;
+const UNIVERSAL_TOKEN = /(^|[\s>+~,(])\*/;
 
 // Module-level state for deferred merge
 let storedRemoteConfig = null;
@@ -20,17 +27,17 @@ function isNonEmptyString(v) {
     return typeof v === 'string' && v.length > 0;
 }
 
-function isArrayOfStrings(v, allowEmpty = false) {
+function isArrayOfNonEmptyStrings(v, allowEmpty = false) {
     return (
         Array.isArray(v) &&
         (allowEmpty || v.length > 0) &&
-        v.every((item) => typeof item === 'string')
+        v.every((item) => typeof item === 'string' && item.trim().length > 0)
     );
 }
 
 /**
- * Validates a CSS selector against the current page DOM.
- * Returns true if the selector is syntactically valid and matches at least one element.
+ * Validates a CSS selector's syntax against the current DOM.
+ * Returns true when the selector parses; it may legitimately match nothing.
  */
 function isValidSelector(s) {
     try {
@@ -41,8 +48,26 @@ function isValidSelector(s) {
     }
 }
 
+/**
+ * Pure (DOM-free) guard against selectors that would match the page itself
+ * (e.g. "*", "div", ":root", "div *"). Shared with the build-time validator.
+ */
+export function isSafeSelectorShape(selector) {
+    const trimmed = selector.trim();
+    if (BARE_TYPE_SELECTOR.test(trimmed)) return false;
+    if (/^(html|body)(?![a-z0-9-])/i.test(trimmed)) return false;
+    if (trimmed === ':root' || trimmed.startsWith(':root')) return false;
+    if (UNIVERSAL_TOKEN.test(trimmed)) return false;
+    return true;
+}
+
+/** Shape guard + CSS syntax check against the current DOM. */
+function isSafeSelector(s) {
+    return isSafeSelectorShape(s) && isValidSelector(s.trim());
+}
+
 function isValidFeedWrapperValue(v) {
-    return v === null || (isNonEmptyString(v) && isValidSelector(v));
+    return v === null || (isNonEmptyString(v) && isSafeSelector(v));
 }
 
 function isValidProfile(profile) {
@@ -54,8 +79,9 @@ function isValidProfile(profile) {
     if (!isValidFeedWrapperValue(fw.desktop)) return false;
     if (!isValidFeedWrapperValue(fw.newFeed)) return false;
 
-    if (!isArrayOfStrings(profile.postContainers)) return false;
-    if (!profile.postContainers.every(isValidSelector)) return false;
+    if (!isArrayOfNonEmptyStrings(profile.postContainers)) return false;
+    if (profile.postContainers.length > MAX_SELECTORS_PER_LIST) return false;
+    if (!profile.postContainers.every(isSafeSelector)) return false;
 
     const det = profile.detection;
     if (!det) return false;
@@ -63,11 +89,14 @@ function isValidProfile(profile) {
     for (const cat of CATEGORIES) {
         const entry = det[cat];
         if (!entry) return false;
-        if (!isArrayOfStrings(entry.keywordSelectors)) return false;
-        if (!entry.keywordSelectors.every(isValidSelector)) return false;
-        if (!isArrayOfStrings(entry.keywords)) return false;
-        if (!isArrayOfStrings(entry.childSelectors, true)) return false;
-        if (!entry.childSelectors.every(isValidSelector)) return false;
+        if (!isArrayOfNonEmptyStrings(entry.keywordSelectors)) return false;
+        if (entry.keywordSelectors.length > MAX_SELECTORS_PER_LIST) return false;
+        if (!entry.keywordSelectors.every(isSafeSelector)) return false;
+        if (!isArrayOfNonEmptyStrings(entry.keywords)) return false;
+        if (entry.keywords.length > MAX_KEYWORDS_PER_CATEGORY) return false;
+        if (!isArrayOfNonEmptyStrings(entry.childSelectors, true)) return false;
+        if (entry.childSelectors.length > MAX_SELECTORS_PER_LIST) return false;
+        if (!entry.childSelectors.every(isSafeSelector)) return false;
     }
 
     return true;

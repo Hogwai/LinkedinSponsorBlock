@@ -29,6 +29,7 @@ const pieLegend = document.getElementById('pieLegend');
 const openSettingsBtn = document.getElementById('openSettings');
 const settingsModal = document.getElementById('settingsModal');
 const closeSettingsBtn = document.getElementById('closeSettings');
+const resetCountersWrapper = document.getElementById('resetCountersWrapper');
 const resetCountersBtn = document.getElementById('resetCounters');
 const resetConfirm = document.getElementById('resetConfirm');
 const confirmResetBtn = document.getElementById('confirmReset');
@@ -70,6 +71,11 @@ function updateUILanguage() {
     document.body.className = document.body.className.replace(/\blang-\w+\b/g, '').trim();
     document.body.classList.add(`lang-${lang}`);
     document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+
+    document.querySelectorAll('[data-translate-aria]').forEach((el) => {
+        el.setAttribute('aria-label', t(el.getAttribute('data-translate-aria')));
+    });
 
     const elements = [...document.querySelectorAll('[data-translate]')];
     const btnText = scanBtn.querySelector('.btn-text');
@@ -106,7 +112,11 @@ function updateUILanguage() {
 
 // Load settings from storage
 async function loadSettings() {
-    const result = await api.storage.local.get(EXTENSION_STORAGE_DEFAULTS);
+    const [result, languageResult] = await Promise.all([
+        api.storage.local.get(EXTENSION_STORAGE_DEFAULTS),
+        // Read the language separately
+        api.storage.local.get({ [SETTINGS_KEYS.LANGUAGE]: null }),
+    ]);
 
     extensionToggle.checked = result.enabled;
     filterPromoted.checked = result.filterPromoted;
@@ -114,10 +124,11 @@ async function loadSettings() {
     filterRecommended.checked = result.filterRecommended;
     loggingToggle.checked = result.logging || false;
     verboseLoggingToggle.checked = result.verboseLogging || false;
-    languageSelect.value = result.language || detectLanguage();
+    languageSelect.value = languageResult[SETTINGS_KEYS.LANGUAGE] || detectLanguage();
 
     updateDisabledState(result.enabled);
     updateUILanguage();
+    updateFeedbackLink();
 }
 
 // Render SVG pie chart
@@ -192,16 +203,32 @@ function renderPieChart(promoted, suggested, content) {
     pieChart.innerHTML = paths;
 }
 
-// Update counters from storage
+// Update counters from the background (single writer), with a storage fallback.
 async function updateCounters() {
-    const result = await api.storage.local.get({
-        [SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED]: 0,
-        [SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED]: 0,
-        [SETTINGS_KEYS.TOTAL_POSTS_SCANNED]: 0,
-    });
-    const promoted = result[SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED];
-    const suggested = result[SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED];
-    const scanned = result[SETTINGS_KEYS.TOTAL_POSTS_SCANNED];
+    let counters = null;
+
+    try {
+        counters = await api.runtime.sendMessage({ type: MESSAGE_TYPES.GET_COUNTERS });
+    } catch {
+        // Background unavailable: fall back to storage below.
+    }
+
+    if (!counters) {
+        const result = await api.storage.local.get({
+            [SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED]: 0,
+            [SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED]: 0,
+            [SETTINGS_KEYS.TOTAL_POSTS_SCANNED]: 0,
+        });
+        counters = {
+            promoted: result[SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED],
+            suggested: result[SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED],
+            totalPostsScanned: result[SETTINGS_KEYS.TOTAL_POSTS_SCANNED],
+        };
+    }
+
+    const promoted = counters.promoted || 0;
+    const suggested = counters.suggested || 0;
+    const scanned = counters.totalPostsScanned || 0;
     const content = Math.max(0, scanned - promoted - suggested);
     statsScannedCount.textContent = scanned;
     promotedCountEl.textContent = promoted;
@@ -231,9 +258,9 @@ extensionToggle.addEventListener('change', async () => {
 
     const [tab] = await api.tabs.query({ active: true, currentWindow: true });
     if (tab?.url?.includes('linkedin.com')) {
-        api.tabs.sendMessage(tab.id, createSettingsChangedMessage({ enabled }));
+        api.tabs.sendMessage(tab.id, createSettingsChangedMessage({ enabled })).catch(() => {});
     }
-    api.runtime.sendMessage(createSettingsChangedMessage({ enabled }));
+    api.runtime.sendMessage(createSettingsChangedMessage({ enabled })).catch(() => {});
 
     setStatus(enabled ? t('extensionEnabled') : t('extensionDisabled'), 'success');
     setTimeout(() => setStatus(''), 2000);
@@ -285,6 +312,9 @@ languageSelect.addEventListener('change', async () => {
 openSettingsBtn.addEventListener('click', () => {
     settingsModal.classList.add('active');
     languageSelect.value = getCurrentLanguage();
+    // Do not reopen on a half-finished reset confirmation.
+    resetCountersWrapper.classList.remove('hidden');
+    resetConfirm.classList.add('hidden');
 });
 
 // Close settings modal
@@ -301,33 +331,27 @@ settingsModal.addEventListener('click', (e) => {
 
 // Show reset confirmation
 resetCountersBtn.addEventListener('click', () => {
-    resetCountersBtn.classList.add('hidden');
+    resetCountersWrapper.classList.add('hidden');
     resetConfirm.classList.remove('hidden');
 });
 
 // Cancel reset
 cancelResetBtn.addEventListener('click', () => {
     resetConfirm.classList.add('hidden');
-    resetCountersBtn.classList.remove('hidden');
+    resetCountersWrapper.classList.remove('hidden');
 });
 
 // Confirm reset
-confirmResetBtn.addEventListener('click', async () => {
-    await saveSettings({
-        [SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED]: 0,
-        [SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED]: 0,
-        [SETTINGS_KEYS.TOTAL_POSTS_SCANNED]: 0,
-    });
-
+confirmResetBtn.addEventListener('click', () => {
     statsScannedCount.textContent = '0';
     promotedCountEl.textContent = '0';
     suggestedCountEl.textContent = '0';
     renderPieChart(0, 0, 0);
 
-    api.runtime.sendMessage(createResetCountersMessage());
+    api.runtime.sendMessage(createResetCountersMessage()).catch(() => {});
 
     resetConfirm.classList.add('hidden');
-    resetCountersBtn.classList.remove('hidden');
+    resetCountersWrapper.classList.remove('hidden');
 
     settingsModal.classList.remove('active');
 
@@ -355,7 +379,7 @@ statsModal.addEventListener('click', (e) => {
 async function notifyContentScript(message) {
     const [tab] = await api.tabs.query({ active: true, currentWindow: true });
     if (tab?.url?.includes('linkedin.com')) {
-        api.tabs.sendMessage(tab.id, message);
+        api.tabs.sendMessage(tab.id, message).catch(() => {});
     }
 }
 
@@ -371,41 +395,32 @@ scanBtn.addEventListener('click', async () => {
     setStatus(t('scanning'), 'pending');
     scanBtn.disabled = true;
 
-    api.tabs.sendMessage(tab.id, createManualScanMessage(), (response) => {
-        if (api.runtime.lastError) {
-            setStatus(t('error'), 'error');
-        } else if (response) {
-            const msg = [];
-            if (response.promoted > 0) msg.push(`${response.promoted} promoted post`);
-            if (response.suggested > 0) msg.push(`${response.suggested} suggested post`);
-            if (msg.length > 0) {
-                setStatus(`${msg.join(', ')} hidden`, 'success');
-            } else {
-                setStatus(t('noPostsFound'), 'success');
-            }
+    try {
+        // Promise form works on both `chrome` (MV3) and `browser` (Firefox).
+        const response = await api.tabs.sendMessage(tab.id, createManualScanMessage());
+        const promoted = response?.promoted || 0;
+        const suggested = response?.suggested || 0;
+        const parts = [];
+        if (promoted > 0) parts.push(`${promoted} ${t('promotedLabel')}`);
+        if (suggested > 0) parts.push(`${suggested} ${t('suggestedLabel')}`);
+
+        if (parts.length > 0) {
+            setStatus(`${parts.join(', ')} ${t('postsHidden')}`, 'success');
         } else {
-            setStatus(t('noPostsFound'), 'success');
+            setStatus(t('noNewPosts'), 'success');
         }
+    } catch {
+        setStatus(t('error'), 'error');
+    } finally {
         scanBtn.disabled = false;
         setTimeout(() => setStatus(''), 3000);
-    });
+    }
 });
 
 // Listen for counter updates from background
 api.runtime.onMessage.addListener((message) => {
     if (message.type === MESSAGE_TYPES.COUNTER_UPDATE) {
         updateCounters();
-    }
-});
-
-// Update counters when popup opens
-api.runtime.onConnect.addListener((port) => {
-    if (port.name === 'counterUpdate') {
-        port.onMessage.addListener((msg) => {
-            if (msg.type === MESSAGE_TYPES.COUNTER_UPDATE) {
-                updateCounters();
-            }
-        });
     }
 });
 

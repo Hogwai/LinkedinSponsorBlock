@@ -590,7 +590,12 @@ function createDOM() {
 
     const fab = el(
         'button',
-        { class: 'lsb-fab', id: 'lsb-fab', title: 'Linkedin Sponsor Block' },
+        {
+            class: 'lsb-fab',
+            id: 'lsb-fab',
+            title: 'Linkedin Sponsor Block',
+            'aria-label': 'Linkedin Sponsor Block',
+        },
         fabIcon,
         el('span', { class: 'lsb-badge', id: 'lsb-badge' }),
     );
@@ -611,7 +616,11 @@ function createDOM() {
             'div',
             { class: 'lsb-header' },
             el('span', { class: 'lsb-title', 'data-t': 'title' }, 'Linkedin Sponsor Block'),
-            el('button', { class: 'lsb-close', id: 'lsb-close' }, closeIcon),
+            el(
+                'button',
+                { class: 'lsb-close', id: 'lsb-close', 'data-t-aria': 'dismiss' },
+                closeIcon,
+            ),
         ),
         // Review banner
         el(
@@ -622,7 +631,7 @@ function createDOM() {
                 {
                     class: 'lsb-banner-close-btn',
                     id: 'lsb-dismiss-banner',
-                    'aria-label': 'Dismiss',
+                    'data-t-aria': 'dismiss',
                 },
                 dismissIcon,
             ),
@@ -700,7 +709,12 @@ function createDOM() {
         // Scan button
         el('button', { class: 'lsb-scan-btn', id: 'lsb-scan', 'data-t': 'scanNow' }, 'Scan now'),
         // Status
-        el('div', { class: 'lsb-status', id: 'lsb-status' }),
+        el('div', {
+            class: 'lsb-status',
+            id: 'lsb-status',
+            role: 'status',
+            'aria-live': 'polite',
+        }),
         // Support section
         el(
             'div',
@@ -844,9 +858,14 @@ export function createFloatingUI({
         // Set lang class on host for per-language font overrides (prevents FOIT)
         host.className = host.className.replace(/\blang-\w+\b/g, '').trim();
         host.classList.add(`lang-${currentLang}`);
+        host.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
 
         shadow.querySelectorAll('[data-t]').forEach((el) => {
             el.textContent = t(el.getAttribute('data-t'));
+        });
+
+        shadow.querySelectorAll('[data-t-aria]').forEach((el) => {
+            el.setAttribute('aria-label', t(el.getAttribute('data-t-aria')));
         });
 
         updateVersionLabel(panel);
@@ -1049,7 +1068,7 @@ export function createFloatingUI({
             showStatus(`${parts.join(', ')} ${t('postsHidden')}`, 'success');
             refreshCounters();
         } else {
-            showStatus(t('noPostsFound'));
+            showStatus(t('noNewPosts'));
         }
     });
 
@@ -1062,7 +1081,10 @@ export function createFloatingUI({
 
     posSelect.addEventListener('change', () => {
         const pos = posSelect.value;
-        host.className = 'pos-' + pos;
+        for (const value of Object.values(POSITIONS)) {
+            host.classList.remove(`pos-${value}`);
+        }
+        host.classList.add(`pos-${pos}`);
         onPositionChange(pos);
     });
 
