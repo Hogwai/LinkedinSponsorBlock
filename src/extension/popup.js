@@ -203,16 +203,32 @@ function renderPieChart(promoted, suggested, content) {
     pieChart.innerHTML = paths;
 }
 
-// Update counters from storage
+// Update counters from the background (single writer), with a storage fallback.
 async function updateCounters() {
-    const result = await api.storage.local.get({
-        [SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED]: 0,
-        [SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED]: 0,
-        [SETTINGS_KEYS.TOTAL_POSTS_SCANNED]: 0,
-    });
-    const promoted = result[SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED];
-    const suggested = result[SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED];
-    const scanned = result[SETTINGS_KEYS.TOTAL_POSTS_SCANNED];
+    let counters = null;
+
+    try {
+        counters = await api.runtime.sendMessage({ type: MESSAGE_TYPES.GET_COUNTERS });
+    } catch {
+        // Background unavailable: fall back to storage below.
+    }
+
+    if (!counters) {
+        const result = await api.storage.local.get({
+            [SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED]: 0,
+            [SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED]: 0,
+            [SETTINGS_KEYS.TOTAL_POSTS_SCANNED]: 0,
+        });
+        counters = {
+            promoted: result[SETTINGS_KEYS.TOTAL_PROMOTED_BLOCKED],
+            suggested: result[SETTINGS_KEYS.TOTAL_SUGGESTED_BLOCKED],
+            totalPostsScanned: result[SETTINGS_KEYS.TOTAL_POSTS_SCANNED],
+        };
+    }
+
+    const promoted = counters.promoted || 0;
+    const suggested = counters.suggested || 0;
+    const scanned = counters.totalPostsScanned || 0;
     const content = Math.max(0, scanned - promoted - suggested);
     statsScannedCount.textContent = scanned;
     promotedCountEl.textContent = promoted;
@@ -405,17 +421,6 @@ scanBtn.addEventListener('click', async () => {
 api.runtime.onMessage.addListener((message) => {
     if (message.type === MESSAGE_TYPES.COUNTER_UPDATE) {
         updateCounters();
-    }
-});
-
-// Update counters when popup opens
-api.runtime.onConnect.addListener((port) => {
-    if (port.name === 'counterUpdate') {
-        port.onMessage.addListener((msg) => {
-            if (msg.type === MESSAGE_TYPES.COUNTER_UPDATE) {
-                updateCounters();
-            }
-        });
     }
 });
 

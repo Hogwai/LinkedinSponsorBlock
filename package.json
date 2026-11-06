@@ -2,6 +2,9 @@
     "name": "linkedin-sponsor-block",
     "private": true,
     "type": "module",
+    "engines": {
+        "node": ">=20"
+    },
     "scripts": {
         "prepare": "husky",
         "build": "node build.js",

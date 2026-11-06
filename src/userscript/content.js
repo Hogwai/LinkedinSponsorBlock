@@ -334,14 +334,9 @@ function setRemoteDebugStatus(status) {
     logger.info(`Remote status ${JSON.stringify(payload)}`);
 }
 
+// The userscript banner only grants GM_xmlhttpRequest and unsafeWindow, so the
+// remote-config cache uses localStorage like every other userscript setting.
 async function getUserscriptValue(key) {
-    try {
-        if (typeof GM_getValue !== 'undefined') return GM_getValue(key, null);
-        if (typeof GM !== 'undefined' && GM.getValue) return await GM.getValue(key, null);
-    } catch (err) {
-        setRemoteDebugStatus({ phase: 'storage-get-failed', error: String(err) });
-    }
-
     try {
         const raw = localStorage.getItem(key);
         return raw !== null ? JSON.parse(raw) : null;
@@ -351,13 +346,6 @@ async function getUserscriptValue(key) {
 }
 
 async function setUserscriptValue(key, value) {
-    try {
-        if (typeof GM_setValue !== 'undefined') GM_setValue(key, value);
-        else if (typeof GM !== 'undefined' && GM.setValue) await GM.setValue(key, value);
-    } catch (err) {
-        setRemoteDebugStatus({ phase: 'gm-storage-set-failed', error: String(err) });
-    }
-
     try {
         localStorage.setItem(key, JSON.stringify(value));
     } catch (err) {

@@ -1,16 +1,42 @@
 export function createUrlWatcher({ pageWindow, intervalMs, onChange }) {
     let originalPushState = null;
     let originalReplaceState = null;
-    let lastUrl = pageWindow.location.href;
+    let lastUrl = locationKey();
     let intervalId = null;
     let started = false;
 
+    // Hash-only navigation does not change the feed: compare path + query only.
+    function locationKey() {
+        const { pathname, search, href } = pageWindow.location;
+        return typeof pathname === 'string' ? `${pathname}${search || ''}` : href;
+    }
+
     function handleUrlChange() {
-        const currentUrl = pageWindow.location.href;
+        const currentUrl = locationKey();
         if (currentUrl === lastUrl) return;
 
         lastUrl = currentUrl;
         onChange();
+    }
+
+    function startPolling() {
+        if (intervalId !== null) return;
+        intervalId = setInterval(handleUrlChange, intervalMs);
+    }
+
+    function stopPolling() {
+        if (intervalId === null) return;
+        clearInterval(intervalId);
+        intervalId = null;
+    }
+
+    function onVisibilityChange() {
+        if (pageWindow.document?.hidden) {
+            stopPolling();
+            return;
+        }
+        handleUrlChange();
+        startPolling();
     }
 
     function pushState(...args) {
@@ -28,11 +54,12 @@ export function createUrlWatcher({ pageWindow, intervalMs, onChange }) {
 
         originalPushState = pageWindow.history.pushState;
         originalReplaceState = pageWindow.history.replaceState;
-        lastUrl = pageWindow.location.href;
+        lastUrl = locationKey();
         pageWindow.history.pushState = pushState;
         pageWindow.history.replaceState = replaceState;
         pageWindow.addEventListener('popstate', handleUrlChange);
-        intervalId = setInterval(handleUrlChange, intervalMs);
+        pageWindow.document?.addEventListener('visibilitychange', onVisibilityChange);
+        if (!pageWindow.document?.hidden) startPolling();
         started = true;
     }
 
@@ -40,8 +67,8 @@ export function createUrlWatcher({ pageWindow, intervalMs, onChange }) {
         if (!started) return;
 
         pageWindow.removeEventListener('popstate', handleUrlChange);
-        clearInterval(intervalId);
-        intervalId = null;
+        pageWindow.document?.removeEventListener('visibilitychange', onVisibilityChange);
+        stopPolling();
         pageWindow.history.pushState = originalPushState;
         pageWindow.history.replaceState = originalReplaceState;
         started = false;

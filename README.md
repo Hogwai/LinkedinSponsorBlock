@@ -56,11 +56,11 @@ Please check for extension updates or report the issue on [GitHub](https://githu
 - 🚫 **Automatic removal**:  Hides sponsored posts, suggested content, and partner promotions
 - 📱 **Desktop & mobile**:  Works on both desktop and mobile versions of Linkedin (Firefox & userscript)
 - 🌐 **Multilingual support**:  Works with all languages available on Linkedin
-- 🌍 **Localized UI**:  Extension interface available in English and French
+- 🌍 **Localized UI**:  Available in English, French, Spanish, Portuguese, German, Italian, Hindi, Arabic, Chinese and Japanese
 - ⚡ **Lightweight & discreet**:  Runs in the background without slowing your browsing
 - 💼 **Focused feed**:  Concentrate on the content that actually matters to you
-- 📊 **Counter tracking**:  See how many posts have been blocked
-- ⚙️ **Customizable filters**:  Choose what to block (promoted, suggested, or both)
+- 📊 **Counter tracking**:  See how many posts have been blocked, with a per-category breakdown and a reset button
+- ⚙️ **Customizable filters**:  Choose what to block (promoted, suggested, recommended or any combination)
 
 Perfect for professionals, recruiters, or regular Linkedin users who want a more relevant and distraction-free feed.
 
@@ -132,7 +132,7 @@ Available on the [Chrome Web Store](https://chromewebstore.google.com/detail/lin
 #### Usage
 
 - Visit [linkedin.com/feed](https://www.linkedin.com/feed/)
-- Open the browser console (`F12` > Console) to view logs (e.g., how many ads were removed)
+- Logging is off by default. Enable **Enable simple logging** (or **Enable detailed logging**) in the floating panel, then open the browser console (`F12` > Console) to see per-post decisions.
 - Open the floating panel and enable **Hide floating icon** to keep the icon hidden across LinkedIn pages and browser sessions
 - To restore the icon, press **Ctrl+Shift+Space**. On ChromeOS, this shortcut is reserved for changing keyboard languages and may not reach the userscript
 
