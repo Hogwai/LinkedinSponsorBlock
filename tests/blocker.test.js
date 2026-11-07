@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { loadFixtureDOM, createTestState } from './helpers.js';
 
 let createBlocker;
@@ -37,6 +37,31 @@ describe('scanFeed: disabled', () => {
 
         const result = blocker.scanFeed(document.body);
         expect(result).toEqual({ promoted: 0, suggested: 0 });
+    });
+});
+
+describe('scanFeed: single post detail page', () => {
+    afterEach(() => {
+        window.history.replaceState({}, '', '/');
+    });
+
+    it('does not hide or count the post opened on its own page', () => {
+        window.history.replaceState({}, '', '/feed/update/urn:li:share:7524514326716612608/');
+        const state = createTestState();
+        const blocker = createBlocker({ state });
+
+        const feed = loadFixtureDOM('feed-real-follow-button.html');
+        document.body.innerHTML = '';
+        document.body.appendChild(feed);
+
+        const result = blocker.scanFeed(document.body);
+
+        expect(result).toEqual({ promoted: 0, suggested: 0 });
+        expect(state.sessionSuggestedRemoved).toBe(0);
+        expect(state.sessionPostsScanned).toBe(0);
+        expect(
+            feed.querySelector('[data-lazy-mount-id="fixture-follow-1"]').style.display,
+        ).not.toBe('none');
     });
 });
 

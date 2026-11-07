@@ -6,6 +6,7 @@ import {
 } from './detection.js';
 import { getActiveProfile } from './config.js';
 import { logger } from './logger.js';
+import { isScannablePage } from './page.js';
 import { SETTINGS_KEYS } from './settings.js';
 
 const LOG_PREVIEW_LENGTH = 100;
@@ -68,7 +69,7 @@ export function createBlocker({ state, onBlocked } = {}) {
     }
 
     function scanFeed(root = document) {
-        if (!state.settings[SETTINGS_KEYS.ENABLED]) {
+        if (!state.settings[SETTINGS_KEYS.ENABLED] || !isScannablePage()) {
             return { promoted: 0, suggested: 0 };
         }
 

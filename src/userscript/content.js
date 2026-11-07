@@ -1,7 +1,7 @@
 import { CONFIG } from '../shared/config.js';
 import { logger } from '../shared/logger.js';
 import { createObserver } from '../shared/observer.js';
-import { isFeedPage, createPageManager } from '../shared/page.js';
+import { isFeedPage, isScannablePage, createPageManager } from '../shared/page.js';
 import { SETTINGS_KEYS, DEFAULT_SETTINGS } from '../shared/settings.js';
 import { createFloatingUI } from './ui.js';
 import { createUserscriptStorage, STORAGE_PREFIX } from './storage.js';
@@ -55,7 +55,7 @@ const state = {
     sessionPromotedRemoved: 0,
     sessionSuggestedRemoved: 0,
     isObserverConnected: false,
-    isCurrentlyFeedPage: false,
+    isCurrentlyScannable: false,
     settings: {
         [SETTINGS_KEYS.ENABLED]: getStored(
             SETTINGS_KEYS.ENABLED,
@@ -156,7 +156,7 @@ function applySettingsChange(next) {
 
         if (!enabled) {
             if (wasEnabled) observer.stop();
-        } else if (!wasEnabled && state.isCurrentlyFeedPage) {
+        } else if (!wasEnabled && state.isCurrentlyScannable) {
             observer.start();
         }
     }
@@ -246,7 +246,7 @@ function initUI() {
             state.settings[SETTINGS_KEYS.HIDE_FLOATING_UI] = hidden;
             setStored(SETTINGS_KEYS.HIDE_FLOATING_UI, hidden);
         },
-        isFeedPage: () => state.isCurrentlyFeedPage,
+        isFeedPage: () => isFeedPage(),
     });
 }
 
@@ -255,7 +255,7 @@ function initUI() {
 const pageWindow = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window;
 
 function onVisibilityChange() {
-    if (!state.isCurrentlyFeedPage) return;
+    if (!state.isCurrentlyScannable) return;
     if (!state.settings[SETTINGS_KEYS.ENABLED]) return;
     if (document.hidden) observer.stop();
     else observer.start();
@@ -264,7 +264,7 @@ function onVisibilityChange() {
 function handleUrlChange() {
     pageManager.handleUrlChange();
     if (state.ui) {
-        if (state.isCurrentlyFeedPage) state.ui.show();
+        if (isFeedPage()) state.ui.show();
         else state.ui.hide();
     }
 }
@@ -416,12 +416,11 @@ function start() {
     attachVisibilityListener();
     attachStorageListener();
     urlWatcher.start();
-    state.isCurrentlyFeedPage = isFeedPage();
-    if (state.isCurrentlyFeedPage) {
-        if (state.settings[SETTINGS_KEYS.ENABLED]) observer.start();
-    } else {
-        state.ui.hide();
+    state.isCurrentlyScannable = isScannablePage();
+    if (state.isCurrentlyScannable && state.settings[SETTINGS_KEYS.ENABLED]) {
+        observer.start();
     }
+    if (!isFeedPage()) state.ui.hide();
 }
 
 function teardown() {
