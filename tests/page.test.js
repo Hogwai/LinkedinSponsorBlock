@@ -44,10 +44,50 @@ describe('page.js', () => {
         });
     });
 
+    describe('isPostDetailPage', () => {
+        it('returns true for a single post page', async () => {
+            const { isPostDetailPage } = await import('../src/shared/page.js');
+            window.history.replaceState({}, '', '/feed/update/urn:li:share:7524514326716612608/');
+            expect(isPostDetailPage()).toBe(true);
+        });
+
+        it('returns true for the bare post detail path', async () => {
+            const { isPostDetailPage } = await import('../src/shared/page.js');
+            window.history.replaceState({}, '', '/feed/update');
+            expect(isPostDetailPage()).toBe(true);
+        });
+
+        it('returns false for the regular feed', async () => {
+            const { isPostDetailPage } = await import('../src/shared/page.js');
+            window.history.replaceState({}, '', '/feed/');
+            expect(isPostDetailPage()).toBe(false);
+        });
+    });
+
+    describe('isScannablePage', () => {
+        it('returns true on the feed', async () => {
+            const { isScannablePage } = await import('../src/shared/page.js');
+            window.history.replaceState({}, '', '/feed/');
+            expect(isScannablePage()).toBe(true);
+        });
+
+        it('returns false on a single post page, which is opened on purpose', async () => {
+            const { isScannablePage } = await import('../src/shared/page.js');
+            window.history.replaceState({}, '', '/feed/update/urn:li:share:7524514326716612608/');
+            expect(isScannablePage()).toBe(false);
+        });
+
+        it('returns false on non-feed pages', async () => {
+            const { isScannablePage } = await import('../src/shared/page.js');
+            window.history.replaceState({}, '', '/messaging/');
+            expect(isScannablePage()).toBe(false);
+        });
+    });
+
     describe('createPageManager', () => {
         it('creates a page manager with handleUrlChange', async () => {
             const { createPageManager } = await import('../src/shared/page.js');
-            const state = { isCurrentlyFeedPage: false };
+            const state = { isCurrentlyScannable: false };
             const observer = { start: () => {}, stop: () => {} };
             const pm = createPageManager(state, observer, () => {});
             expect(pm).toHaveProperty('handleUrlChange');
@@ -55,7 +95,7 @@ describe('page.js', () => {
 
         it('starts observer when navigating to feed', async () => {
             const { createPageManager } = await import('../src/shared/page.js');
-            const state = { isCurrentlyFeedPage: false };
+            const state = { isCurrentlyScannable: false };
             let started = false;
             let stopped = false;
             let resetCalled = false;
@@ -79,7 +119,7 @@ describe('page.js', () => {
 
         it('stops observer when navigating away from feed', async () => {
             const { createPageManager } = await import('../src/shared/page.js');
-            const state = { isCurrentlyFeedPage: true };
+            const state = { isCurrentlyScannable: true };
             let stopped = false;
             const observer = {
                 start: () => {},
@@ -91,12 +131,12 @@ describe('page.js', () => {
             window.history.replaceState({}, '', '/messaging/');
             pm.handleUrlChange();
             expect(stopped).toBe(true);
-            expect(state.isCurrentlyFeedPage).toBe(false);
+            expect(state.isCurrentlyScannable).toBe(false);
         });
 
         it('restarts observer when staying on feed (SPA navigation)', async () => {
             const { createPageManager } = await import('../src/shared/page.js');
-            const state = { isCurrentlyFeedPage: true };
+            const state = { isCurrentlyScannable: true };
             let started = false;
             let stopped = false;
             let resetCalled = false;
@@ -116,6 +156,31 @@ describe('page.js', () => {
             expect(stopped).toBe(true);
             expect(started).toBe(true);
             expect(resetCalled).toBe(false);
+        });
+
+        it('stops the observer when opening a single post page', async () => {
+            const { createPageManager } = await import('../src/shared/page.js');
+            const state = { isCurrentlyScannable: true };
+            let started = false;
+            let stopped = false;
+            let resetCalled = false;
+            const observer = {
+                start: () => {
+                    started = true;
+                },
+                stop: () => {
+                    stopped = true;
+                },
+            };
+            const pm = createPageManager(state, observer, () => {
+                resetCalled = true;
+            });
+            window.history.replaceState({}, '', '/feed/update/urn:li:share:7524514326716612608/');
+            pm.handleUrlChange();
+            expect(stopped).toBe(true);
+            expect(started).toBe(false);
+            expect(resetCalled).toBe(false);
+            expect(state.isCurrentlyScannable).toBe(false);
         });
     });
 });

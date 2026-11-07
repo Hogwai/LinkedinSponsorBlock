@@ -1,6 +1,6 @@
 import { logger } from '../shared/logger.js';
 import { createObserver } from '../shared/observer.js';
-import { isFeedPage, createPageManager } from '../shared/page.js';
+import { isScannablePage, createPageManager } from '../shared/page.js';
 import { SETTINGS_KEYS } from '../shared/settings.js';
 import api from './browser-api.js';
 import { applyRemoteConfig } from '../shared/remote-config.js';
@@ -16,7 +16,7 @@ const state = {
     sessionSuggestedRemoved: 0,
     sessionPostsScanned: 0,
     isObserverConnected: false,
-    isCurrentlyFeedPage: false,
+    isCurrentlyScannable: false,
     settings: {
         [SETTINGS_KEYS.ENABLED]: true,
         [SETTINGS_KEYS.FILTER_PROMOTED]: true,
@@ -80,7 +80,7 @@ function updateSettings(newSettings) {
         if (!state.settings[SETTINGS_KEYS.ENABLED]) {
             observer.stop();
             notifier.cancel();
-        } else if (state.isCurrentlyFeedPage) {
+        } else if (state.isCurrentlyScannable) {
             observer.start();
         }
     }
@@ -107,7 +107,7 @@ function updateSettings(newSettings) {
 
 // ==================== INIT ====================
 document.addEventListener('visibilitychange', () => {
-    if (!state.isCurrentlyFeedPage) return;
+    if (!state.isCurrentlyScannable) return;
     if (!state.settings[SETTINGS_KEYS.ENABLED]) return;
     if (document.hidden) observer.stop();
     else observer.start();
@@ -155,10 +155,10 @@ async function init() {
         },
         () => api.runtime.sendMessage(createFetchRemoteConfigMessage()),
     );
-    state.isCurrentlyFeedPage = isFeedPage();
+    state.isCurrentlyScannable = isScannablePage();
 
     if (document.body) {
-        if (state.isCurrentlyFeedPage && state.settings[SETTINGS_KEYS.ENABLED]) {
+        if (state.isCurrentlyScannable && state.settings[SETTINGS_KEYS.ENABLED]) {
             observer.start();
         }
     } else {
@@ -166,7 +166,7 @@ async function init() {
             if (document.body) {
                 state.waiter.disconnect();
                 state.waiter = null;
-                if (state.isCurrentlyFeedPage && state.settings[SETTINGS_KEYS.ENABLED])
+                if (state.isCurrentlyScannable && state.settings[SETTINGS_KEYS.ENABLED])
                     observer.start();
             }
         });
