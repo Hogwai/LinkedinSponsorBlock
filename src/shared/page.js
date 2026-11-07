@@ -6,7 +6,7 @@ export function isFeedPage() {
 }
 
 /**
- * A single post opened on its own page (/feed/update/urn:li:share:...) is a deliberate navigation, not a feed. 
+ * A single post opened on its own page (/feed/update/urn:li:share:...) is a deliberate navigation, not a feed.
  * The post is displayed on purpose, so the extension must not hide it or count it
  */
 export function isPostDetailPage() {
