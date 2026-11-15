@@ -32,7 +32,7 @@
         "husky": "^9.1.7",
         "jsdom": "^31.0.0",
         "oxlint": "^1.93.0",
-        "prettier": "^3.9.10",
+        "prettier": "^3.10.1",
         "rollup": "^4.67.5",
         "rollup-plugin-copy": "^3.5.0",
         "vitest": "^5.1.0"
